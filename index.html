@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>科学实验数据收集站</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-light: #818cf8;
+      --primary-bg: #eef2ff;
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
+      --warning: #f59e0b;
+      --warning-bg: #fffbeb;
+      --gray-50: #f9fafb;
+      --gray-100: #f3f4f6;
+      --gray-200: #e5e7eb;
+      --gray-300: #d1d5db;
+      --gray-400: #9ca3af;
+      --gray-500: #6b7280;
+      --gray-600: #4b5563;
+      --gray-700: #374151;
+      --gray-800: #1f2937;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 16px;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .container { max-width: 1000px; margin: 0 auto; }
+
+    .header {
+      text-align: center; color: white;
+      margin-bottom: 20px; animation: fadeInDown 0.6s ease;
+    }
+    .header h1 { font-size: 24px; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,0.15); margin-bottom: 4px; }
+    .header p { font-size: 13px; opacity: 0.85; }
+
+    .mode-switcher {
+      display: flex; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
+      border-radius: 50px; padding: 4px; margin-bottom: 20px;
+      max-width: 360px; margin-left: auto; margin-right: auto;
+    }
+    .mode-btn {
+      flex: 1; padding: 10px 20px; border: none; border-radius: 50px;
+      background: transparent; color: rgba(255,255,255,0.8);
+      font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+    }
+    .mode-btn.active { background: white; color: var(--primary); box-shadow: var(--shadow-md); }
+    .mode-btn:hover:not(.active) { color: white; background: rgba(255,255,255,0.15); }
+
+    .card {
+      background: white; border-radius: var(--radius); box-shadow: var(--shadow-lg);
+      padding: 24px; margin-bottom: 20px; animation: fadeInUp 0.5s ease;
+    }
+    .card-title {
+      font-size: 18px; font-weight: 700; color: var(--gray-800);
+      margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
+    }
+    .card-title .icon { font-size: 22px; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; }
+    .form-group.full-width { grid-column: 1 / -1; }
+    .form-label { font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 5px; }
+    .form-input, .form-select, .form-textarea {
+      padding: 10px 12px; border: 2px solid var(--gray-200); border-radius: 8px;
+      font-size: 16px; color: var(--gray-800); transition: border-color 0.2s;
+      outline: none; font-family: inherit;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+    }
+    .form-textarea { resize: vertical; min-height: 70px; }
+
+    .data-rows { display: flex; flex-direction: column; gap: 10px; }
+    .data-row {
+      display: grid; grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 8px; align-items: center; animation: fadeInUp 0.3s ease;
+    }
+    .data-row .form-input { padding: 9px 10px; font-size: 15px; }
+    .remove-row-btn {
+      width: 36px; height: 36px; border-radius: 50%; border: none;
+      background: var(--danger-bg); color: var(--danger); font-size: 20px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+    }
+    .remove-row-btn:hover { background: var(--danger); color: white; }
+
+    .btn {
+      padding: 12px 22px; border: none; border-radius: 8px; font-size: 15px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #059669; transform: translateY(-1px); }
+    .btn-outline { background: transparent; border: 2px solid var(--gray-300); color: var(--gray-600); }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-danger:hover { background: #dc2626; transform: translateY(-1px); }
+    .btn-warning { background: var(--warning); color: white; }
+    .btn-warning:hover { background: #d97706; }
+    .btn-sm { padding: 8px 14px; font-size: 13px; }
+    .btn-group { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+
+    .toast {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      padding: 14px 24px; border-radius: 10px; color: white; font-weight: 600;
+      font-size: 14px; z-index: 1000; box-shadow: var(--shadow-lg);
+      animation: slideIn 0.4s ease;
+    }
+    .toast-success { background: var(--success); }
+    .toast-error { background: var(--danger); }
+    .toast-info { background: var(--primary); }
+
+    .stats-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 10px; margin-bottom: 20px;
+    }
+    .stat-card {
+      background: var(--gray-50); border-radius: 10px; padding: 14px 10px;
+      text-align: center; border: 1px solid var(--gray-200);
+    }
+    .stat-value { font-size: 24px; font-weight: 700; color: var(--primary); }
+    .stat-label { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+
+    .filter-bar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
+    .filter-bar .form-select { padding: 7px 10px; font-size: 13px; min-width: 120px; }
+    .filter-bar label { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+
+    .table-wrapper { overflow-x: auto; margin-top: 14px; -webkit-overflow-scrolling: touch; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 700px; }
+    thead th {
+      background: var(--primary-bg); color: var(--primary); padding: 10px 12px;
+      text-align: left; font-weight: 600; white-space: nowrap; position: sticky; top: 0;
+    }
+    thead th:first-child { border-radius: 8px 0 0 0; }
+    thead th:last-child { border-radius: 0 8px 0 0; }
+    tbody td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
+    tbody tr:hover { background: var(--gray-50); }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 50px; font-size: 11px; font-weight: 600; }
+    .badge-class { background: var(--primary-bg); color: var(--primary); }
+    .badge-group { background: #fef3c7; color: #92400e; }
+    .delete-btn {
+      padding: 5px 12px; border: none; border-radius: 6px;
+      background: var(--danger-bg); color: var(--danger); font-size: 12px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .delete-btn:hover { background: var(--danger); color: white; }
+
+    .empty-state { text-align: center; padding: 40px 20px; color: var(--gray-400); }
+    .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+    .empty-state p { font-size: 15px; }
+
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+      z-index: 999; align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: white; border-radius: var(--radius); padding: 28px;
+      max-width: 400px; width: 90%; box-shadow: var(--shadow-lg);
+      animation: scaleIn 0.3s ease; text-align: center;
+    }
+    .modal .icon { font-size: 48px; margin-bottom: 12px; }
+    .modal h3 { font-size: 18px; color: var(--gray-800); margin-bottom: 8px; }
+    .modal p { font-size: 14px; color: var(--gray-500); margin-bottom: 20px; }
+    .modal .btn-group { justify-content: center; }
+
+    .experiment-tag {
+      display: inline-block; padding: 3px 10px; border-radius: 6px;
+      font-size: 12px; font-weight: 600; background: #ecfdf5; color: #065f46;
+    }
+
+    .auto-refresh { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gray-400); margin-left: auto; }
+    .pulse-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--success); animation: pulse 2s infinite;
+    }
+
+    .data-detail { font-size: 12px; color: var(--gray-500); line-height: 1.6; }
+
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideIn { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    @media (max-width: 640px) {
+      body { padding: 10px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .data-row { grid-template-columns: 1fr 1fr; }
+      .header h1 { font-size: 20px; }
+      .card { padding: 18px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .btn { padding: 10px 18px; font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <h1>🔬 科学实验数据收集站</h1>
+    <p>提交实验数据 · 共享科学发现</p>
+  </div>
+
+  <div class="mode-switcher">
+    <button class="mode-btn active" onclick="switchMode('student')" id="btnStudent">📝 学生提交</button>
+    <button class="mode-btn" onclick="switchMode('teacher')" id="btnTeacher">📊 老师查看</button>
+  </div>
+
+  <!-- 学生提交 -->
+  <div id="studentView">
+    <div class="card">
+      <div class="card-title"><span class="icon">📋</span> 实验数据记录单</div>
+      <form id="dataForm" onsubmit="return submitData(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">学生姓名 *</label>
+            <input type="text" class="form-input" id="studentName" placeholder="请输入姓名" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">班级 *</label>
+            <select class="form-select" id="studentClass" required>
+              <option value="">请选择班级</option>
+              <option value="三(1)班">三(1)班</option><option value="三(2)班">三(2)班</option>
+              <option value="三(3)班">三(3)班</option><option value="三(4)班">三(4)班</option>
+              <option value="三(5)班">三(5)班</option><option value="三(6)班">三(6)班</option>
+              <option value="五(1)班">五(1)班</option><option value="五(2)班">五(2)班</option>
+              <option value="五(3)班">五(3)班</option><option value="五(4)班">五(4)班</option>
+              <option value="六(1)班">六(1)班</option><option value="六(2)班">六(2)班</option>
+              <option value="六(3)班">六(3)班</option><option value="六(4)班">六(4)班</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">小组号 *</label>
+            <select class="form-select" id="groupNum" required>
+              <option value="">请选择小组</option>
+              <option value="第1组">第1组</option><option value="第2组">第2组</option>
+              <option value="第3组">第3组</option><option value="第4组">第4组</option>
+              <option value="第5组">第5组</option><option value="第6组">第6组</option>
+              <option value="第7组">第7组</option><option value="第8组">第8组</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">实验名称 *</label>
+            <select class="form-select" id="experimentName" required>
+              <option value="">请选择实验</option>
+              <option value="植物生长与阳光的关系">植物生长与阳光的关系</option>
+              <option value="种子萌发条件">种子萌发条件</option>
+              <option value="蚕的生命周期观察">蚕的生命周期观察</option>
+              <option value="物体运动快慢比较">物体运动快慢比较</option>
+              <option value="水的三态变化">水的三态变化</option>
+              <option value="磁铁两极的探究">磁铁两极的探究</option>
+              <option value="溶解快慢的影响因素">溶解快慢的影响因素</option>
+              <option value="__custom__">✏️ 自定义实验...</option>
+            </select>
+          </div>
+          <div class="form-group full-width" id="customExperimentGroup" style="display:none;">
+            <label class="form-label">自定义实验名称</label>
+            <input type="text" class="form-input" id="customExperiment" placeholder="请输入实验名称">
+          </div>
+          <div class="form-group full-width">
+            <label class="form-label">实验日期</label>
+            <input type="date" class="form-input" id="experimentDate">
+          </div>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+            <label class="form-label" style="margin-bottom:0;">📊 实验数据记录</label>
+            <button type="button" class="btn btn-outline btn-sm" onclick="addDataRow()">＋ 添加一行</button>
+          </div>
+          <div class="data-rows" id="dataRows">
+            <div class="data-row">
+              <input type="text" class="form-input" placeholder="项目（如：温度）" data-field="item">
+              <input type="text" class="form-input" placeholder="数值（如：25）" data-field="value">
+              <input type="text" class="form-input" placeholder="单位（如：℃）" data-field="unit">
+              <button type="button" class="remove-row-btn" onclick="removeDataRow(this)" title="删除此行">×</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group full-width" style="margin-top: 18px;">
+          <label class="form-label">📝 实验发现与备注</label>
+          <textarea class="form-textarea" id="remarks" placeholder="记录你在实验中的发现、疑问或感想..."></textarea>
+        </div>
+
+        <div class="btn-group">
+          <button type="submit" class="btn btn-success">✅ 提交数据</button>
+          <button type="button" class="btn btn-outline" onclick="resetForm()">🔄 重置表单</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 老师查看 -->
+  <div id="teacherView" style="display:none;">
+    <div class="card" style="padding: 18px;">
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-value" id="statTotal">-</div><div class="stat-label">总提交数</div></div>
+        <div class="stat-card"><div class="stat-value" id="statStudents">-</div><div class="stat-label">提交学生</div></div>
+        <div class="stat-card"><div class="stat-value" id="statClasses">-</div><div class="stat-label">参与班级</div></div>
+        <div class="stat-card"><div class="stat-value" id="statExperiments">-</div><div class="stat-label">实验项目</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
+        <div class="card-title" style="margin-bottom:0;"><span class="icon">📊</span> 学生数据汇总</div>
+        <div class="auto-refresh"><div class="pulse-dot"></div><span>自动刷新中</span></div>
+      </div>
+
+      <div class="filter-bar">
+        <div style="display:flex; align-items:center; gap:6px;">
+          <label>班级：</label>
+          <select class="form-select" id="filterClass" onchange="renderTable()"><option value="">全部班级</option></select>
+        </div>
+        <div style="display:flex; align-items:center; gap:6px;">
+          <label>实验：</label>
+          <select class="form-select" id="filterExperiment" onchange="renderTable()"><option value="">全部实验</option></select>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="exportCSV()">📥 导出CSV</button>
+        <button class="btn btn-warning btn-sm" onclick="showClearModal()">🗑️ 清除全部数据</button>
+      </div>
+
+      <div class="table-wrapper">
+        <table id="dataTable">
+          <thead>
+            <tr>
+              <th>序号</th><th>提交时间</th><th>姓名</th><th>班级</th>
+              <th>小组</th><th>实验名称</th><th>实验数据</th><th>备注</th><th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="dataBody"></tbody>
+        </table>
+      </div>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <div class="icon">📭</div><p>暂无学生提交数据</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 清除确认 -->
+<div class="modal-overlay" id="clearModal">
+  <div class="modal">
+    <div class="icon">⚠️</div>
+    <h3>确认清除所有数据？</h3>
+    <p>此操作不可恢复，所有学生提交的实验数据将被永久删除。</p>
+    <div class="btn-group">
+      <button class="btn btn-outline" onclick="hideClearModal()">取消</button>
+      <button class="btn btn-danger" onclick="clearAllData()">确认清除</button>
+    </div>
+  </div>
+</div>
+
+<!-- 删除确认 -->
+<div class="modal-overlay" id="deleteModal">
+  <div class="modal">
+    <div class="icon">🗑️</div>
+    <h3>确认删除此条记录？</h3>
+    <p>删除后将无法恢复。</p>
+    <div class="btn-group">
+      <button class="btn btn-outline" onclick="hideDeleteModal()">取消</button>
+      <button class="btn btn-danger" onclick="confirmDeleteSingle()">确认删除</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API = '/api/records';
+  let allRecords = [];
+  let pendingDeleteId = null;
+  let autoRefreshTimer = null;
+
+  function switchMode(mode) {
+    document.getElementById('studentView').style.display = mode === 'student' ? '' : 'none';
+    document.getElementById('teacherView').style.display = mode === 'teacher' ? '' : 'none';
+    document.getElementById('btnStudent').classList.toggle('active', mode === 'student');
+    document.getElementById('btnTeacher').classList.toggle('active', mode === 'teacher');
+    if (mode === 'teacher') { loadRecords(); startAutoRefresh(); }
+    else { stopAutoRefresh(); }
+  }
+
+  document.getElementById('experimentName').addEventListener('change', function() {
+    document.getElementById('customExperimentGroup').style.display = this.value === '__custom__' ? '' : 'none';
+    if (this.value !== '__custom__') document.getElementById('customExperiment').value = '';
+  });
+
+  function getExperimentName() {
+    const sel = document.getElementById('experimentName').value;
+    return sel === '__custom__' ? document.getElementById('customExperiment').value.trim() : sel;
+  }
+
+  function addDataRow() {
+    const container = document.getElementById('dataRows');
+    const row = document.createElement('div');
+    row.className = 'data-row';
+    row.innerHTML = `
+      <input type="text" class="form-input" placeholder="项目" data-field="item">
+      <input type="text" class="form-input" placeholder="数值" data-field="value">
+      <input type="text" class="form-input" placeholder="单位" data-field="unit">
+      <button type="button" class="remove-row-btn" onclick="removeDataRow(this)" title="删除">×</button>
+    `;
+    container.appendChild(row);
+  }
+
+  function removeDataRow(btn) {
+    const c = document.getElementById('dataRows');
+    if (c.children.length > 1) btn.parentElement.remove();
+    else showToast('至少保留一行数据', 'error');
+  }
+
+  function collectDataRows() {
+    const data = [];
+    document.querySelectorAll('#dataRows .data-row').forEach(row => {
+      const item = row.querySelector('[data-field="item"]').value.trim();
+      const value = row.querySelector('[data-field="value"]').value.trim();
+      const unit = row.querySelector('[data-field="unit"]').value.trim();
+      if (item || value) data.push({ item, value, unit });
+    });
+    return data;
+  }
+
+  async function submitData(e) {
+    e.preventDefault();
+    const experimentName = getExperimentName();
+    if (!experimentName) { showToast('请填写实验名称', 'error'); return false; }
+    const experimentData = collectDataRows();
+    if (experimentData.length === 0) { showToast('请至少填写一行数据', 'error'); return false; }
+
+    const record = {
+      studentName: document.getElementById('studentName').value.trim(),
+      studentClass: document.getElementById('studentClass').value,
+      groupNum: document.getElementById('groupNum').value,
+      experimentName,
+      experimentDate: document.getElementById('experimentDate').value || new Date().toISOString().split('T')[0],
+      experimentData,
+      remarks: document.getElementById('remarks').value.trim()
+    };
+
+    try {
+      const resp = await fetch(API, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(record)
+      });
+      const result = await resp.json();
+      if (result.success) { showToast('🎉 数据提交成功！', 'success'); resetForm(); }
+      else showToast('提交失败，请重试', 'error');
+    } catch { showToast('网络错误，请检查连接', 'error'); }
+    return false;
+  }
+
+  function resetForm() {
+    document.getElementById('dataForm').reset();
+    document.getElementById('customExperimentGroup').style.display = 'none';
+    document.getElementById('dataRows').innerHTML = `
+      <div class="data-row">
+        <input type="text" class="form-input" placeholder="项目（如：温度）" data-field="item">
+        <input type="text" class="form-input" placeholder="数值（如：25）" data-field="value">
+        <input type="text" class="form-input" placeholder="单位（如：℃）" data-field="unit">
+        <button type="button" class="remove-row-btn" onclick="removeDataRow(this)" title="删除此行">×</button>
+      </div>`;
+    document.getElementById('experimentDate').value = new Date().toISOString().split('T')[0];
+  }
+
+  async function loadRecords() {
+    try {
+      const resp = await fetch(API);
+      const result = await resp.json();
+      if (result.success) { allRecords = result.records; updateStats(); updateFilters(); renderTable(); }
+    } catch (err) { console.error('加载失败:', err); }
+  }
+
+  function updateStats() {
+    document.getElementById('statTotal').textContent = allRecords.length;
+    document.getElementById('statStudents').textContent = new Set(allRecords.map(r => r.studentName)).size;
+    document.getElementById('statClasses').textContent = new Set(allRecords.map(r => r.studentClass).filter(Boolean)).size;
+    document.getElementById('statExperiments').textContent = new Set(allRecords.map(r => r.experimentName).filter(Boolean)).size;
+  }
+
+  function updateFilters() {
+    const cf = document.getElementById('filterClass'), ef = document.getElementById('filterExperiment');
+    const cc = cf.value, ce = ef.value;
+    const classes = [...new Set(allRecords.map(r => r.studentClass).filter(Boolean))].sort();
+    const exps = [...new Set(allRecords.map(r => r.experimentName).filter(Boolean))].sort();
+    cf.innerHTML = '<option value="">全部班级</option>' + classes.map(c => `<option value="${esc(c)}" ${c===cc?'selected':''}>${esc(c)}</option>`).join('');
+    ef.innerHTML = '<option value="">全部实验</option>' + exps.map(e => `<option value="${esc(e)}" ${e===ce?'selected':''}>${esc(e)}</option>`).join('');
+  }
+
+  function renderTable() {
+    const classFilter = document.getElementById('filterClass').value;
+    const expFilter = document.getElementById('filterExperiment').value;
+    let filtered = allRecords;
+    if (classFilter) filtered = filtered.filter(r => r.studentClass === classFilter);
+    if (expFilter) filtered = filtered.filter(r => r.experimentName === expFilter);
+
+    const tbody = document.getElementById('dataBody');
+    const empty = document.getElementById('emptyState');
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = ''; empty.style.display = '';
+      document.querySelector('.table-wrapper').style.display = 'none'; return;
+    }
+    empty.style.display = 'none'; document.querySelector('.table-wrapper').style.display = '';
+
+    tbody.innerHTML = filtered.map((r, i) => `
+      <tr>
+        <td>${i + 1}</td>
+        <td style="white-space:nowrap;">${formatTime(r.timestamp)}</td>
+        <td><strong>${esc(r.studentName)}</strong></td>
+        <td><span class="badge badge-class">${esc(r.studentClass)}</span></td>
+        <td><span class="badge badge-group">${esc(r.groupNum)}</span></td>
+        <td><span class="experiment-tag">${esc(r.experimentName)}</span></td>
+        <td>${renderDataItems(r.experimentData)}</td>
+        <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;" title="${esc(r.remarks||'')}">${esc(r.remarks||'-')}</td>
+        <td><button class="delete-btn" onclick="deleteSingle('${r.id}')">删除</button></td>
+      </tr>`).join('');
+  }
+
+  function renderDataItems(data) {
+    if (!data || !data.length) return '-';
+    return '<div class="data-detail">' + data.map(d =>
+      `${esc(d.item)||'—'}: <strong>${esc(d.value)||'—'}${esc(d.unit)||''}</strong>`
+    ).join('<br>') + '</div>';
+  }
+
+  function formatTime(ts) {
+    if (!ts) return '-';
+    const d = new Date(ts);
+    if (isNaN(d)) return '-';
+    return `${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+  }
+
+  function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+  function deleteSingle(id) { pendingDeleteId = id; document.getElementById('deleteModal').classList.add('show'); }
+  async function confirmDeleteSingle() {
+    if (!pendingDeleteId) return;
+    try { await fetch(`${API}/${pendingDeleteId}`, { method: 'DELETE' }); hideDeleteModal(); loadRecords(); showToast('记录已删除', 'info'); }
+    catch { showToast('删除失败', 'error'); }
+  }
+  function hideDeleteModal() { document.getElementById('deleteModal').classList.remove('show'); pendingDeleteId = null; }
+
+  function showClearModal() { document.getElementById('clearModal').classList.add('show'); }
+  function hideClearModal() { document.getElementById('clearModal').classList.remove('show'); }
+
+  async function clearAllData() {
+    try {
+      const resp = await fetch(API, {
+        method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ confirmKey: 'CLEAR_ALL_DATA' })
+      });
+      const result = await resp.json();
+      if (result.success) { hideClearModal(); loadRecords(); showToast('所有数据已清除', 'info'); }
+    } catch { showToast('清除失败', 'error'); }
+  }
+
+  function exportCSV() {
+    if (allRecords.length === 0) { showToast('暂无数据可导出', 'error'); return; }
+    let csv = '\uFEFF序号,提交时间,姓名,班级,小组,实验名称,实验日期,数据项,数值,单位,备注\n';
+    allRecords.forEach((r, i) => {
+      const ds = (r.experimentData||[]).map(d => `${d.item||''}:${d.value||''}${d.unit||''}`).join('; ');
+      csv += `${i+1},"${formatTime(r.timestamp)}","${r.studentName}","${r.studentClass}","${r.groupNum}","${r.experimentName}","${r.experimentDate||''}","${ds}","${(r.remarks||'').replace(/"/g,'""')}"\n`;
+    });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+    a.download = `实验数据_${new Date().toISOString().split('T')[0]}.csv`;
+    a.click(); showToast('CSV 导出成功', 'success');
+  }
+
+  function startAutoRefresh() { stopAutoRefresh(); autoRefreshTimer = setInterval(loadRecords, 5000); }
+  function stopAutoRefresh() { if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; } }
+
+  function showToast(msg, type = 'info') {
+    const old = document.querySelector('.toast'); if (old) old.remove();
+    const t = document.createElement('div');
+    t.className = `toast toast-${type}`; t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => { if (t.parentNode) t.remove(); }, 3000);
+  }
+
+  document.getElementById('experimentDate').value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>

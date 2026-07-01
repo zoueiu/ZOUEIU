@@ -1,603 +1,1123 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>科学实验数据收集站</title>
-  <style>
-    :root {
-      --primary: #4f46e5;
-      --primary-light: #818cf8;
-      --primary-bg: #eef2ff;
-      --success: #10b981;
-      --success-bg: #ecfdf5;
-      --danger: #ef4444;
-      --danger-bg: #fef2f2;
-      --warning: #f59e0b;
-      --warning-bg: #fffbeb;
-      --gray-50: #f9fafb;
-      --gray-100: #f3f4f6;
-      --gray-200: #e5e7eb;
-      --gray-300: #d1d5db;
-      --gray-400: #9ca3af;
-      --gray-500: #6b7280;
-      --gray-600: #4b5563;
-      --gray-700: #374151;
-      --gray-800: #1f2937;
-      --radius: 12px;
-      --shadow: 0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
-      --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.06);
-      --shadow-lg: 0 10px 15px rgba(0,0,0,0.1), 0 4px 6px rgba(0,0,0,0.05);
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三年级科学复习大闯关</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
 
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 16px;
-      -webkit-tap-highlight-color: transparent;
-    }
+.container {
+  width: 100%;
+  max-width: 1200px;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 85vh;
+}
 
-    .container { max-width: 1000px; margin: 0 auto; }
+/* Header */
+.header {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
 
-    .header {
-      text-align: center; color: white;
-      margin-bottom: 20px; animation: fadeInDown 0.6s ease;
-    }
-    .header h1 { font-size: 24px; font-weight: 700; text-shadow: 0 2px 8px rgba(0,0,0,0.15); margin-bottom: 4px; }
-    .header p { font-size: 13px; opacity: 0.85; }
+.header h1 {
+  font-size: 28px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
 
-    .mode-switcher {
-      display: flex; background: rgba(255,255,255,0.2); backdrop-filter: blur(10px);
-      border-radius: 50px; padding: 4px; margin-bottom: 20px;
-      max-width: 360px; margin-left: auto; margin-right: auto;
-    }
-    .mode-btn {
-      flex: 1; padding: 10px 20px; border: none; border-radius: 50px;
-      background: transparent; color: rgba(255,255,255,0.8);
-      font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;
-    }
-    .mode-btn.active { background: white; color: var(--primary); box-shadow: var(--shadow-md); }
-    .mode-btn:hover:not(.active) { color: white; background: rgba(255,255,255,0.15); }
+.score-display {
+  display: flex;
+  gap: 24px;
+  font-size: 18px;
+}
 
-    .card {
-      background: white; border-radius: var(--radius); box-shadow: var(--shadow-lg);
-      padding: 24px; margin-bottom: 20px; animation: fadeInUp 0.5s ease;
-    }
-    .card-title {
-      font-size: 18px; font-weight: 700; color: var(--gray-800);
-      margin-bottom: 18px; display: flex; align-items: center; gap: 8px;
-    }
-    .card-title .icon { font-size: 22px; }
+.score-display .score-item {
+  background: rgba(255,255,255,0.25);
+  padding: 8px 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
 
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .form-group { display: flex; flex-direction: column; }
-    .form-group.full-width { grid-column: 1 / -1; }
-    .form-label { font-size: 13px; font-weight: 600; color: var(--gray-600); margin-bottom: 5px; }
-    .form-input, .form-select, .form-textarea {
-      padding: 10px 12px; border: 2px solid var(--gray-200); border-radius: 8px;
-      font-size: 16px; color: var(--gray-800); transition: border-color 0.2s;
-      outline: none; font-family: inherit;
-    }
-    .form-input:focus, .form-select:focus, .form-textarea:focus {
-      border-color: var(--primary); box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
-    }
-    .form-textarea { resize: vertical; min-height: 70px; }
+.score-display .score-item span {
+  font-weight: bold;
+  font-size: 24px;
+  margin: 0 4px;
+}
 
-    .data-rows { display: flex; flex-direction: column; gap: 10px; }
-    .data-row {
-      display: grid; grid-template-columns: 1fr 1fr 1fr auto;
-      gap: 8px; align-items: center; animation: fadeInUp 0.3s ease;
-    }
-    .data-row .form-input { padding: 9px 10px; font-size: 15px; }
-    .remove-row-btn {
-      width: 36px; height: 36px; border-radius: 50%; border: none;
-      background: var(--danger-bg); color: var(--danger); font-size: 20px;
-      cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-    }
-    .remove-row-btn:hover { background: var(--danger); color: white; }
+/* Main Content */
+.main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
 
-    .btn {
-      padding: 12px 22px; border: none; border-radius: 8px; font-size: 15px;
-      font-weight: 600; cursor: pointer; transition: all 0.2s;
-      display: inline-flex; align-items: center; gap: 6px;
-    }
-    .btn-primary { background: var(--primary); color: white; }
-    .btn-primary:hover { background: #4338ca; transform: translateY(-1px); }
-    .btn-success { background: var(--success); color: white; }
-    .btn-success:hover { background: #059669; transform: translateY(-1px); }
-    .btn-outline { background: transparent; border: 2px solid var(--gray-300); color: var(--gray-600); }
-    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-    .btn-danger { background: var(--danger); color: white; }
-    .btn-danger:hover { background: #dc2626; transform: translateY(-1px); }
-    .btn-warning { background: var(--warning); color: white; }
-    .btn-warning:hover { background: #d97706; }
-    .btn-sm { padding: 8px 14px; font-size: 13px; }
-    .btn-group { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  background: #f8f9fa;
+  border-right: 1px solid #e9ecef;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
 
-    .toast {
-      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-      padding: 14px 24px; border-radius: 10px; color: white; font-weight: 600;
-      font-size: 14px; z-index: 1000; box-shadow: var(--shadow-lg);
-      animation: slideIn 0.4s ease;
-    }
-    .toast-success { background: var(--success); }
-    .toast-error { background: var(--danger); }
-    .toast-info { background: var(--primary); }
+.sidebar .cat-btn {
+  padding: 14px 20px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 4px solid transparent;
+  color: #495057;
+  font-family: inherit;
+  white-space: nowrap;
+}
 
-    .stats-grid {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 10px; margin-bottom: 20px;
-    }
-    .stat-card {
-      background: var(--gray-50); border-radius: 10px; padding: 14px 10px;
-      text-align: center; border: 1px solid var(--gray-200);
-    }
-    .stat-value { font-size: 24px; font-weight: 700; color: var(--primary); }
-    .stat-label { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+.sidebar .cat-btn:hover {
+  background: #e9ecef;
+}
 
-    .filter-bar { display: flex; gap: 10px; margin-bottom: 14px; flex-wrap: wrap; align-items: center; }
-    .filter-bar .form-select { padding: 7px 10px; font-size: 13px; min-width: 120px; }
-    .filter-bar label { font-size: 13px; font-weight: 600; color: var(--gray-600); }
+.sidebar .cat-btn.active {
+  background: #e7f0ff;
+  border-left-color: #667eea;
+  color: #667eea;
+  font-weight: bold;
+}
 
-    .table-wrapper { overflow-x: auto; margin-top: 14px; -webkit-overflow-scrolling: touch; }
-    table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 700px; }
-    thead th {
-      background: var(--primary-bg); color: var(--primary); padding: 10px 12px;
-      text-align: left; font-weight: 600; white-space: nowrap; position: sticky; top: 0;
-    }
-    thead th:first-child { border-radius: 8px 0 0 0; }
-    thead th:last-child { border-radius: 0 8px 0 0; }
-    tbody td { padding: 10px 12px; border-bottom: 1px solid var(--gray-100); color: var(--gray-700); }
-    tbody tr:hover { background: var(--gray-50); }
-    .badge { display: inline-block; padding: 3px 10px; border-radius: 50px; font-size: 11px; font-weight: 600; }
-    .badge-class { background: var(--primary-bg); color: var(--primary); }
-    .badge-group { background: #fef3c7; color: #92400e; }
-    .delete-btn {
-      padding: 5px 12px; border: none; border-radius: 6px;
-      background: var(--danger-bg); color: var(--danger); font-size: 12px;
-      cursor: pointer; transition: all 0.2s;
-    }
-    .delete-btn:hover { background: var(--danger); color: white; }
+.sidebar .cat-btn .emoji {
+  margin-right: 8px;
+  font-size: 20px;
+}
 
-    .empty-state { text-align: center; padding: 40px 20px; color: var(--gray-400); }
-    .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
-    .empty-state p { font-size: 15px; }
+/* Question Area */
+.question-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px;
+  overflow-y: auto;
+}
 
-    .modal-overlay {
-      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-      z-index: 999; align-items: center; justify-content: center;
-    }
-    .modal-overlay.show { display: flex; }
-    .modal {
-      background: white; border-radius: var(--radius); padding: 28px;
-      max-width: 400px; width: 90%; box-shadow: var(--shadow-lg);
-      animation: scaleIn 0.3s ease; text-align: center;
-    }
-    .modal .icon { font-size: 48px; margin-bottom: 12px; }
-    .modal h3 { font-size: 18px; color: var(--gray-800); margin-bottom: 8px; }
-    .modal p { font-size: 14px; color: var(--gray-500); margin-bottom: 20px; }
-    .modal .btn-group { justify-content: center; }
+/* Category Header */
+.cat-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+}
 
-    .experiment-tag {
-      display: inline-block; padding: 3px 10px; border-radius: 6px;
-      font-size: 12px; font-weight: 600; background: #ecfdf5; color: #065f46;
-    }
+.cat-header .q-counter {
+  background: rgba(255,255,255,0.25);
+  padding: 6px 16px;
+  border-radius: 14px;
+  font-size: 16px;
+}
 
-    .auto-refresh { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--gray-400); margin-left: auto; }
-    .pulse-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--success); animation: pulse 2s infinite;
-    }
+/* Question Card */
+.question-card {
+  background: #f8f9ff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  border: 2px solid #e0e4ff;
+}
 
-    .data-detail { font-size: 12px; color: var(--gray-500); line-height: 1.6; }
+.question-card .q-number {
+  display: inline-block;
+  background: #667eea;
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
 
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes fadeInDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes slideIn { from { opacity: 0; transform: translate(-50%, -20px); } to { opacity: 1; transform: translate(-50%, 0); } }
-    @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+.question-card .q-text {
+  font-size: 22px;
+  line-height: 1.6;
+  color: #212529;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
 
-    @media (max-width: 640px) {
-      body { padding: 10px; }
-      .form-grid { grid-template-columns: 1fr; }
-      .data-row { grid-template-columns: 1fr 1fr; }
-      .header h1 { font-size: 20px; }
-      .card { padding: 18px; }
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .btn { padding: 10px 18px; font-size: 14px; }
-    }
-  </style>
+/* Image Container */
+.image-container {
+  text-align: center;
+  margin: 16px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  border: 2px solid #e0e4ff;
+}
+
+.image-container img {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Options */
+.options {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.option-btn {
+  flex: 1;
+  min-width: 150px;
+  padding: 18px 24px;
+  font-size: 20px;
+  border: 3px solid #e0e4ff;
+  border-radius: 16px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  font-weight: 500;
+  color: #333;
+}
+
+.option-btn:hover {
+  border-color: #667eea;
+  background: #f0f2ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102,126,234,0.2);
+}
+
+.option-btn:active {
+  transform: translateY(0);
+}
+
+.option-btn.correct {
+  background: #d4edda;
+  border-color: #28a745;
+  color: #155724;
+  animation: pulse 0.5s;
+}
+
+.option-btn.wrong {
+  background: #f8d7da;
+  border-color: #dc3545;
+  color: #721c24;
+}
+
+.option-btn.disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.option-btn.show-answer {
+  border-color: #28a745;
+  background: #d4edda;
+  box-shadow: 0 0 16px rgba(40,167,69,0.3);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Feedback */
+.feedback {
+  margin-top: 16px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  display: none;
+  text-align: center;
+}
+
+.feedback.correct-fb {
+  background: #d4edda;
+  color: #155724;
+  display: block;
+}
+
+.feedback.wrong-fb {
+  background: #f8d7da;
+  color: #721c24;
+  display: block;
+}
+
+/* Nav Buttons */
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.nav-btn.prev {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.nav-btn.prev:hover {
+  background: #dee2e6;
+}
+
+.nav-btn.next {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  margin-left: auto;
+}
+
+.nav-btn.next:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.nav-btn.show-ans {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: #fff;
+}
+
+.nav-btn.show-ans:hover {
+  opacity: 0.9;
+}
+
+.nav-btn.try-again {
+  background: #ffc107;
+  color: #212529;
+}
+
+.nav-btn.try-again:hover {
+  background: #e0a800;
+}
+
+/* Welcome Screen */
+.welcome {
+  text-align: center;
+  padding: 60px 32px;
+}
+
+.welcome h2 {
+  font-size: 36px;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.welcome .subtitle {
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+.welcome .topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.topic-card {
+  padding: 32px 20px;
+  border-radius: 20px;
+  border: 2px solid #e0e4ff;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.topic-card .icon {
+  font-size: 48px;
+}
+
+.topic-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(102,126,234,0.2);
+}
+
+.topic-card:nth-child(1) { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-color: #fcb69f; }
+.topic-card:nth-child(2) { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); border-color: #a1c4fd; }
+.topic-card:nth-child(3) { background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); border-color: #96e6a1; }
+.topic-card:nth-child(4) { background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); border-color: #fbc2eb; }
+.topic-card:nth-child(5) { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); border-color: #fdcb6e; }
+
+/* Result Screen */
+.result-screen {
+  text-align: center;
+  padding: 60px 32px;
+}
+
+.result-screen h2 {
+  font-size: 36px;
+  margin-bottom: 16px;
+}
+
+.result-screen .final-score {
+  font-size: 72px;
+  font-weight: bold;
+  color: #667eea;
+  margin: 20px 0;
+}
+
+.result-screen .stats {
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 32px;
+}
+
+.result-screen .stars {
+  font-size: 48px;
+  margin: 20px 0;
+}
+
+/* Home button */
+.home-btn {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-btn:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+.header { position: relative; }
+</style>
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="app">
+
+  <!-- Header -->
   <div class="header">
-    <h1>🔬 科学实验数据收集站</h1>
-    <p>提交实验数据 · 共享科学发现</p>
-  </div>
-
-  <div class="mode-switcher">
-    <button class="mode-btn active" onclick="switchMode('student')" id="btnStudent">📝 学生提交</button>
-    <button class="mode-btn" onclick="switchMode('teacher')" id="btnTeacher">📊 老师查看</button>
-  </div>
-
-  <!-- 学生提交 -->
-  <div id="studentView">
-    <div class="card">
-      <div class="card-title"><span class="icon">📋</span> 实验数据记录单</div>
-      <form id="dataForm" onsubmit="return submitData(event)">
-        <div class="form-grid">
-          <div class="form-group">
-            <label class="form-label">学生姓名 *</label>
-            <input type="text" class="form-input" id="studentName" placeholder="请输入姓名" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">班级 *</label>
-            <select class="form-select" id="studentClass" required>
-              <option value="">请选择班级</option>
-              <option value="三(1)班">三(1)班</option><option value="三(2)班">三(2)班</option>
-              <option value="三(3)班">三(3)班</option><option value="三(4)班">三(4)班</option>
-              <option value="三(5)班">三(5)班</option><option value="三(6)班">三(6)班</option>
-              <option value="五(1)班">五(1)班</option><option value="五(2)班">五(2)班</option>
-              <option value="五(3)班">五(3)班</option><option value="五(4)班">五(4)班</option>
-              <option value="六(1)班">六(1)班</option><option value="六(2)班">六(2)班</option>
-              <option value="六(3)班">六(3)班</option><option value="六(4)班">六(4)班</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">小组号 *</label>
-            <select class="form-select" id="groupNum" required>
-              <option value="">请选择小组</option>
-              <option value="第1组">第1组</option><option value="第2组">第2组</option>
-              <option value="第3组">第3组</option><option value="第4组">第4组</option>
-              <option value="第5组">第5组</option><option value="第6组">第6组</option>
-              <option value="第7组">第7组</option><option value="第8组">第8组</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">实验名称 *</label>
-            <select class="form-select" id="experimentName" required>
-              <option value="">请选择实验</option>
-              <option value="植物生长与阳光的关系">植物生长与阳光的关系</option>
-              <option value="种子萌发条件">种子萌发条件</option>
-              <option value="蚕的生命周期观察">蚕的生命周期观察</option>
-              <option value="物体运动快慢比较">物体运动快慢比较</option>
-              <option value="水的三态变化">水的三态变化</option>
-              <option value="磁铁两极的探究">磁铁两极的探究</option>
-              <option value="溶解快慢的影响因素">溶解快慢的影响因素</option>
-              <option value="__custom__">✏️ 自定义实验...</option>
-            </select>
-          </div>
-          <div class="form-group full-width" id="customExperimentGroup" style="display:none;">
-            <label class="form-label">自定义实验名称</label>
-            <input type="text" class="form-input" id="customExperiment" placeholder="请输入实验名称">
-          </div>
-          <div class="form-group full-width">
-            <label class="form-label">实验日期</label>
-            <input type="date" class="form-input" id="experimentDate">
-          </div>
-        </div>
-
-        <div style="margin-top: 20px;">
-          <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
-            <label class="form-label" style="margin-bottom:0;">📊 实验数据记录</label>
-            <button type="button" class="btn btn-outline btn-sm" onclick="addDataRow()">＋ 添加一行</button>
-          </div>
-          <div class="data-rows" id="dataRows">
-            <div class="data-row">
-              <input type="text" class="form-input" placeholder="项目（如：温度）" data-field="item">
-              <input type="text" class="form-input" placeholder="数值（如：25）" data-field="value">
-              <input type="text" class="form-input" placeholder="单位（如：℃）" data-field="unit">
-              <button type="button" class="remove-row-btn" onclick="removeDataRow(this)" title="删除此行">×</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group full-width" style="margin-top: 18px;">
-          <label class="form-label">📝 实验发现与备注</label>
-          <textarea class="form-textarea" id="remarks" placeholder="记录你在实验中的发现、疑问或感想..."></textarea>
-        </div>
-
-        <div class="btn-group">
-          <button type="submit" class="btn btn-success">✅ 提交数据</button>
-          <button type="button" class="btn btn-outline" onclick="resetForm()">🔄 重置表单</button>
-        </div>
-      </form>
+    <button class="home-btn" onclick="goHome()" title="回到首页">🏠</button>
+    <h1>🦋 三年级科学复习大闯关</h1>
+    <div class="score-display">
+      <div class="score-item">⭐ <span id="correctCount">0</span> / <span id="totalCount">0</span></div>
     </div>
   </div>
 
-  <!-- 老师查看 -->
-  <div id="teacherView" style="display:none;">
-    <div class="card" style="padding: 18px;">
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-value" id="statTotal">-</div><div class="stat-label">总提交数</div></div>
-        <div class="stat-card"><div class="stat-value" id="statStudents">-</div><div class="stat-label">提交学生</div></div>
-        <div class="stat-card"><div class="stat-value" id="statClasses">-</div><div class="stat-label">参与班级</div></div>
-        <div class="stat-card"><div class="stat-value" id="statExperiments">-</div><div class="stat-label">实验项目</div></div>
-      </div>
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <button class="cat-btn active" onclick="selectCategory(0)">
+        <span class="emoji">🧲</span>磁铁与指南针
+      </button>
+      <button class="cat-btn" onclick="selectCategory(1)">
+        <span class="emoji">🐛</span>蚕的一生
+      </button>
+      <button class="cat-btn" onclick="selectCategory(2)">
+        <span class="emoji">🐯</span>动物分类
+      </button>
+      <button class="cat-btn" onclick="selectCategory(3)">
+        <span class="emoji">☀️</span>影子与太阳
+      </button>
+      <button class="cat-btn" onclick="selectCategory(4)">
+        <span class="emoji">🌍</span>地球与月球
+      </button>
     </div>
 
-    <div class="card">
-      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px;">
-        <div class="card-title" style="margin-bottom:0;"><span class="icon">📊</span> 学生数据汇总</div>
-        <div class="auto-refresh"><div class="pulse-dot"></div><span>自动刷新中</span></div>
-      </div>
-
-      <div class="filter-bar">
-        <div style="display:flex; align-items:center; gap:6px;">
-          <label>班级：</label>
-          <select class="form-select" id="filterClass" onchange="renderTable()"><option value="">全部班级</option></select>
-        </div>
-        <div style="display:flex; align-items:center; gap:6px;">
-          <label>实验：</label>
-          <select class="form-select" id="filterExperiment" onchange="renderTable()"><option value="">全部实验</option></select>
-        </div>
-        <button class="btn btn-outline btn-sm" onclick="exportCSV()">📥 导出CSV</button>
-        <button class="btn btn-warning btn-sm" onclick="showClearModal()">🗑️ 清除全部数据</button>
-      </div>
-
-      <div class="table-wrapper">
-        <table id="dataTable">
-          <thead>
-            <tr>
-              <th>序号</th><th>提交时间</th><th>姓名</th><th>班级</th>
-              <th>小组</th><th>实验名称</th><th>实验数据</th><th>备注</th><th>操作</th>
-            </tr>
-          </thead>
-          <tbody id="dataBody"></tbody>
-        </table>
-      </div>
-      <div class="empty-state" id="emptyState" style="display:none;">
-        <div class="icon">📭</div><p>暂无学生提交数据</p>
-      </div>
+    <!-- Question Area -->
+    <div class="question-area" id="questionArea">
     </div>
+
   </div>
-</div>
 
-<!-- 清除确认 -->
-<div class="modal-overlay" id="clearModal">
-  <div class="modal">
-    <div class="icon">⚠️</div>
-    <h3>确认清除所有数据？</h3>
-    <p>此操作不可恢复，所有学生提交的实验数据将被永久删除。</p>
-    <div class="btn-group">
-      <button class="btn btn-outline" onclick="hideClearModal()">取消</button>
-      <button class="btn btn-danger" onclick="clearAllData()">确认清除</button>
-    </div>
-  </div>
-</div>
-
-<!-- 删除确认 -->
-<div class="modal-overlay" id="deleteModal">
-  <div class="modal">
-    <div class="icon">🗑️</div>
-    <h3>确认删除此条记录？</h3>
-    <p>删除后将无法恢复。</p>
-    <div class="btn-group">
-      <button class="btn btn-outline" onclick="hideDeleteModal()">取消</button>
-      <button class="btn btn-danger" onclick="confirmDeleteSingle()">确认删除</button>
-    </div>
-  </div>
 </div>
 
 <script>
-  const API = '/api/records';
-  let allRecords = [];
-  let pendingDeleteId = null;
-  let autoRefreshTimer = null;
+// ==================== QUESTION DATABASE ====================
+const questionsDB = [
+  // ===== 0: 磁铁与指南针 =====
+  {
+    category: "磁铁与指南针",
+    questions: [
+      {
+        id: "mag-01",
+        text: "把条形磁铁水平悬挂在空中，静止时磁铁两端分别指向（　）",
+        options: ["A. 东、西", "B. 东、南", "C. 南、北"],
+        answer: 2,
+        image: "images/crops/s3_q15.jpg"
+      },
+      {
+        id: "mag-02",
+        text: "用磁铁在纸板下方让小鸭子「游泳」，说明磁铁（　）",
+        options: ["A. 有魔力", "B. 能吸引纸板", "C. 隔着纸板也能吸引物体"],
+        answer: 2,
+        image: "images/crops/s3_q16.jpg"
+      },
+      {
+        id: "mag-03",
+        text: "下列物体能被磁铁吸引的是（　）",
+        options: ["A. 塑料尺", "B. 曲别针", "C. 玻璃珠"],
+        answer: 1,
+      },
+      {
+        id: "mag-04",
+        text: "制作悬挂法指南针时，下列说法正确的是（　）",
+        options: ["A. 选用的针越小越好", "B. 外形美观更重要", "C. 磁针能自由转动是关键"],
+        answer: 2,
+        note: "制作指南针时要注意的重要的一点是磁针能自由转动"
+      },
+      {
+        id: "mag-05",
+        text: "原地转动指南针盒时，盒内的小磁针相对于地面（　）",
+        options: ["A. 快速转动", "B. 几乎不动", "C. 随着盒子一起转动"],
+        answer: 1,
+      },
+      {
+        id: "mag-06",
+        text: "如图，用条形磁铁的不同位置吸引大头针。下列说法错误的是（　）",
+        options: ["A. C点吸引的大头针数量最少", "B. B点吸引的一定比A点多", "C. A点和E点吸引的数量最多"],
+        answer: 1,
+        image: "images/crops/s1_q11.jpg"
+      },
+      {
+        id: "mag-07",
+        text: "如图所示，在条形磁铁周围放置甲、乙、丙三个小磁针，N极指向正确的是（　）",
+        options: ["A. 甲、乙", "B. 甲、丙", "C. 乙、丙"],
+        answer: 2,
+        image: "images/crops/s1_q12.jpg"
+      },
+      {
+        id: "mag-08",
+        text: "指南针的构造不包括（　）",
+        options: ["A. 磁针", "B. 刻度盘", "C. 时针"],
+        answer: 2,
+        image: "images/crops/s1_q13.jpg"
+      },
+      {
+        id: "mag-09",
+        text: "下列说法错误的是（　）",
+        options: ["A. 指南针的指针是一根纤细的磁化了的塑料针", "B. 指南针常用于航海、旅行", "C. 指南针利用磁铁指示方向"],
+        answer: 0,
+      },
+      {
+        id: "mag-10",
+        text: "两个条形磁铁相互排斥，可以判断未知磁铁的左端是（　）极",
+        options: ["A. N", "B. S", "C. 未知"],
+        answer: 0,
+        image: "images/crops/s2_q17.jpg"
+      },
+      {
+        id: "mag-11",
+        text: "下列使用指南针的方法错误的是（　）",
+        options: ["A. 使用时让磁针自由转动", "B. 静止后一端指北一端指南", "C. 不放平也可以使用"],
+        answer: 2,
+      },
+      {
+        id: "mag-12",
+        text: "在地图上，以下确定方向的方法错误的是（　）",
+        options: ["A. 上北下南，左西右东", "B. 先用指向标确定北方", "C. 上南下北，左西右东"],
+        answer: 2,
+      },
+      {
+        id: "mag-13",
+        text: "如下图，判断右边小车磁铁左端的磁极，应填（　）",
+        options: ["A. N极", "B. S极", "C. 无法确定"],
+        answer: 1,
+        image: "images/crops/s2_fill.jpg"
+      },
+      {
+        id: "mag-14",
+        text: "小钢珠放在条形磁铁中间，松手后会（　）",
+        options: ["A. 掉下来", "B. 滚向一端", "C. 不动"],
+        answer: 1,
+        image: "images/crops/s10_q15.jpg"
+      },
+      {
+        id: "mag-15",
+        text: "条形磁铁的N极会对（　）产生排斥力",
+        options: ["A. 另一个N极", "B. S极", "C. 铁钉"],
+        answer: 0,
+      },
+      {
+        id: "mag-16",
+        text: "在冬季，我国北方下雪后，可以根据不同地形中积雪融化的程度来辨别方向。下列说法错误的是（　）",
+        options: ["A. 山坡积雪融化较快的一侧是南方", "B. 沟渠里融化较快的一侧是南方", "C. 屋顶积雪较多的一侧是北方"],
+        answer: 1,
+        note: "沟渠里融化较快的是北侧（南侧积雪更多因为背阴）"
+      },
+      {
+        id: "mag-17",
+        text: "文天祥诗句「臣心一片磁针石，不指南方不肯休」，关于指南针正确的是（　）",
+        options: ["A. 指向不受附近磁铁干扰", "B. 指南针能指南北说明地球有磁场", "C. 指南针方向与地理南北两极完全重合"],
+        answer: 1,
+      },
+      {
+        id: "mag-18",
+        text: "使用指南针时，说法错误的是（　）",
+        options: ["A. 先让磁针自由转动等静止再确定方位", "B. 可以直接用手按住磁针确定方向", "C. 应水平放置指南针"],
+        answer: 1,
+      }
+    ]
+  },
 
-  function switchMode(mode) {
-    document.getElementById('studentView').style.display = mode === 'student' ? '' : 'none';
-    document.getElementById('teacherView').style.display = mode === 'teacher' ? '' : 'none';
-    document.getElementById('btnStudent').classList.toggle('active', mode === 'student');
-    document.getElementById('btnTeacher').classList.toggle('active', mode === 'teacher');
-    if (mode === 'teacher') { loadRecords(); startAutoRefresh(); }
-    else { stopAutoRefresh(); }
+  // ===== 1: 蚕的一生 =====
+  {
+    category: "蚕的一生",
+    questions: [
+      {
+        id: "silkworm-01",
+        text: "蚕卵是（　）形的",
+        options: ["A. 椭圆", "B. 长方", "C. 三角"],
+        answer: 0,
+      },
+      {
+        id: "silkworm-02",
+        text: "「春蚕到死丝方尽」，蚕吐丝时并未死亡，只是发育成不吃不动的（　）",
+        options: ["A. 蚕茧", "B. 蚕蛹", "C. 蚕蛾"],
+        answer: 1,
+      },
+      {
+        id: "silkworm-03",
+        text: "蚕宝宝身体变黄透明，头部不停摇摆，判断它（　）",
+        options: ["A. 要吐丝结茧了", "B. 生病了", "C. 要变成蚕蛾了"],
+        answer: 0,
+      },
+      {
+        id: "silkworm-04",
+        text: "蚕蛹的身体没有（　）",
+        options: ["A. 气门", "B. 体节", "C. 腹足"],
+        answer: 2,
+      },
+      {
+        id: "silkworm-05",
+        text: "关于蚕茧的说法，错误的是（　）",
+        options: ["A. 由无数根丝组成", "B. 起保护作用", "C. 可以直接做衣服"],
+        answer: 0,
+        note: "蚕茧由1根丝组成"
+      },
+      {
+        id: "silkworm-06",
+        text: "剪开蚕茧，除了蚕蛹还能发现（　）",
+        options: ["A. 蜕的皮", "B. 粪便", "C. 没吃完的桑叶"],
+        answer: 0,
+      },
+      {
+        id: "silkworm-07",
+        text: "蚕在吐丝结茧前，正确的现象是（　）",
+        options: ["A. 继续大量吃桑叶", "B. 排出绿色软便，身体变黄透明", "C. 马上变成蚕蛾"],
+        answer: 1,
+      },
+      {
+        id: "silkworm-08",
+        text: "如图，蚕蛾的翅膀是由蛹的（　）部位发育而来",
+        options: ["A. 头部", "B. 胸部", "C. 腹部"],
+        answer: 1,
+        image: "images/crops/s10_q11.jpg"
+      },
+      {
+        id: "silkworm-09",
+        text: "「莴苣叶能不能代替桑叶喂蚕」对比实验中，每个饲养盒中应放（　）条蚕宝宝",
+        options: ["A. 1条", "B. 2条", "C. 10条"],
+        answer: 2,
+        note: "对比实验需要足够样本量，10条蚕宝宝能减少偶然因素"
+      },
+      {
+        id: "silkworm-10",
+        text: "蚕蛾从茧中出来后，身体分为头、胸、腹三部分，属于（　）",
+        options: ["A. 环节动物", "B. 昆虫", "C. 哺乳动物"],
+        answer: 1,
+      },
+      {
+        id: "silkworm-11",
+        text: "蚕的一生要经过的正确顺序是（　）",
+        options: ["A. 卵→幼虫→蛹→成虫", "B. 卵→蛹→幼虫→成虫", "C. 幼虫→卵→蛹→成虫"],
+        answer: 0,
+      },
+      {
+        id: "silkworm-12",
+        text: "夏天庭院器皿积水中上下翻动的小虫，是蚊子的（　）",
+        options: ["A. 卵", "B. 幼虫（孑孓）", "C. 成虫"],
+        answer: 1,
+      }
+    ]
+  },
+
+  // ===== 2: 动物分类 =====
+  {
+    category: "动物分类",
+    questions: [
+      {
+        id: "animal-01",
+        text: "下列动物中，属于珍稀动物的是（　）",
+        options: ["A. 大熊猫", "B. 蚕", "C. 狗"],
+        answer: 0,
+      },
+      {
+        id: "animal-02",
+        text: "下列动物中，与其他动物不同类的是（　）",
+        options: ["A. 鲤鱼", "B. 鹦鹉", "C. 蚂蚁"],
+        answer: 2,
+        note: "鲤鱼和鹦鹉有脊柱，是脊椎动物。蚂蚁是无脊椎动物，只有外骨骼。蚂蚁与其他不同"
+      },
+      {
+        id: "animal-03",
+        text: "以下动物行为中，描述的不是繁殖行为的是（　）",
+        options: ["A. 母鸡孵蛋", "B. 蜻蜓点水（产卵）", "C. 蚕蜕皮"],
+        answer: 2,
+        note: "蚕蜕皮是生长现象，不是繁殖行为"
+      },
+      {
+        id: "animal-04",
+        text: "「武松打虎」的故事中，老虎属于（　）",
+        options: ["A. 鱼类", "B. 鸟类", "C. 哺乳动物"],
+        answer: 2,
+      },
+      {
+        id: "animal-05",
+        text: "关于胎生和卵生动物，说法不正确的是（　）",
+        options: ["A. 蝙蝠有翅膀会飞→属于鸟类，卵生", "B. 胎生动物一般用哺乳喂养后代", "C. 卵生动物通过产卵繁殖"],
+        answer: 0,
+        note: "蝙蝠是唯一会飞的哺乳动物，胎生而非卵生"
+      },
+      {
+        id: "animal-06",
+        text: "「螳螂捕蝉」中，螳螂和蝉（　）",
+        options: ["A. 都是昆虫", "B. 蝉是昆虫、螳螂不是", "C. 螳螂是昆虫、蝉不是"],
+        answer: 0,
+      },
+      {
+        id: "animal-07",
+        text: "人的一生中，生长发育最快的时期是（　）",
+        options: ["A. 儿童期", "B. 青年期", "C. 出生前后和青春期"],
+        answer: 2,
+      },
+      {
+        id: "animal-08",
+        text: "森林中树木树干一侧因缺乏阳光长满青苔，这一侧指向（　）",
+        options: ["A. 东方", "B. 北方", "C. 南方"],
+        answer: 1,
+        note: "青苔喜阴，北半球北侧背阴，容易长青苔"
+      }
+    ]
+  },
+
+  // ===== 3: 影子与太阳 =====
+  {
+    category: "影子与太阳",
+    questions: [
+      {
+        id: "shadow-01",
+        text: "一天中，阳光下物体影子的（　）会发生变化",
+        options: ["A. 长短", "B. 方向", "C. 长短和方向都会变化"],
+        answer: 2,
+        note: "一天中影子的长短和方向都会发生变化"
+      },
+      {
+        id: "shadow-02",
+        text: "一天中阳光下物体影子的长度变化规律是（　）",
+        options: ["A. 短→长→短", "B. 长→短→长", "C. 一直变短"],
+        answer: 1,
+      },
+      {
+        id: "shadow-03",
+        text: "上午9点大树影长5米，一小时前（8点）影长（　）5米",
+        options: ["A. 等于", "B. 大于", "C. 小于"],
+        answer: 1,
+        note: "上午影子越来越短，8点比9点更早，影子更长"
+      },
+      {
+        id: "shadow-04",
+        text: "手电筒照射木圆柱实验中，正确的是（　）",
+        options: ["A. 手电筒位置越高影子越长", "B. 东边照射，影子在西边", "C. 怎么摆形状都一样"],
+        answer: 1,
+      },
+      {
+        id: "shadow-05",
+        text: "太阳看上去并不大，是因为（　）",
+        options: ["A. 太阳本身不大", "B. 太阳距地球太远", "C. 太阳被遮住了"],
+        answer: 1,
+      },
+      {
+        id: "shadow-06",
+        text: "关于太阳的说法，不正确的是（　）",
+        options: ["A. 太阳是高温气体星球", "B. 太阳体积是地球的109倍", "C. 太阳表面有黑子，月球表面有月海"],
+        answer: 1,
+        note: "太阳体积是地球的130万倍。太阳是气体星球，所以不会有环形山噢！"
+      },
+      {
+        id: "shadow-07",
+        text: "下列航天器中，属于行星巡视器的是（　）",
+        options: ["A. 祝融号火星车", "B. 嫦娥六号", "C. 天宫空间站"],
+        answer: 0,
+      }
+    ]
+  },
+
+  // ===== 4: 地球与月球 =====
+  {
+    category: "地球与月球",
+    questions: [
+      {
+        id: "earth-01",
+        text: "月球不适合人类居住的主要原因是（　）",
+        options: ["A. 体积太小", "B. 有很多环形山", "C. 没有液态水和空气"],
+        answer: 2,
+      },
+      {
+        id: "earth-02",
+        text: "关于地球的描述，正确的是（　）",
+        options: ["A. 水资源丰富，不需节水", "B. 月球和地球一样充满生机", "C. 地球有一颗天然卫星——月球"],
+        answer: 2,
+      },
+      {
+        id: "earth-03",
+        text: "月球表面环形山的形成原因，最有可能是（　）",
+        options: ["A. 火山喷发", "B. 地震", "C. 陨石撞击"],
+        answer: 2,
+      },
+      {
+        id: "earth-04",
+        text: "「嫦娥六号」观测到地球是一颗蓝色星球，主要因为地球表面有大量的（　）",
+        options: ["A. 蓝色细菌", "B. 蓝色矿物", "C. 液态水（海洋）"],
+        answer: 2,
+      },
+      {
+        id: "earth-05",
+        text: "下列属于太阳的特征是（　）",
+        options: ["A. 能发出光和热", "B. 有丰富的液态水和空气", "C. 背面有很多环形山"],
+        answer: 0,
+      },
+      {
+        id: "earth-06",
+        text: "下列属于地球的特征是（　）",
+        options: ["A. 能发出光和热", "B. 有丰富的液态水和空气", "C. 表面有许多环形山"],
+        answer: 1,
+      },
+      {
+        id: "earth-07",
+        text: "下列属于月球的特征是（　）",
+        options: ["A. 是气态天体", "B. 有丰富的液态水和空气", "C. 背面有很多环形山"],
+        answer: 2,
+      },
+      {
+        id: "earth-08",
+        text: "用数格子法比较两个小区面积大小，哪个方法正确？",
+        options: ["A. 数满格和不满格都算", "B. 先数满格，不满格的两个算一个", "C. 只看轮廓不看格子"],
+        answer: 1,
+      }
+    ]
+  }
+];
+
+// ==================== GAME STATE ====================
+let currentCategory = 0;
+let currentQuestionIndex = 0;
+let answered = false;
+let scores = [0, 0, 0, 0, 0]; // correct answers per category
+let totals = [0, 0, 0, 0, 0]; // total answered per category
+
+// ==================== RENDER FUNCTIONS ====================
+function render() {
+  updateSidebar();
+  updateScore();
+  const area = document.getElementById('questionArea');
+  const cat = questionsDB[currentCategory];
+  const q = cat.questions[currentQuestionIndex];
+
+  let html = `
+    <div class="cat-header">
+      <div>${getCategoryIcon(currentCategory)} ${cat.category}</div>
+      <div class="q-counter">第 ${currentQuestionIndex + 1} / ${cat.questions.length} 题</div>
+    </div>
+
+    <div class="question-card">
+      <div class="q-number">📝 题目 ${currentQuestionIndex + 1}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.note && answered ? `<div style="background:#fff3cd;padding:12px;border-radius:8px;margin-top:8px;color:#856404;font-size:16px;">💡 ${q.note}</div>` : ''}
+    </div>
+  `;
+
+  // Image
+  if (q.image) {
+    html += `
+      <div class="image-container">
+        <img src="${q.image}" alt="题目图片" onerror="this.parentElement.style.display='none'">
+      </div>
+    `;
   }
 
-  document.getElementById('experimentName').addEventListener('change', function() {
-    document.getElementById('customExperimentGroup').style.display = this.value === '__custom__' ? '' : 'none';
-    if (this.value !== '__custom__') document.getElementById('customExperiment').value = '';
+  // Options
+  html += `<div class="options">`;
+  q.options.forEach((opt, i) => {
+    let optClass = 'option-btn';
+    if (answered) {
+      optClass += ' disabled';
+      if (i === q.answer) optClass += ' show-answer';
+      else if (i === selectedAnswer && i !== q.answer) optClass += ' wrong';
+    }
+    html += `<button class="${optClass}" onclick="selectOption(${i})" ${answered ? 'disabled' : ''}>${opt}</button>`;
+  });
+  html += `</div>`;
+
+  // Feedback
+  if (answered) {
+    const isCorrect = selectedAnswer === q.answer;
+    html += `<div class="feedback ${isCorrect ? 'correct-fb' : 'wrong-fb'}">${isCorrect ? '✅ 回答正确！太棒了！' : '❌ 回答错误，正确答案是 ' + q.options[q.answer].charAt(0)}</div>`;
+  }
+
+  // Navigation
+  html += `<div class="nav-buttons">`;
+  if (currentQuestionIndex > 0) {
+    html += `<button class="nav-btn prev" onclick="prevQuestion()">⬅ 上一题</button>`;
+  }
+  if (!answered) {
+    html += `<button class="nav-btn show-ans" onclick="showAnswer()">🔍 显示答案</button>`;
+  } else {
+    html += `<button class="nav-btn try-again" onclick="tryAgain()">🔄 重试本题</button>`;
+  }
+  if (currentQuestionIndex < cat.questions.length - 1) {
+    html += `<button class="nav-btn next" onclick="nextQuestion()">下一题 ➡</button>`;
+  } else {
+    html += `<button class="nav-btn next" onclick="showResults()">🏆 查看成绩</button>`;
+  }
+  html += `</div>`;
+
+  area.innerHTML = html;
+}
+
+function renderHome() {
+  const area = document.getElementById('questionArea');
+  const totalCorrect = scores.reduce((a, b) => a + b, 0);
+  const totalQ = totals.reduce((a, b) => a + b, 0);
+
+  let html = `
+    <div class="welcome">
+      <h2>🦋 欢迎来到科学复习大闯关！</h2>
+      <p class="subtitle">选择下方主题开始答题吧~</p>
+      ${totalQ > 0 ? `<p style="margin-bottom:30px;font-size:18px;color:#667eea;">📊 已答 ${totalQ} 题，正确 ${totalCorrect} 题（${totalQ > 0 ? Math.round(totalCorrect/totalQ*100) : 0}%）</p>` : ''}
+      <div class="topic-grid">
+  `;
+
+  const icons = ['🧲', '🐛', '🐯', '☀️', '🌍'];
+  questionsDB.forEach((cat, i) => {
+    html += `
+      <button class="topic-card" onclick="selectCategory(${i})">
+        <span class="icon">${icons[i]}</span>
+        ${cat.category}
+        <span style="font-size:14px;font-weight:normal;color:#666;">${cat.questions.length} 道题</span>
+      </button>
+    `;
   });
 
-  function getExperimentName() {
-    const sel = document.getElementById('experimentName').value;
-    return sel === '__custom__' ? document.getElementById('customExperiment').value.trim() : sel;
-  }
+  html += `
+      </div>
+    </div>
+  `;
+  area.innerHTML = html;
+  updateSidebar();
+  updateScore();
+}
 
-  function addDataRow() {
-    const container = document.getElementById('dataRows');
-    const row = document.createElement('div');
-    row.className = 'data-row';
-    row.innerHTML = `
-      <input type="text" class="form-input" placeholder="项目" data-field="item">
-      <input type="text" class="form-input" placeholder="数值" data-field="value">
-      <input type="text" class="form-input" placeholder="单位" data-field="unit">
-      <button type="button" class="remove-row-btn" onclick="removeDataRow(this)" title="删除">×</button>
+let selectedAnswer = -1;
+
+function selectOption(index) {
+  if (answered) return;
+  selectedAnswer = index;
+  answered = true;
+
+  const q = questionsDB[currentCategory].questions[currentQuestionIndex];
+  const isCorrect = index === q.answer;
+
+  totals[currentCategory]++;
+  if (isCorrect) scores[currentCategory]++;
+
+  render();
+  updateScore();
+}
+
+function showAnswer() {
+  if (answered) return;
+  selectedAnswer = -1;
+  answered = true;
+  render();
+  updateScore();
+}
+
+function tryAgain() {
+  answered = false;
+  selectedAnswer = -1;
+  render();
+}
+
+function nextQuestion() {
+  const cat = questionsDB[currentCategory];
+  if (currentQuestionIndex < cat.questions.length - 1) {
+    currentQuestionIndex++;
+    answered = false;
+    selectedAnswer = -1;
+    render();
+    document.getElementById('questionArea').scrollTop = 0;
+  }
+}
+
+function prevQuestion() {
+  if (currentQuestionIndex > 0) {
+    currentQuestionIndex--;
+    answered = false;
+    selectedAnswer = -1;
+    render();
+    document.getElementById('questionArea').scrollTop = 0;
+  }
+}
+
+function selectCategory(index) {
+  currentCategory = index;
+  currentQuestionIndex = 0;
+  answered = false;
+  selectedAnswer = -1;
+  render();
+  document.getElementById('questionArea').scrollTop = 0;
+}
+
+function goHome() {
+  renderHome();
+}
+
+function updateSidebar() {
+  const btns = document.querySelectorAll('.sidebar .cat-btn');
+  btns.forEach((btn, i) => {
+    btn.classList.toggle('active', i === currentCategory);
+    const progress = totals[i] > 0 ? ` (${scores[i]}/${totals[i]})` : '';
+    btn.innerHTML = `<span class="emoji">${getCategoryIcon(i)}</span>${questionsDB[i].category}${progress}`;
+  });
+}
+
+function updateScore() {
+  const totalCorrect = scores.reduce((a, b) => a + b, 0);
+  const totalQ = totals.reduce((a, b) => a + b, 0);
+  document.getElementById('correctCount').textContent = totalCorrect;
+  document.getElementById('totalCount').textContent = totalQ;
+}
+
+function getCategoryIcon(i) {
+  const icons = ['🧲', '🐛', '🐯', '☀️', '🌍'];
+  return icons[i] || '📚';
+}
+
+function showResults() {
+  const area = document.getElementById('questionArea');
+  const totalCorrect = scores.reduce((a, b) => a + b, 0);
+  const totalQ = totals.reduce((a, b) => a + b, 0);
+  const pct = totalQ > 0 ? Math.round(totalCorrect / totalQ * 100) : 0;
+
+  let stars = '';
+  if (pct >= 90) stars = '🌟🌟🌟';
+  else if (pct >= 70) stars = '🌟🌟';
+  else if (pct >= 50) stars = '🌟';
+  else stars = '💪';
+
+  let html = `
+    <div class="result-screen">
+      <h2>🏆 成绩报告</h2>
+      <div class="final-score">${totalCorrect} / ${totalQ}</div>
+      <div class="stats">正确率：${pct}%</div>
+      <div class="stars">${stars}</div>
+      <p style="font-size:20px;color:#666;margin-bottom:32px;">${pct >= 90 ? '你太厉害了！科学小达人！' : pct >= 70 ? '很不错，继续加油！' : pct >= 50 ? '还需努力，再复习一下吧~' : '别灰心，多练习一定能进步！'}</p>
+
+      <h3 style="margin-bottom:16px;">各主题成绩</h3>
+      <div class="topic-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+  `;
+
+  questionsDB.forEach((cat, i) => {
+    const cpct = totals[i] > 0 ? Math.round(scores[i] / totals[i] * 100) : 0;
+    html += `
+      <div class="topic-card" style="cursor:default;" onclick="selectCategory(${i})">
+        <span class="icon">${getCategoryIcon(i)}</span>
+        ${cat.category}
+        <span style="font-size:14px;">${scores[i]}/${totals[i]} (${cpct}%)</span>
+      </div>
     `;
-    container.appendChild(row);
-  }
+  });
 
-  function removeDataRow(btn) {
-    const c = document.getElementById('dataRows');
-    if (c.children.length > 1) btn.parentElement.remove();
-    else showToast('至少保留一行数据', 'error');
-  }
+  html += `
+      </div>
+      <div style="margin-top:24px;">
+        <button class="nav-btn show-ans" onclick="goHome()" style="margin:8px;">🏠 返回首页</button>
+        <button class="nav-btn try-again" onclick="resetAll()" style="margin:8px;">🔄 全部重做</button>
+      </div>
+    </div>
+  `;
 
-  function collectDataRows() {
-    const data = [];
-    document.querySelectorAll('#dataRows .data-row').forEach(row => {
-      const item = row.querySelector('[data-field="item"]').value.trim();
-      const value = row.querySelector('[data-field="value"]').value.trim();
-      const unit = row.querySelector('[data-field="unit"]').value.trim();
-      if (item || value) data.push({ item, value, unit });
-    });
-    return data;
-  }
+  area.innerHTML = html;
+  updateScore();
+}
 
-  async function submitData(e) {
-    e.preventDefault();
-    const experimentName = getExperimentName();
-    if (!experimentName) { showToast('请填写实验名称', 'error'); return false; }
-    const experimentData = collectDataRows();
-    if (experimentData.length === 0) { showToast('请至少填写一行数据', 'error'); return false; }
+function resetAll() {
+  scores = [0, 0, 0, 0, 0];
+  totals = [0, 0, 0, 0, 0];
+  currentCategory = 0;
+  currentQuestionIndex = 0;
+  answered = false;
+  selectedAnswer = -1;
+  renderHome();
+}
 
-    const record = {
-      studentName: document.getElementById('studentName').value.trim(),
-      studentClass: document.getElementById('studentClass').value,
-      groupNum: document.getElementById('groupNum').value,
-      experimentName,
-      experimentDate: document.getElementById('experimentDate').value || new Date().toISOString().split('T')[0],
-      experimentData,
-      remarks: document.getElementById('remarks').value.trim()
-    };
-
-    try {
-      const resp = await fetch(API, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(record)
-      });
-      const result = await resp.json();
-      if (result.success) { showToast('🎉 数据提交成功！', 'success'); resetForm(); }
-      else showToast('提交失败，请重试', 'error');
-    } catch { showToast('网络错误，请检查连接', 'error'); }
-    return false;
-  }
-
-  function resetForm() {
-    document.getElementById('dataForm').reset();
-    document.getElementById('customExperimentGroup').style.display = 'none';
-    document.getElementById('dataRows').innerHTML = `
-      <div class="data-row">
-        <input type="text" class="form-input" placeholder="项目（如：温度）" data-field="item">
-        <input type="text" class="form-input" placeholder="数值（如：25）" data-field="value">
-        <input type="text" class="form-input" placeholder="单位（如：℃）" data-field="unit">
-        <button type="button" class="remove-row-btn" onclick="removeDataRow(this)" title="删除此行">×</button>
-      </div>`;
-    document.getElementById('experimentDate').value = new Date().toISOString().split('T')[0];
-  }
-
-  async function loadRecords() {
-    try {
-      const resp = await fetch(API);
-      const result = await resp.json();
-      if (result.success) { allRecords = result.records; updateStats(); updateFilters(); renderTable(); }
-    } catch (err) { console.error('加载失败:', err); }
-  }
-
-  function updateStats() {
-    document.getElementById('statTotal').textContent = allRecords.length;
-    document.getElementById('statStudents').textContent = new Set(allRecords.map(r => r.studentName)).size;
-    document.getElementById('statClasses').textContent = new Set(allRecords.map(r => r.studentClass).filter(Boolean)).size;
-    document.getElementById('statExperiments').textContent = new Set(allRecords.map(r => r.experimentName).filter(Boolean)).size;
-  }
-
-  function updateFilters() {
-    const cf = document.getElementById('filterClass'), ef = document.getElementById('filterExperiment');
-    const cc = cf.value, ce = ef.value;
-    const classes = [...new Set(allRecords.map(r => r.studentClass).filter(Boolean))].sort();
-    const exps = [...new Set(allRecords.map(r => r.experimentName).filter(Boolean))].sort();
-    cf.innerHTML = '<option value="">全部班级</option>' + classes.map(c => `<option value="${esc(c)}" ${c===cc?'selected':''}>${esc(c)}</option>`).join('');
-    ef.innerHTML = '<option value="">全部实验</option>' + exps.map(e => `<option value="${esc(e)}" ${e===ce?'selected':''}>${esc(e)}</option>`).join('');
-  }
-
-  function renderTable() {
-    const classFilter = document.getElementById('filterClass').value;
-    const expFilter = document.getElementById('filterExperiment').value;
-    let filtered = allRecords;
-    if (classFilter) filtered = filtered.filter(r => r.studentClass === classFilter);
-    if (expFilter) filtered = filtered.filter(r => r.experimentName === expFilter);
-
-    const tbody = document.getElementById('dataBody');
-    const empty = document.getElementById('emptyState');
-
-    if (filtered.length === 0) {
-      tbody.innerHTML = ''; empty.style.display = '';
-      document.querySelector('.table-wrapper').style.display = 'none'; return;
-    }
-    empty.style.display = 'none'; document.querySelector('.table-wrapper').style.display = '';
-
-    tbody.innerHTML = filtered.map((r, i) => `
-      <tr>
-        <td>${i + 1}</td>
-        <td style="white-space:nowrap;">${formatTime(r.timestamp)}</td>
-        <td><strong>${esc(r.studentName)}</strong></td>
-        <td><span class="badge badge-class">${esc(r.studentClass)}</span></td>
-        <td><span class="badge badge-group">${esc(r.groupNum)}</span></td>
-        <td><span class="experiment-tag">${esc(r.experimentName)}</span></td>
-        <td>${renderDataItems(r.experimentData)}</td>
-        <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;" title="${esc(r.remarks||'')}">${esc(r.remarks||'-')}</td>
-        <td><button class="delete-btn" onclick="deleteSingle('${r.id}')">删除</button></td>
-      </tr>`).join('');
-  }
-
-  function renderDataItems(data) {
-    if (!data || !data.length) return '-';
-    return '<div class="data-detail">' + data.map(d =>
-      `${esc(d.item)||'—'}: <strong>${esc(d.value)||'—'}${esc(d.unit)||''}</strong>`
-    ).join('<br>') + '</div>';
-  }
-
-  function formatTime(ts) {
-    if (!ts) return '-';
-    const d = new Date(ts);
-    if (isNaN(d)) return '-';
-    return `${(d.getMonth()+1).toString().padStart(2,'0')}-${d.getDate().toString().padStart(2,'0')} ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
-  }
-
-  function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-  function deleteSingle(id) { pendingDeleteId = id; document.getElementById('deleteModal').classList.add('show'); }
-  async function confirmDeleteSingle() {
-    if (!pendingDeleteId) return;
-    try { await fetch(`${API}/${pendingDeleteId}`, { method: 'DELETE' }); hideDeleteModal(); loadRecords(); showToast('记录已删除', 'info'); }
-    catch { showToast('删除失败', 'error'); }
-  }
-  function hideDeleteModal() { document.getElementById('deleteModal').classList.remove('show'); pendingDeleteId = null; }
-
-  function showClearModal() { document.getElementById('clearModal').classList.add('show'); }
-  function hideClearModal() { document.getElementById('clearModal').classList.remove('show'); }
-
-  async function clearAllData() {
-    try {
-      const resp = await fetch(API, {
-        method: 'DELETE', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ confirmKey: 'CLEAR_ALL_DATA' })
-      });
-      const result = await resp.json();
-      if (result.success) { hideClearModal(); loadRecords(); showToast('所有数据已清除', 'info'); }
-    } catch { showToast('清除失败', 'error'); }
-  }
-
-  function exportCSV() {
-    if (allRecords.length === 0) { showToast('暂无数据可导出', 'error'); return; }
-    let csv = '\uFEFF序号,提交时间,姓名,班级,小组,实验名称,实验日期,数据项,数值,单位,备注\n';
-    allRecords.forEach((r, i) => {
-      const ds = (r.experimentData||[]).map(d => `${d.item||''}:${d.value||''}${d.unit||''}`).join('; ');
-      csv += `${i+1},"${formatTime(r.timestamp)}","${r.studentName}","${r.studentClass}","${r.groupNum}","${r.experimentName}","${r.experimentDate||''}","${ds}","${(r.remarks||'').replace(/"/g,'""')}"\n`;
-    });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-    a.download = `实验数据_${new Date().toISOString().split('T')[0]}.csv`;
-    a.click(); showToast('CSV 导出成功', 'success');
-  }
-
-  function startAutoRefresh() { stopAutoRefresh(); autoRefreshTimer = setInterval(loadRecords, 5000); }
-  function stopAutoRefresh() { if (autoRefreshTimer) { clearInterval(autoRefreshTimer); autoRefreshTimer = null; } }
-
-  function showToast(msg, type = 'info') {
-    const old = document.querySelector('.toast'); if (old) old.remove();
-    const t = document.createElement('div');
-    t.className = `toast toast-${type}`; t.textContent = msg;
-    document.body.appendChild(t);
-    setTimeout(() => { if (t.parentNode) t.remove(); }, 3000);
-  }
-
-  document.getElementById('experimentDate').value = new Date().toISOString().split('T')[0];
+// Init
+renderHome();
 </script>
+
 </body>
 </html>

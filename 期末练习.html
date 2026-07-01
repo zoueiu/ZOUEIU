@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>三年级科学复习大闯关</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  background: #fff;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 85vh;
+}
+
+/* Header */
+.header {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  padding: 16px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+}
+
+.header h1 {
+  font-size: 28px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.score-display {
+  display: flex;
+  gap: 24px;
+  font-size: 18px;
+}
+
+.score-display .score-item {
+  background: rgba(255,255,255,0.25);
+  padding: 8px 20px;
+  border-radius: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.score-display .score-item span {
+  font-weight: bold;
+  font-size: 24px;
+  margin: 0 4px;
+}
+
+/* Main Content */
+.main {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Sidebar */
+.sidebar {
+  width: 200px;
+  background: #f8f9fa;
+  border-right: 1px solid #e9ecef;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+}
+
+.sidebar .cat-btn {
+  padding: 14px 20px;
+  border: none;
+  background: transparent;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 4px solid transparent;
+  color: #495057;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.sidebar .cat-btn:hover {
+  background: #e9ecef;
+}
+
+.sidebar .cat-btn.active {
+  background: #e7f0ff;
+  border-left-color: #667eea;
+  color: #667eea;
+  font-weight: bold;
+}
+
+.sidebar .cat-btn .emoji {
+  margin-right: 8px;
+  font-size: 20px;
+}
+
+/* Question Area */
+.question-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 32px;
+  overflow-y: auto;
+}
+
+/* Category Header */
+.cat-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 20px;
+}
+
+.cat-header .q-counter {
+  background: rgba(255,255,255,0.25);
+  padding: 6px 16px;
+  border-radius: 14px;
+  font-size: 16px;
+}
+
+/* Question Card */
+.question-card {
+  background: #f8f9ff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 16px;
+  border: 2px solid #e0e4ff;
+}
+
+.question-card .q-number {
+  display: inline-block;
+  background: #667eea;
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 16px;
+}
+
+.question-card .q-text {
+  font-size: 22px;
+  line-height: 1.6;
+  color: #212529;
+  margin-bottom: 16px;
+  font-weight: 500;
+}
+
+/* Image Container */
+.image-container {
+  text-align: center;
+  margin: 16px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  border: 2px solid #e0e4ff;
+}
+
+.image-container img {
+  max-width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Options */
+.options {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.option-btn {
+  flex: 1;
+  min-width: 150px;
+  padding: 18px 24px;
+  font-size: 20px;
+  border: 3px solid #e0e4ff;
+  border-radius: 16px;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  font-weight: 500;
+  color: #333;
+}
+
+.option-btn:hover {
+  border-color: #667eea;
+  background: #f0f2ff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102,126,234,0.2);
+}
+
+.option-btn:active {
+  transform: translateY(0);
+}
+
+.option-btn.correct {
+  background: #d4edda;
+  border-color: #28a745;
+  color: #155724;
+  animation: pulse 0.5s;
+}
+
+.option-btn.wrong {
+  background: #f8d7da;
+  border-color: #dc3545;
+  color: #721c24;
+}
+
+.option-btn.disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.option-btn.show-answer {
+  border-color: #28a745;
+  background: #d4edda;
+  box-shadow: 0 0 16px rgba(40,167,69,0.3);
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+/* Feedback */
+.feedback {
+  margin-top: 16px;
+  padding: 16px 24px;
+  border-radius: 12px;
+  font-size: 20px;
+  font-weight: bold;
+  display: none;
+  text-align: center;
+}
+
+.feedback.correct-fb {
+  background: #d4edda;
+  color: #155724;
+  display: block;
+}
+
+.feedback.wrong-fb {
+  background: #f8d7da;
+  color: #721c24;
+  display: block;
+}
+
+/* Nav Buttons */
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  padding: 14px 28px;
+  border-radius: 12px;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.nav-btn.prev {
+  background: #e9ecef;
+  color: #495057;
+}
+
+.nav-btn.prev:hover {
+  background: #dee2e6;
+}
+
+.nav-btn.next {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  margin-left: auto;
+}
+
+.nav-btn.next:hover {
+  opacity: 0.9;
+  transform: translateY(-2px);
+}
+
+.nav-btn.show-ans {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  color: #fff;
+}
+
+.nav-btn.show-ans:hover {
+  opacity: 0.9;
+}
+
+.nav-btn.try-again {
+  background: #ffc107;
+  color: #212529;
+}
+
+.nav-btn.try-again:hover {
+  background: #e0a800;
+}
+
+/* Welcome Screen */
+.welcome {
+  text-align: center;
+  padding: 60px 32px;
+}
+
+.welcome h2 {
+  font-size: 36px;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.welcome .subtitle {
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 40px;
+}
+
+.welcome .topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.topic-card {
+  padding: 32px 20px;
+  border-radius: 20px;
+  border: 2px solid #e0e4ff;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+  font-family: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.topic-card .icon {
+  font-size: 48px;
+}
+
+.topic-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(102,126,234,0.2);
+}
+
+.topic-card:nth-child(1) { background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-color: #fcb69f; }
+.topic-card:nth-child(2) { background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%); border-color: #a1c4fd; }
+.topic-card:nth-child(3) { background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); border-color: #96e6a1; }
+.topic-card:nth-child(4) { background: linear-gradient(135deg, #fbc2eb 0%, #a6c1ee 100%); border-color: #fbc2eb; }
+.topic-card:nth-child(5) { background: linear-gradient(135deg, #ffeaa7 0%, #fdcb6e 100%); border-color: #fdcb6e; }
+
+/* Result Screen */
+.result-screen {
+  text-align: center;
+  padding: 60px 32px;
+}
+
+.result-screen h2 {
+  font-size: 36px;
+  margin-bottom: 16px;
+}
+
+.result-screen .final-score {
+  font-size: 72px;
+  font-weight: bold;
+  color: #667eea;
+  margin: 20px 0;
+}
+
+.result-screen .stats {
+  font-size: 20px;
+  color: #666;
+  margin-bottom: 32px;
+}
+
+.result-screen .stars {
+  font-size: 48px;
+  margin: 20px 0;
+}
+
+/* Home button */
+.home-btn {
+  position: absolute;
+  top: 16px;
+  left: 20px;
+  background: rgba(255,255,255,0.2);
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.home-btn:hover {
+  background: rgba(255,255,255,0.35);
+}
+
+.header { position: relative; }
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <button class="home-btn" onclick="goHome()" title="回到首页">🏠</button>
+    <h1>🦋 三年级科学复习大闯关</h1>
+    <div class="score-display">
+      <div class="score-item">⭐ <span id="correctCount">0</span> / <span id="totalCount">0</span></div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <button class="cat-btn active" onclick="selectCategory(0)">
+        <span class="emoji">🧲</span>磁铁与指南针
+      </button>
+      <button class="cat-btn" onclick="selectCategory(1)">
+        <span class="emoji">🐛</span>蚕的一生
+      </button>
+      <button class="cat-btn" onclick="selectCategory(2)">
+        <span class="emoji">🐯</span>动物分类
+      </button>
+      <button class="cat-btn" onclick="selectCategory(3)">
+        <span class="emoji">☀️</span>影子与太阳
+      </button>
+      <button class="cat-btn" onclick="selectCategory(4)">
+        <span class="emoji">🌍</span>地球与月球
+      </button>
+    </div>
+
+    <!-- Question Area -->
+    <div class="question-area" id="questionArea">
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+// ==================== QUESTION DATABASE ====================
+const questionsDB = [
+  // ===== 0: 磁铁与指南针 =====
+  {
+    category: "磁铁与指南针",
+    questions: [
+      {
+        id: "mag-01",
+        text: "把条形磁铁水平悬挂在空中，静止时磁铁两端分别指向（　）",
+        options: ["A. 东、西", "B. 东、南", "C. 南、北"],
+        answer: 2,
+        image: "images/crops/s3_q15.jpg"
+      },
+      {
+        id: "mag-02",
+        text: "用磁铁在纸板下方让小鸭子「游泳」，说明磁铁（　）",
+        options: ["A. 有魔力", "B. 能吸引纸板", "C. 隔着纸板也能吸引物体"],
+        answer: 2,
+        image: "images/crops/s3_q16.jpg"
+      },
+      {
+        id: "mag-03",
+        text: "下列物体能被磁铁吸引的是（　）",
+        options: ["A. 塑料尺", "B. 曲别针", "C. 玻璃珠"],
+        answer: 1,
+      },
+      {
+        id: "mag-04",
+        text: "制作悬挂法指南针时，下列说法正确的是（　）",
+        options: ["A. 选用的针越小越好", "B. 外形美观更重要", "C. 磁针能自由转动是关键"],
+        answer: 2,
+        note: "制作指南针时要注意的重要的一点是磁针能自由转动"
+      },
+      {
+        id: "mag-05",
+        text: "原地转动指南针盒时，盒内的小磁针相对于地面（　）",
+        options: ["A. 快速转动", "B. 几乎不动", "C. 随着盒子一起转动"],
+        answer: 1,
+      },
+      {
+        id: "mag-06",
+        text: "如图，用条形磁铁的不同位置吸引大头针。下列说法错误的是（　）",
+        options: ["A. C点吸引的大头针数量最少", "B. B点吸引的一定比A点多", "C. A点和E点吸引的数量最多"],
+        answer: 1,
+        image: "images/crops/s1_q11.jpg"
+      },
+      {
+        id: "mag-07",
+        text: "如图所示，在条形磁铁周围放置甲、乙、丙三个小磁针，N极指向正确的是（　）",
+        options: ["A. 甲、乙", "B. 甲、丙", "C. 乙、丙"],
+        answer: 2,
+        image: "images/crops/s1_q12.jpg"
+      },
+      {
+        id: "mag-08",
+        text: "指南针的构造不包括（　）",
+        options: ["A. 磁针", "B. 刻度盘", "C. 时针"],
+        answer: 2,
+        image: "images/crops/s1_q13.jpg"
+      },
+      {
+        id: "mag-09",
+        text: "下列说法错误的是（　）",
+        options: ["A. 指南针的指针是一根纤细的磁化了的塑料针", "B. 指南针常用于航海、旅行", "C. 指南针利用磁铁指示方向"],
+        answer: 0,
+      },
+      {
+        id: "mag-10",
+        text: "两个条形磁铁相互排斥，可以判断未知磁铁的左端是（　）极",
+        options: ["A. N", "B. S", "C. 未知"],
+        answer: 0,
+        image: "images/crops/s2_q17.jpg"
+      },
+      {
+        id: "mag-11",
+        text: "下列使用指南针的方法错误的是（　）",
+        options: ["A. 使用时让磁针自由转动", "B. 静止后一端指北一端指南", "C. 不放平也可以使用"],
+        answer: 2,
+      },
+      {
+        id: "mag-12",
+        text: "在地图上，以下确定方向的方法错误的是（　）",
+        options: ["A. 上北下南，左西右东", "B. 先用指向标确定北方", "C. 上南下北，左西右东"],
+        answer: 2,
+      },
+      {
+        id: "mag-13",
+        text: "如下图，判断右边小车磁铁左端的磁极，应填（　）",
+        options: ["A. N极", "B. S极", "C. 无法确定"],
+        answer: 1,
+        image: "images/crops/s2_fill.jpg"
+      },
+      {
+        id: "mag-14",
+        text: "小钢珠放在条形磁铁中间，松手后会（　）",
+        options: ["A. 掉下来", "B. 滚向一端", "C. 不动"],
+        answer: 1,
+        image: "images/crops/s10_q15.jpg"
+      },
+      {
+        id: "mag-15",
+        text: "条形磁铁的N极会对（　）产生排斥力",
+        options: ["A. 另一个N极", "B. S极", "C. 铁钉"],
+        answer: 0,
+      },
+      {
+        id: "mag-16",
+        text: "在冬季，我国北方下雪后，可以根据不同地形中积雪融化的程度来辨别方向。下列说法错误的是（　）",
+        options: ["A. 山坡积雪融化较快的一侧是南方", "B. 沟渠里融化较快的一侧是南方", "C. 屋顶积雪较多的一侧是北方"],
+        answer: 1,
+        note: "沟渠里融化较快的是北侧（南侧积雪更多因为背阴）"
+      },
+      {
+        id: "mag-17",
+        text: "文天祥诗句「臣心一片磁针石，不指南方不肯休」，关于指南针正确的是（　）",
+        options: ["A. 指向不受附近磁铁干扰", "B. 指南针能指南北说明地球有磁场", "C. 指南针方向与地理南北两极完全重合"],
+        answer: 1,
+      },
+      {
+        id: "mag-18",
+        text: "使用指南针时，说法错误的是（　）",
+        options: ["A. 先让磁针自由转动等静止再确定方位", "B. 可以直接用手按住磁针确定方向", "C. 应水平放置指南针"],
+        answer: 1,
+      }
+    ]
+  },
+
+  // ===== 1: 蚕的一生 =====
+  {
+    category: "蚕的一生",
+    questions: [
+      {
+        id: "silkworm-01",
+        text: "蚕卵是（　）形的",
+        options: ["A. 椭圆", "B. 长方", "C. 三角"],
+        answer: 0,
+      },
+      {
+        id: "silkworm-02",
+        text: "「春蚕到死丝方尽」，蚕吐丝时并未死亡，只是发育成不吃不动的（　）",
+        options: ["A. 蚕茧", "B. 蚕蛹", "C. 蚕蛾"],
+        answer: 1,
+      },
+      {
+        id: "silkworm-03",
+        text: "蚕宝宝身体变黄透明，头部不停摇摆，判断它（　）",
+        options: ["A. 要吐丝结茧了", "B. 生病了", "C. 要变成蚕蛾了"],
+        answer: 0,
+      },
+      {
+        id: "silkworm-04",
+        text: "蚕蛹的身体没有（　）",
+        options: ["A. 气门", "B. 体节", "C. 腹足"],
+        answer: 2,
+      },
+      {
+        id: "silkworm-05",
+        text: "关于蚕茧的说法，错误的是（　）",
+        options: ["A. 由无数根丝组成", "B. 起保护作用", "C. 可以直接做衣服"],
+        answer: 0,
+        note: "蚕茧由1根丝组成"
+      },
+      {
+        id: "silkworm-06",
+        text: "剪开蚕茧，除了蚕蛹还能发现（　）",
+        options: ["A. 蜕的皮", "B. 粪便", "C. 没吃完的桑叶"],
+        answer: 0,
+      },
+      {
+        id: "silkworm-07",
+        text: "蚕在吐丝结茧前，正确的现象是（　）",
+        options: ["A. 继续大量吃桑叶", "B. 排出绿色软便，身体变黄透明", "C. 马上变成蚕蛾"],
+        answer: 1,
+      },
+      {
+        id: "silkworm-08",
+        text: "如图，蚕蛾的翅膀是由蛹的（　）部位发育而来",
+        options: ["A. 头部", "B. 胸部", "C. 腹部"],
+        answer: 1,
+        image: "images/crops/s10_q11.jpg"
+      },
+      {
+        id: "silkworm-09",
+        text: "「莴苣叶能不能代替桑叶喂蚕」对比实验中，每个饲养盒中应放（　）条蚕宝宝",
+        options: ["A. 1条", "B. 2条", "C. 10条"],
+        answer: 2,
+        note: "对比实验需要足够样本量，10条蚕宝宝能减少偶然因素"
+      },
+      {
+        id: "silkworm-10",
+        text: "蚕蛾从茧中出来后，身体分为头、胸、腹三部分，属于（　）",
+        options: ["A. 环节动物", "B. 昆虫", "C. 哺乳动物"],
+        answer: 1,
+      },
+      {
+        id: "silkworm-11",
+        text: "蚕的一生要经过的正确顺序是（　）",
+        options: ["A. 卵→幼虫→蛹→成虫", "B. 卵→蛹→幼虫→成虫", "C. 幼虫→卵→蛹→成虫"],
+        answer: 0,
+      },
+      {
+        id: "silkworm-12",
+        text: "夏天庭院器皿积水中上下翻动的小虫，是蚊子的（　）",
+        options: ["A. 卵", "B. 幼虫（孑孓）", "C. 成虫"],
+        answer: 1,
+      }
+    ]
+  },
+
+  // ===== 2: 动物分类 =====
+  {
+    category: "动物分类",
+    questions: [
+      {
+        id: "animal-01",
+        text: "下列动物中，属于珍稀动物的是（　）",
+        options: ["A. 大熊猫", "B. 蚕", "C. 狗"],
+        answer: 0,
+      },
+      {
+        id: "animal-02",
+        text: "下列动物中，与其他动物不同类的是（　）",
+        options: ["A. 鲤鱼", "B. 鹦鹉", "C. 蚂蚁"],
+        answer: 2,
+        note: "鲤鱼和鹦鹉有脊柱，是脊椎动物。蚂蚁是无脊椎动物，只有外骨骼。蚂蚁与其他不同"
+      },
+      {
+        id: "animal-03",
+        text: "以下动物行为中，描述的不是繁殖行为的是（　）",
+        options: ["A. 母鸡孵蛋", "B. 蜻蜓点水（产卵）", "C. 蚕蜕皮"],
+        answer: 2,
+        note: "蚕蜕皮是生长现象，不是繁殖行为"
+      },
+      {
+        id: "animal-04",
+        text: "「武松打虎」的故事中，老虎属于（　）",
+        options: ["A. 鱼类", "B. 鸟类", "C. 哺乳动物"],
+        answer: 2,
+      },
+      {
+        id: "animal-05",
+        text: "关于胎生和卵生动物，说法不正确的是（　）",
+        options: ["A. 蝙蝠有翅膀会飞→属于鸟类，卵生", "B. 胎生动物一般用哺乳喂养后代", "C. 卵生动物通过产卵繁殖"],
+        answer: 0,
+        note: "蝙蝠是唯一会飞的哺乳动物，胎生而非卵生"
+      },
+      {
+        id: "animal-06",
+        text: "「螳螂捕蝉」中，螳螂和蝉（　）",
+        options: ["A. 都是昆虫", "B. 蝉是昆虫、螳螂不是", "C. 螳螂是昆虫、蝉不是"],
+        answer: 0,
+      },
+      {
+        id: "animal-07",
+        text: "人的一生中，生长发育最快的时期是（　）",
+        options: ["A. 儿童期", "B. 青年期", "C. 出生前后和青春期"],
+        answer: 2,
+      },
+      {
+        id: "animal-08",
+        text: "森林中树木树干一侧因缺乏阳光长满青苔，这一侧指向（　）",
+        options: ["A. 东方", "B. 北方", "C. 南方"],
+        answer: 1,
+        note: "青苔喜阴，北半球北侧背阴，容易长青苔"
+      }
+    ]
+  },
+
+  // ===== 3: 影子与太阳 =====
+  {
+    category: "影子与太阳",
+    questions: [
+      {
+        id: "shadow-01",
+        text: "一天中，阳光下物体影子的（　）会发生变化",
+        options: ["A. 长短", "B. 方向", "C. 长短和方向都会变化"],
+        answer: 2,
+        note: "一天中影子的长短和方向都会发生变化"
+      },
+      {
+        id: "shadow-02",
+        text: "一天中阳光下物体影子的长度变化规律是（　）",
+        options: ["A. 短→长→短", "B. 长→短→长", "C. 一直变短"],
+        answer: 1,
+      },
+      {
+        id: "shadow-03",
+        text: "上午9点大树影长5米，一小时前（8点）影长（　）5米",
+        options: ["A. 等于", "B. 大于", "C. 小于"],
+        answer: 1,
+        note: "上午影子越来越短，8点比9点更早，影子更长"
+      },
+      {
+        id: "shadow-04",
+        text: "手电筒照射木圆柱实验中，正确的是（　）",
+        options: ["A. 手电筒位置越高影子越长", "B. 东边照射，影子在西边", "C. 怎么摆形状都一样"],
+        answer: 1,
+      },
+      {
+        id: "shadow-05",
+        text: "太阳看上去并不大，是因为（　）",
+        options: ["A. 太阳本身不大", "B. 太阳距地球太远", "C. 太阳被遮住了"],
+        answer: 1,
+      },
+      {
+        id: "shadow-06",
+        text: "关于太阳的说法，不正确的是（　）",
+        options: ["A. 太阳是高温气体星球", "B. 太阳体积是地球的109倍", "C. 太阳表面有黑子，月球表面有月海"],
+        answer: 1,
+        note: "太阳体积是地球的130万倍。太阳是气体星球，所以不会有环形山噢！"
+      },
+      {
+        id: "shadow-07",
+        text: "下列航天器中，属于行星巡视器的是（　）",
+        options: ["A. 祝融号火星车", "B. 嫦娥六号", "C. 天宫空间站"],
+        answer: 0,
+      }
+    ]
+  },
+
+  // ===== 4: 地球与月球 =====
+  {
+    category: "地球与月球",
+    questions: [
+      {
+        id: "earth-01",
+        text: "月球不适合人类居住的主要原因是（　）",
+        options: ["A. 体积太小", "B. 有很多环形山", "C. 没有液态水和空气"],
+        answer: 2,
+      },
+      {
+        id: "earth-02",
+        text: "关于地球的描述，正确的是（　）",
+        options: ["A. 水资源丰富，不需节水", "B. 月球和地球一样充满生机", "C. 地球有一颗天然卫星——月球"],
+        answer: 2,
+      },
+      {
+        id: "earth-03",
+        text: "月球表面环形山的形成原因，最有可能是（　）",
+        options: ["A. 火山喷发", "B. 地震", "C. 陨石撞击"],
+        answer: 2,
+      },
+      {
+        id: "earth-04",
+        text: "「嫦娥六号」观测到地球是一颗蓝色星球，主要因为地球表面有大量的（　）",
+        options: ["A. 蓝色细菌", "B. 蓝色矿物", "C. 液态水（海洋）"],
+        answer: 2,
+      },
+      {
+        id: "earth-05",
+        text: "下列属于太阳的特征是（　）",
+        options: ["A. 能发出光和热", "B. 有丰富的液态水和空气", "C. 背面有很多环形山"],
+        answer: 0,
+      },
+      {
+        id: "earth-06",
+        text: "下列属于地球的特征是（　）",
+        options: ["A. 能发出光和热", "B. 有丰富的液态水和空气", "C. 表面有许多环形山"],
+        answer: 1,
+      },
+      {
+        id: "earth-07",
+        text: "下列属于月球的特征是（　）",
+        options: ["A. 是气态天体", "B. 有丰富的液态水和空气", "C. 背面有很多环形山"],
+        answer: 2,
+      },
+      {
+        id: "earth-08",
+        text: "用数格子法比较两个小区面积大小，哪个方法正确？",
+        options: ["A. 数满格和不满格都算", "B. 先数满格，不满格的两个算一个", "C. 只看轮廓不看格子"],
+        answer: 1,
+      }
+    ]
+  }
+];
+
+// ==================== GAME STATE ====================
+let currentCategory = 0;
+let currentQuestionIndex = 0;
+let answered = false;
+let scores = [0, 0, 0, 0, 0]; // correct answers per category
+let totals = [0, 0, 0, 0, 0]; // total answered per category
+
+// ==================== RENDER FUNCTIONS ====================
+function render() {
+  updateSidebar();
+  updateScore();
+  const area = document.getElementById('questionArea');
+  const cat = questionsDB[currentCategory];
+  const q = cat.questions[currentQuestionIndex];
+
+  let html = `
+    <div class="cat-header">
+      <div>${getCategoryIcon(currentCategory)} ${cat.category}</div>
+      <div class="q-counter">第 ${currentQuestionIndex + 1} / ${cat.questions.length} 题</div>
+    </div>
+
+    <div class="question-card">
+      <div class="q-number">📝 题目 ${currentQuestionIndex + 1}</div>
+      <div class="q-text">${q.text}</div>
+      ${q.note && answered ? `<div style="background:#fff3cd;padding:12px;border-radius:8px;margin-top:8px;color:#856404;font-size:16px;">💡 ${q.note}</div>` : ''}
+    </div>
+  `;
+
+  // Image
+  if (q.image) {
+    html += `
+      <div class="image-container">
+        <img src="${q.image}" alt="题目图片" onerror="this.parentElement.style.display='none'">
+      </div>
+    `;
+  }
+
+  // Options
+  html += `<div class="options">`;
+  q.options.forEach((opt, i) => {
+    let optClass = 'option-btn';
+    if (answered) {
+      optClass += ' disabled';
+      if (i === q.answer) optClass += ' show-answer';
+      else if (i === selectedAnswer && i !== q.answer) optClass += ' wrong';
+    }
+    html += `<button class="${optClass}" onclick="selectOption(${i})" ${answered ? 'disabled' : ''}>${opt}</button>`;
+  });
+  html += `</div>`;
+
+  // Feedback
+  if (answered) {
+    const isCorrect = selectedAnswer === q.answer;
+    html += `<div class="feedback ${isCorrect ? 'correct-fb' : 'wrong-fb'}">${isCorrect ? '✅ 回答正确！太棒了！' : '❌ 回答错误，正确答案是 ' + q.options[q.answer].charAt(0)}</div>`;
+  }
+
+  // Navigation
+  html += `<div class="nav-buttons">`;
+  if (currentQuestionIndex > 0) {
+    html += `<button class="nav-btn prev" onclick="prevQuestion()">⬅ 上一题</button>`;
+  }
+  if (!answered) {
+    html += `<button class="nav-btn show-ans" onclick="showAnswer()">🔍 显示答案</button>`;
+  } else {
+    html += `<button class="nav-btn try-again" onclick="tryAgain()">🔄 重试本题</button>`;
+  }
+  if (currentQuestionIndex < cat.questions.length - 1) {
+    html += `<button class="nav-btn next" onclick="nextQuestion()">下一题 ➡</button>`;
+  } else {
+    html += `<button class="nav-btn next" onclick="showResults()">🏆 查看成绩</button>`;
+  }
+  html += `</div>`;
+
+  area.innerHTML = html;
+}
+
+function renderHome() {
+  const area = document.getElementById('questionArea');
+  const totalCorrect = scores.reduce((a, b) => a + b, 0);
+  const totalQ = totals.reduce((a, b) => a + b, 0);
+
+  let html = `
+    <div class="welcome">
+      <h2>🦋 欢迎来到科学复习大闯关！</h2>
+      <p class="subtitle">选择下方主题开始答题吧~</p>
+      ${totalQ > 0 ? `<p style="margin-bottom:30px;font-size:18px;color:#667eea;">📊 已答 ${totalQ} 题，正确 ${totalCorrect} 题（${totalQ > 0 ? Math.round(totalCorrect/totalQ*100) : 0}%）</p>` : ''}
+      <div class="topic-grid">
+  `;
+
+  const icons = ['🧲', '🐛', '🐯', '☀️', '🌍'];
+  questionsDB.forEach((cat, i) => {
+    html += `
+      <button class="topic-card" onclick="selectCategory(${i})">
+        <span class="icon">${icons[i]}</span>
+        ${cat.category}
+        <span style="font-size:14px;font-weight:normal;color:#666;">${cat.questions.length} 道题</span>
+      </button>
+    `;
+  });
+
+  html += `
+      </div>
+    </div>
+  `;
+  area.innerHTML = html;
+  updateSidebar();
+  updateScore();
+}
+
+let selectedAnswer = -1;
+
+function selectOption(index) {
+  if (answered) return;
+  selectedAnswer = index;
+  answered = true;
+
+  const q = questionsDB[currentCategory].questions[currentQuestionIndex];
+  const isCorrect = index === q.answer;
+
+  totals[currentCategory]++;
+  if (isCorrect) scores[currentCategory]++;
+
+  render();
+  updateScore();
+}
+
+function showAnswer() {
+  if (answered) return;
+  selectedAnswer = -1;
+  answered = true;
+  render();
+  updateScore();
+}
+
+function tryAgain() {
+  answered = false;
+  selectedAnswer = -1;
+  render();
+}
+
+function nextQuestion() {
+  const cat = questionsDB[currentCategory];
+  if (currentQuestionIndex < cat.questions.length - 1) {
+    currentQuestionIndex++;
+    answered = false;
+    selectedAnswer = -1;
+    render();
+    document.getElementById('questionArea').scrollTop = 0;
+  }
+}
+
+function prevQuestion() {
+  if (currentQuestionIndex > 0) {
+    currentQuestionIndex--;
+    answered = false;
+    selectedAnswer = -1;
+    render();
+    document.getElementById('questionArea').scrollTop = 0;
+  }
+}
+
+function selectCategory(index) {
+  currentCategory = index;
+  currentQuestionIndex = 0;
+  answered = false;
+  selectedAnswer = -1;
+  render();
+  document.getElementById('questionArea').scrollTop = 0;
+}
+
+function goHome() {
+  renderHome();
+}
+
+function updateSidebar() {
+  const btns = document.querySelectorAll('.sidebar .cat-btn');
+  btns.forEach((btn, i) => {
+    btn.classList.toggle('active', i === currentCategory);
+    const progress = totals[i] > 0 ? ` (${scores[i]}/${totals[i]})` : '';
+    btn.innerHTML = `<span class="emoji">${getCategoryIcon(i)}</span>${questionsDB[i].category}${progress}`;
+  });
+}
+
+function updateScore() {
+  const totalCorrect = scores.reduce((a, b) => a + b, 0);
+  const totalQ = totals.reduce((a, b) => a + b, 0);
+  document.getElementById('correctCount').textContent = totalCorrect;
+  document.getElementById('totalCount').textContent = totalQ;
+}
+
+function getCategoryIcon(i) {
+  const icons = ['🧲', '🐛', '🐯', '☀️', '🌍'];
+  return icons[i] || '📚';
+}
+
+function showResults() {
+  const area = document.getElementById('questionArea');
+  const totalCorrect = scores.reduce((a, b) => a + b, 0);
+  const totalQ = totals.reduce((a, b) => a + b, 0);
+  const pct = totalQ > 0 ? Math.round(totalCorrect / totalQ * 100) : 0;
+
+  let stars = '';
+  if (pct >= 90) stars = '🌟🌟🌟';
+  else if (pct >= 70) stars = '🌟🌟';
+  else if (pct >= 50) stars = '🌟';
+  else stars = '💪';
+
+  let html = `
+    <div class="result-screen">
+      <h2>🏆 成绩报告</h2>
+      <div class="final-score">${totalCorrect} / ${totalQ}</div>
+      <div class="stats">正确率：${pct}%</div>
+      <div class="stars">${stars}</div>
+      <p style="font-size:20px;color:#666;margin-bottom:32px;">${pct >= 90 ? '你太厉害了！科学小达人！' : pct >= 70 ? '很不错，继续加油！' : pct >= 50 ? '还需努力，再复习一下吧~' : '别灰心，多练习一定能进步！'}</p>
+
+      <h3 style="margin-bottom:16px;">各主题成绩</h3>
+      <div class="topic-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));">
+  `;
+
+  questionsDB.forEach((cat, i) => {
+    const cpct = totals[i] > 0 ? Math.round(scores[i] / totals[i] * 100) : 0;
+    html += `
+      <div class="topic-card" style="cursor:default;" onclick="selectCategory(${i})">
+        <span class="icon">${getCategoryIcon(i)}</span>
+        ${cat.category}
+        <span style="font-size:14px;">${scores[i]}/${totals[i]} (${cpct}%)</span>
+      </div>
+    `;
+  });
+
+  html += `
+      </div>
+      <div style="margin-top:24px;">
+        <button class="nav-btn show-ans" onclick="goHome()" style="margin:8px;">🏠 返回首页</button>
+        <button class="nav-btn try-again" onclick="resetAll()" style="margin:8px;">🔄 全部重做</button>
+      </div>
+    </div>
+  `;
+
+  area.innerHTML = html;
+  updateScore();
+}
+
+function resetAll() {
+  scores = [0, 0, 0, 0, 0];
+  totals = [0, 0, 0, 0, 0];
+  currentCategory = 0;
+  currentQuestionIndex = 0;
+  answered = false;
+  selectedAnswer = -1;
+  renderHome();
+}
+
+// Init
+renderHome();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>当AI成为“达尔文的望远镜”——用探究阅读解码自然的生存智慧</title>
+<style>
+:root{
+  --ink:#21332a; --ink-2:#3c4f45; --muted:#7a8a80;
+  --green:#245c40; --green-2:#357551; --leaf:#4e9a70; --leaf-l:#e7f2ea;
+  --brass:#b8862f; --brass-l:#f3e6cd; --amber:#d9a441;
+  --paper:#fbfaf5; --card:#ffffff; --line:#e2e8e1; --line-2:#eef3ee;
+  --r:16px; --r-s:10px;
+  --sh:0 1px 2px rgba(33,51,42,.04),0 6px 20px rgba(33,51,42,.05);
+  --sh-h:0 2px 6px rgba(33,51,42,.06),0 14px 34px rgba(33,51,42,.09);
+  --serif:"Noto Serif SC","Source Han Serif SC","Songti SC","STSong",Georgia,serif;
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",system-ui,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--sans); color:var(--ink); background:var(--paper);
+  font-size:15px; line-height:1.78; -webkit-font-smoothing:antialiased;
+  background-image:
+    radial-gradient(900px 520px at 6% -6%, #e4f0e7 0%, transparent 60%),
+    radial-gradient(760px 460px at 98% 2%, #f4ecd9 0%, transparent 58%);
+  background-attachment:fixed;
+}
+button,input,textarea,select{font-family:inherit;font-size:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+a{color:var(--green);text-decoration:none}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#c9d6cd;border-radius:99px;border:3px solid var(--paper)}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ============ 顶栏 ============ */
+.topbar{
+  position:sticky;top:0;z-index:80;
+  background:linear-gradient(115deg,#123527 0%,#245c40 46%,#35754f 100%);
+  color:#fff; box-shadow:0 10px 30px rgba(18,53,39,.26);
+}
+.topbar::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(circle at 78% 120%,rgba(217,164,65,.20),transparent 55%)}
+.topline{position:relative;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:13px 22px 10px;max-width:1240px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:13px;flex:1;min-width:260px}
+.logo{width:44px;height:44px;flex:0 0 44px;border-radius:13px;
+  background:linear-gradient(150deg,rgba(255,255,255,.22),rgba(255,255,255,.06));
+  border:1px solid rgba(255,255,255,.28);display:grid;place-items:center;font-size:24px}
+.brand h1{font-family:var(--serif);font-size:19px;font-weight:700;letter-spacing:.6px;line-height:1.28}
+.brand .sub{font-size:11.5px;color:#a9d3bd;letter-spacing:1.6px;margin-top:1px}
+.tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tbtn{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.26);color:#fff;border-radius:999px;padding:7px 14px;
+  font-size:13px;white-space:nowrap;transition:.2s}
+.tbtn:hover{background:rgba(255,255,255,.25)}
+.tbtn.pri{background:var(--amber);border-color:var(--amber);color:#3a2a08;font-weight:600}
+.tbtn.pri:hover{background:#e7b457}
+.name-box{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.13);
+  border:1px solid rgba(255,255,255,.26);border-radius:999px;padding:5px 8px 5px 14px}
+.name-box span{font-size:13px;color:#cfe6d9}
+.name-box input{width:104px;background:transparent;border:none;outline:none;color:#fff;font-size:13.5px}
+.name-box input::placeholder{color:#9dc4af}
+.nav{position:relative;display:flex;gap:9px;flex-wrap:wrap;max-width:1240px;margin:0 auto;
+  padding:0 22px 13px}
+.nav-btn{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.20);color:#dff0e6;border-radius:999px;
+  padding:7px 17px 7px 8px;font-size:13.5px;transition:.22s;white-space:nowrap}
+.nav-btn .n{width:25px;height:25px;border-radius:50%;background:rgba(255,255,255,.18);
+  display:grid;place-items:center;font-size:12px;font-weight:700;font-family:var(--serif)}
+.nav-btn .t{display:flex;flex-direction:column;line-height:1.25;text-align:left}
+.nav-btn .t b{font-weight:600;font-size:13.5px}
+.nav-btn .t i{font-style:normal;font-size:10.5px;color:#a9d3bd;letter-spacing:.4px}
+.nav-btn:hover{background:rgba(255,255,255,.22);transform:translateY(-1px)}
+.nav-btn.on{background:#fbfaf5;color:var(--green);border-color:#fbfaf5;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.nav-btn.on .n{background:var(--green);color:#fff}
+.nav-btn.on .t i{color:#6f9b83}
+
+/* ============ 布局 ============ */
+main{max-width:1240px;margin:0 auto;padding:26px 22px 80px}
+.stage{display:none}
+.stage.on{display:block;animation:fade .4s cubic-bezier(.2,.7,.3,1)}
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  padding:22px 24px;box-shadow:var(--sh);margin-bottom:18px}
+.card.tight{padding:16px 18px}
+.card-h{display:flex;align-items:center;gap:11px;margin-bottom:14px;flex-wrap:wrap}
+.card-h .ic{width:34px;height:34px;border-radius:10px;background:var(--leaf-l);color:var(--green);
+  display:grid;place-items:center;font-size:18px;flex:0 0 34px}
+.card-h h2{font-family:var(--serif);font-size:18px;font-weight:700;letter-spacing:.4px}
+.card-h .note{font-size:12.5px;color:var(--muted);margin-left:auto}
+.sec-t{font-family:var(--serif);font-size:15.5px;font-weight:700;color:var(--green);
+  display:flex;align-items:center;gap:8px;margin:20px 0 12px}
+.sec-t::before{content:"";width:4px;height:16px;border-radius:3px;background:var(--amber)}
+
+/* 「我要做的事」任务清单 */
+.todo{list-style:none;counter-reset:td;margin:0}
+.todo li{counter-increment:td;position:relative;font-size:14.5px;line-height:1.95;
+  color:var(--ink-2);padding-left:34px;margin-bottom:4px}
+.todo li::before{content:counter(td);position:absolute;left:0;top:6px;width:22px;height:22px;
+  border-radius:50%;background:var(--leaf-l);color:var(--green);font-size:12px;font-weight:700;
+  font-family:var(--serif);display:grid;place-items:center}
+/* 注意事项清单 */
+.safe{list-style:none;margin:0}
+.safe li{position:relative;font-size:14px;line-height:1.9;color:var(--ink-2);padding-left:26px;margin-bottom:5px}
+.safe li::before{content:"✔";position:absolute;left:0;color:var(--leaf);font-size:14px}
+.prog-inline{display:flex;align-items:center;gap:9px;min-width:190px}
+.prog-inline .prog{width:120px}
+
+/* 阶段头图 */
+.hero{position:relative;overflow:hidden;border-radius:var(--r);margin-bottom:18px;
+  border:1px solid var(--line);box-shadow:var(--sh);
+  background:linear-gradient(120deg,#17402e 0%,#2b6346 48%,#3f8560 100%)}
+.hero .pad{padding:24px 28px;color:#fff;position:relative;z-index:2}
+.hero .kick{font-size:11.5px;letter-spacing:2.4px;color:#b9dfc9;margin-bottom:7px}
+.hero h2{font-family:var(--serif);font-size:25px;font-weight:700;letter-spacing:1px;line-height:1.35}
+.hero .q{margin-top:9px;font-size:14px;color:#d7ecdf;max-width:760px}
+.hero .meta{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+.chip{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.24);
+  border-radius:999px;padding:4px 13px;font-size:12.5px;color:#eaf6ef}
+.hero .orn{position:absolute;right:-30px;top:-40px;font-size:180px;opacity:.10;z-index:1;line-height:1}
+.stage2 .hero{background:linear-gradient(120deg,#1c4433 0%,#31694a 50%,#4a9163 100%)}
+.stage3 .hero{background:linear-gradient(120deg,#101f33 0%,#1b3350 45%,#2c4f6b 100%)}
+.stage3 .hero .kick{color:#a9c6e6}.stage3 .hero .q{color:#cbdef0}
+.stage4 .hero{background:linear-gradient(120deg,#3a2716 0%,#5d4023 48%,#7d5a2e 100%)}
+.stage4 .hero .kick{color:#e6cf9f}.stage4 .hero .q{color:#f0e2c4}
+
+/* 通用元件 */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  background:var(--green);color:#fff;border-radius:999px;padding:9px 18px;font-size:13.5px;
+  font-weight:500;transition:.2s;border:1px solid var(--green)}
+.btn:hover{background:#1c4c34;transform:translateY(-1px)}
+.btn.ghost{background:#fff;color:var(--green);border-color:#cfe0d5}
+.btn.ghost:hover{background:var(--leaf-l)}
+.btn.amber{background:var(--amber);border-color:var(--amber);color:#402d09}
+.btn.amber:hover{background:#c9962f}
+.btn.gray{background:#f1f4f1;color:var(--ink-2);border-color:var(--line)}
+.btn.gray:hover{background:#e6ece7}
+.btn.sm{padding:6px 13px;font-size:12.5px}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn-link{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(180deg,#3b7d59,#2b6446);
+  color:#fff;border-radius:999px;padding:6px 14px;font-size:12.5px;font-weight:500;transition:.2s}
+.btn-link:hover{background:linear-gradient(180deg,#2b6446,#1f5037)}
+input[type=text],input[type=search],input[type=password],textarea,select{
+  background:#fff;border:1px solid var(--line);border-radius:var(--r-s);
+  padding:9px 13px;outline:none;transition:.18s;width:100%;font-size:14px}
+input:focus,textarea:focus,select:focus{border-color:var(--leaf);box-shadow:0 0 0 3px rgba(78,154,112,.13)}
+textarea{resize:vertical;line-height:1.7;min-height:74px}
+label.fld{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px;font-weight:500}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+.tag{display:inline-block;background:var(--leaf-l);color:var(--green);border-radius:6px;
+  padding:2px 9px;font-size:11.5px;font-weight:500}
+.tag.b{background:#fdf3e0;color:#8a5f14}
+.tag.d{background:#e9f0f7;color:#2b4d70}
+.hint{font-size:12.5px;color:var(--muted)}
+.empty{text-align:center;color:var(--muted);font-size:13.5px;padding:26px 10px;
+  border:1px dashed var(--line);border-radius:var(--r-s);background:#fcfdfc}
+
+/* 书单 */
+.book-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(246px,1fr));gap:13px}
+.book{display:flex;gap:12px;background:#fff;border:1px solid var(--line);border-radius:13px;
+  padding:13px;transition:.2s;position:relative;overflow:hidden}
+.book:hover{border-color:#bcd6c6;box-shadow:var(--sh-h);transform:translateY(-2px)}
+.book .no{flex:0 0 44px;height:44px;border-radius:50%;align-self:center;
+  display:grid;place-items:center;font-family:var(--serif);font-size:14.5px;font-weight:700;
+  color:var(--green);background:var(--leaf-l);border:1px solid #d3e5da}
+.book .info{min-width:0}
+.book .bt{font-family:var(--serif);font-size:14.5px;font-weight:700;line-height:1.45}
+.book .ba{font-size:12px;color:var(--muted);margin-top:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.book .bp{font-size:11.5px;color:#94a49a;margin-top:1px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{position:absolute;top:0;right:0;background:var(--amber);color:#fff;font-size:10.5px;
+  padding:2px 9px;border-bottom-left-radius:9px;font-weight:600}
+
+/* 影视（紧凑卡：点卡片即跳转播放页） */
+.vid-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(232px,1fr));gap:10px}
+.vid{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);
+  border-radius:10px;padding:9px 11px;transition:.18s;cursor:pointer;text-align:left}
+.vid:hover{border-color:#bcd6c6;box-shadow:var(--sh-h);transform:translateY(-2px)}
+.vid .no{flex:0 0 30px;height:30px;border-radius:9px;display:grid;place-items:center;
+  font-family:var(--serif);font-size:12.5px;font-weight:700;color:var(--green);
+  background:var(--leaf-l);border:1px solid #d3e5da}
+.vid .vmain{flex:1;min-width:0}
+.vid .vt{font-family:var(--serif);font-size:13.8px;font-weight:700;line-height:1.35;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vid .vmeta{font-size:11.5px;color:var(--muted);margin-top:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vid .go{flex:0 0 auto;font-size:11.5px;color:#fff;background:linear-gradient(180deg,#3b7d59,#2b6446);
+  border-radius:7px;padding:4px 9px;font-weight:600;white-space:nowrap}
+.vid:hover .go{background:linear-gradient(180deg,#2b6446,#1f5037)}
+.vid-links{display:flex;gap:5px;flex-wrap:wrap}
+.vid-links a{font-size:11px;color:var(--green);background:var(--leaf-l);border:1px solid #d3e5da;
+  border-radius:6px;padding:3px 8px;text-decoration:none;white-space:nowrap}
+.vid-links a:hover{background:#e0efe5}
+.kv{display:flex;gap:7px;font-size:13.5px;color:var(--ink-2);margin-bottom:6px}
+.kv b{flex:0 0 66px;color:var(--muted);font-weight:500}
+.vid .note{font-size:11.5px;color:#94a49a}
+
+/* 聊天 / AI */
+.agent{display:flex;gap:13px;align-items:flex-start;background:linear-gradient(120deg,#f4faf6,#fdfbf4);
+  border:1px solid var(--line);border-radius:13px;padding:13px 15px;margin-bottom:14px}
+.agent .av{width:46px;height:46px;flex:0 0 46px;border-radius:14px;
+  background:linear-gradient(150deg,#3b7d59,#1c4433);color:#fff;display:grid;place-items:center;font-size:24px}
+.agent .who{font-family:var(--serif);font-size:15.5px;font-weight:700}
+.agent .role{font-size:12.5px;color:var(--muted);margin-top:1px}
+.agent .oath{font-size:12px;color:var(--green);background:#fff;border:1px dashed #bcd6c6;
+  border-radius:8px;padding:5px 10px;margin-top:7px;display:inline-block}
+.card-h .agent{margin-bottom:0;padding:0;background:none;border:none}
+.chat-wrap{border:1px solid var(--line);border-radius:13px;background:#fff;overflow:hidden}
+.chat-body{height:330px;overflow-y:auto;padding:16px;background:
+  linear-gradient(180deg,#fbfdfb,#f7fbf8);scroll-behavior:smooth}
+.msg{display:flex;gap:10px;margin-bottom:14px;animation:rise .3s ease}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg .a{width:32px;height:32px;flex:0 0 32px;border-radius:10px;display:grid;place-items:center;
+  font-size:17px;background:var(--leaf-l)}
+.msg.me{flex-direction:row-reverse}
+.msg.me .a{background:var(--brass-l)}
+.bub{max-width:74%;background:#fff;border:1px solid var(--line);border-radius:13px;
+  padding:10px 14px;font-size:14px;line-height:1.75;box-shadow:0 1px 2px rgba(33,51,42,.04)}
+.msg.me .bub{background:linear-gradient(135deg,#eaf4ed,#f6faf7);border-color:#d3e6da}
+.bub .who{font-size:11px;color:var(--muted);margin-bottom:3px}
+.bub img.chatimg{max-width:100%;border-radius:9px;margin-top:7px;border:1px solid var(--line);display:block}
+.bub .aud{margin-top:7px}
+.bub .aud audio{width:100%;height:34px}
+.bub .tip{font-size:11.5px;color:var(--muted);margin-top:6px;font-style:italic}
+.bub .qbox{margin-top:9px;background:#fdf8ec;border:1px dashed #e2c98d;border-radius:9px;
+  padding:8px 11px;font-size:13px;color:#7a5715}
+.bub .ok{color:var(--green);font-weight:700}
+.typing{display:inline-flex;gap:4px;align-items:center}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--leaf);animation:bl 1.1s infinite}
+.typing i:nth-child(2){animation-delay:.16s}.typing i:nth-child(3){animation-delay:.32s}
+@keyframes bl{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.chat-bar{border-top:1px solid var(--line);padding:11px 13px;background:#fff}
+.chat-bar .line{display:flex;gap:8px;align-items:flex-end}
+.chat-bar textarea{min-height:46px;max-height:130px;border-radius:12px}
+.icon-btn{width:44px;height:44px;flex:0 0 44px;border-radius:12px;border:1px solid var(--line);
+  background:#fff;display:grid;place-items:center;font-size:19px;transition:.2s;color:var(--ink-2)}
+.icon-btn:hover{background:var(--leaf-l);border-color:#bcd6c6}
+.icon-btn.rec{border-color:#e08a7a;background:#fdf0ed;color:#c0523c}
+.icon-btn.rec.on{animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(192,82,60,.35)}50%{box-shadow:0 0 0 8px rgba(192,82,60,0)}}
+.icon-btn.send{background:var(--green);border-color:var(--green);color:#fff}
+.icon-btn.send:hover{background:#1c4c34}
+.preview-bar{display:flex;gap:8px;align-items:center;margin-bottom:8px;padding:7px 10px;
+  background:var(--leaf-l);border-radius:10px;font-size:12.5px;color:var(--green)}
+.preview-bar img{height:44px;border-radius:7px;border:1px solid #cfe0d5}
+.preview-bar audio{height:30px}
+.quick{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.quick button{background:#f5f8f5;border:1px solid var(--line);border-radius:999px;
+  padding:5px 12px;font-size:12.5px;color:var(--ink-2);transition:.2s}
+.quick button:hover{background:var(--leaf-l);border-color:#bcd6c6;color:var(--green)}
+
+/* 记录卡（阶段三） */
+.rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(288px,1fr));gap:14px}
+.rec{background:#fff;border:1px solid var(--line);border-radius:13px;overflow:hidden;
+  display:flex;flex-direction:column;box-shadow:var(--sh);transition:.2s}
+.rec:hover{box-shadow:var(--sh-h)}
+.rec .rh{display:flex;align-items:center;gap:10px;padding:12px 14px;
+  background:linear-gradient(120deg,#1b3350,#2c4f6b);color:#fff}
+.rec .rh .no{width:26px;height:26px;flex:0 0 26px;border-radius:8px;background:rgba(255,255,255,.18);
+  display:grid;place-items:center;font-size:12.5px;font-family:var(--serif);font-weight:700}
+.rec .rh .nm{font-family:var(--serif);font-size:15.5px;font-weight:700;line-height:1.35}
+.rec .rh .ct{font-size:11.5px;color:#bcd6ea}
+.rec .rh .del{margin-left:auto;width:26px;height:26px;border-radius:8px;color:#fff;
+  background:rgba(255,255,255,.14);display:grid;place-items:center;font-size:14px}
+.rec .rh .del:hover{background:#b3452f}
+.rec .shots{display:flex;gap:6px;padding:11px 13px;flex-wrap:wrap;background:#fafcfa;
+  border-bottom:1px solid var(--line-2)}
+.rec .shots img{width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}
+.rec .vs{padding:11px 13px;display:flex;flex-direction:column;gap:9px}
+.voice{background:#f8faf8;border:1px solid var(--line-2);border-radius:10px;padding:8px 10px}
+.voice .vt{font-size:13px;line-height:1.65;color:var(--ink-2)}
+.voice .vm{display:flex;align-items:center;gap:8px;margin-top:5px}
+.voice audio{height:30px;flex:1}
+.voice .tm{font-size:11px;color:var(--muted)}
+.rec .racts{display:flex;gap:7px;padding:0 13px 13px;flex-wrap:wrap}
+.rec .rnote{padding:0 13px 10px;border-top:1px dashed var(--line);padding-top:10px}
+.rec .rnote .nt{font-size:12.5px;color:var(--ink-2);line-height:1.65;background:#fcfdfc;
+  border-left:3px solid var(--leaf);padding:7px 10px;border-radius:0 8px 8px 0;margin-bottom:7px;
+  max-height:132px;overflow:auto}
+.prog{height:7px;background:#e9f0ea;border-radius:99px;overflow:hidden}
+.prog i{display:block;height:100%;background:linear-gradient(90deg,#4e9a70,#357551);
+  border-radius:99px;transition:width .4s}
+
+/* 表格 */
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th,.tbl td{border:1px solid var(--line);padding:9px 11px;text-align:left;vertical-align:top}
+.tbl th{background:var(--leaf-l);font-weight:600;color:var(--green);white-space:nowrap}
+.tbl tr:nth-child(even) td{background:#fcfdfc}
+.tbl td input{width:100%;border:none;background:transparent;padding:0;outline:none}
+.tbl td input:focus{box-shadow:none}
+
+/* 档案模板 */
+.dossier{background:#fffdf6;border:1px solid #e8e0cc;border-radius:13px;padding:22px 24px;
+  font-family:var(--serif);box-shadow:inset 0 0 40px rgba(217,164,65,.05)}
+.dossier .dt{text-align:center;font-size:20px;font-weight:700;letter-spacing:2px;
+  padding-bottom:12px;border-bottom:2px solid #d9c49a;margin-bottom:14px}
+.dossier .dn{font-size:13.5px;margin-bottom:14px}
+.dossier .two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.dossier .box{border:1px dashed #d3c3a2;border-radius:9px;min-height:96px;display:grid;
+  place-items:center;color:#a99a7d;font-size:13px;text-align:center;padding:10px}
+.dossier .fld{margin-bottom:11px;font-size:14px}
+.dossier .ln{border-bottom:1px solid #d8cdb4;min-height:26px;margin-top:3px}
+.dossier .ln.x2{min-height:52px}
+.chk{display:flex;gap:14px;flex-wrap:wrap;font-size:13.5px;margin-top:4px}
+.chk span::before{content:"□";margin-right:5px;font-size:15px}
+
+/* 评价单 */
+.eval-box{border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#fff}
+.eval-box .eh{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;background:var(--leaf-l);
+  font-size:13px;font-weight:600;color:var(--green);border-bottom:1px solid var(--line)}
+.eval-box .eh>div{padding:9px 12px;border-right:1px solid #dbe8de}
+.eval-box .eh>div:last-child{border-right:none}
+.eval-box .er{display:grid;grid-template-columns:1.2fr 1fr 1fr 1fr;border-bottom:1px solid var(--line-2)}
+.eval-box .er:last-child{border-bottom:none}
+.eval-box .er>div{padding:9px 12px;border-right:1px solid var(--line-2);font-size:13.5px}
+.eval-box .er>div:last-child{border-right:none}
+.chkline{display:flex;align-items:flex-start;gap:7px;font-size:13px;line-height:1.6;
+  padding:3px 0;cursor:pointer}
+.chkline input{margin-top:4px;accent-color:#357551;width:15px;height:15px;flex:0 0 15px}
+@media(max-width:900px){.eval-box .eh,.eval-box .er{grid-template-columns:1fr}}
+
+/* 评分条 */
+.score-row{display:flex;align-items:center;gap:11px;margin-bottom:9px}
+.score-row .lb{flex:0 0 132px;font-size:13.5px;color:var(--ink-2)}
+.score-row .bar{flex:1;height:9px;background:#eef3ef;border-radius:99px;overflow:hidden}
+.score-row .bar i{display:block;height:100%;border-radius:99px;
+  background:linear-gradient(90deg,#4e9a70,#2f6b4f);transition:width .6s}
+.score-row .vv{flex:0 0 52px;text-align:right;font-size:13px;font-family:var(--serif);font-weight:700}
+.verdict{display:flex;align-items:center;gap:14px;background:linear-gradient(120deg,#f4faf6,#fdfbf4);
+  border:1px solid var(--line);border-radius:13px;padding:14px 18px;margin-bottom:14px}
+.verdict .big{font-family:var(--serif);font-size:32px;font-weight:700;color:var(--green);line-height:1}
+.verdict .lv{font-size:16px;font-weight:700}
+.verdict .cm{flex:1;font-size:13.5px;color:var(--ink-2);line-height:1.7}
+.rv-block{margin-top:13px}
+.rv-block h4{font-size:13.5px;color:var(--green);display:flex;align-items:center;gap:6px;margin-bottom:6px}
+.rv-block ul{list-style:none}
+.rv-block li{font-size:13.5px;line-height:1.75;padding-left:18px;position:relative;color:var(--ink-2)}
+.rv-block li::before{content:"◆";position:absolute;left:0;color:var(--amber);font-size:10px;top:6px}
+
+/* 弹窗 */
+.mask{position:fixed;inset:0;background:rgba(20,38,29,.46);backdrop-filter:blur(3px);
+  z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.mask.on{display:flex;animation:fade .22s}
+.modal{background:var(--card);border-radius:18px;max-width:620px;width:100%;
+  max-height:86vh;overflow:auto;box-shadow:0 30px 80px rgba(15,30,22,.35);animation:pop .26s}
+@keyframes pop{from{opacity:0;transform:scale(.95) translateY(10px)}to{opacity:1;transform:none}}
+.modal .mh{position:sticky;top:0;background:var(--card);display:flex;align-items:center;gap:10px;
+  padding:16px 20px;border-bottom:1px solid var(--line);z-index:2}
+.modal .mh h3{font-family:var(--serif);font-size:17px;font-weight:700;flex:1}
+.modal .mh .x{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;
+  font-size:17px;color:var(--muted)}
+.modal .mh .x:hover{background:#f1f4f1}
+.modal .mb{padding:18px 20px 22px}
+.form-row{margin-bottom:13px}
+.form-row .lb{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px}
+.kv{display:flex;gap:9px;font-size:13.5px;padding:6px 0;border-bottom:1px dashed var(--line-2)}
+.kv b{flex:0 0 78px;color:var(--muted);font-weight:500}
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1c3a2c;color:#fff;padding:11px 22px;border-radius:999px;font-size:13.5px;
+  z-index:300;opacity:0;transition:.3s;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:#8c3a2a}
+.save-tag{font-size:12px;color:var(--muted);display:inline-flex;align-items:center;gap:5px}
+.save-tag .dot{width:7px;height:7px;border-radius:50%;background:#b9c8bf}
+.save-tag.on .dot{background:#4e9a70;box-shadow:0 0 0 3px rgba(78,154,112,.18)}
+.save-tag.on{color:var(--green)}
+@media print{.topbar,.noprint{display:none!important}body{background:#fff}}
+</style>
+</head>
+<body>
+<!-- ================= 顶栏 ================= -->
+<header class="topbar">
+  <div class="topline">
+    <div class="brand">
+      <div class="logo">🔭</div>
+      <div>
+        <h1>当AI成为“达尔文的望远镜”</h1>
+        <div class="sub">用探究阅读解码自然的生存智慧</div>
+      </div>
+    </div>
+    <div class="tools">
+      <button class="tbtn" id="btnApi">⚙ AI 设置</button>
+      <button class="tbtn pri" id="btnExportAll">📦 导出全部数据</button>
+    </div>
+  </div>
+  <nav class="nav" id="nav">
+    <button class="nav-btn on" data-stage="1"><span class="n">01</span>
+      <span class="t"><b>图书馆主题阅读</b></span></button>
+    <button class="nav-btn" data-stage="2"><span class="n">02</span>
+      <span class="t"><b>行走研读莲花山公园</b></span></button>
+    <button class="nav-btn" data-stage="3"><span class="n">03</span>
+      <span class="t"><b>夜观莲花山公园</b></span></button>
+    <button class="nav-btn" data-stage="4"><span class="n">04</span>
+      <span class="t"><b>整理报告与成果分享</b></span></button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ================= 阶段一 ================= -->
+<section class="stage stage1 on" id="stage1">
+  <div class="hero">
+    <div class="pad">
+      <div class="kick">第一阶段 · 紫园图书馆</div>
+      <h2>图书馆阅读：在书页里寻找自然的“生存妙招”</h2>
+      <div class="q">子问题 1：我从阅读中发现了哪些有趣的生存智慧？</div>
+    </div>
+    <div class="orn">📖</div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><div class="ic">📝</div><h2>我要做的事</h2>
+      <span class="note">在科普阅读区自由阅读，边读边记</span></div>
+    <ol class="todo">
+      <li>在科普阅读区自由阅读，找一找：哪些生物有“生存妙招”？</li>
+      <li>记下：生物名称 + 它的妙招是什么 + 我猜它为什么这样做。</li>
+      <li>至少记录 3 条，再选出你心里的 TOP5 绝招。</li>
+      <li>小组分享：说清楚生物名称和智慧表现，听听同伴有没有补充。</li>
+      <li>全班一起把这些智慧分分类：伪装类？合作类？结构适应类？</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><div class="ic">📚</div><h2>推荐书单</h2>
+      <span class="note" id="bookCount"></span></div>
+    <div class="row" style="margin-bottom:13px">
+      <input id="bookSearch" type="search" placeholder="🔍 搜索书名 / 作者 / 出版社…" style="flex:1;min-width:220px">
+    </div>
+    <div class="book-grid" id="bookGrid"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><div class="ic">🎬</div><h2>配套影视作品</h2>
+      <span class="note">点击卡片，直接跳转播放页面（新窗口打开）</span></div>
+    <div class="vid-grid" id="videoGrid"></div>
+  </div>
+</section>
+<!-- ================= 阶段二 ================= -->
+<section class="stage stage2" id="stage2">
+  <div class="hero">
+    <div class="pad">
+      <div class="kick">第二阶段 · 莲花山公园</div>
+      <h2>行走研读校园植物：破解植物界的“秘密武器”</h2>
+      <div class="q">子问题 2：莲花山公园的植物分别用了哪些“秘密武器”来适应环境？</div>
+    </div>
+    <div class="orn">🌿</div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><div class="ic">📝</div><h2>我要做的事</h2>
+      <span class="note">形色识别 + AI 对话，把“绝招”挖出来</span></div>
+    <ol class="todo">
+      <li>寻找想了解其生存智慧的植物。</li>
+      <li>利用形色 APP 识别植物的基本资料。</li>
+      <li>与 AI 智能体的对话，获取该植物的生存绝招的信息。</li>
+      <li>提炼出这些生物绝招的关键词并记录到科学阅读记录表中。</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-h" style="margin-bottom:10px">
+      <div class="agent" style="flex:1">
+        <div class="av">🌱</div>
+        <div>
+          <div class="who">小达尔文 · 自然探究助手</div>
+          <div class="role">我从不直接给答案，但我陪你把答案找出来</div>
+          <div class="oath" id="chanTag2">🔌 正在检测 AI 通道…</div>
+        </div>
+      </div>
+      <button class="btn ghost sm" id="btnExport2">⬇ 导出对话记录（HTML）</button>
+    </div>
+    <div class="chat-wrap">
+      <div class="chat-body" id="chatBody2"></div>
+      <div class="chat-bar">
+        <div class="preview-bar" id="prevBar2" style="display:none">
+          <span id="prevTxt2"></span>
+          <button class="btn gray sm" id="rmPrev2" style="margin-left:auto">✕ 移除</button>
+        </div>
+        <div class="line">
+          <button class="icon-btn" id="mic2" title="语音提问（点一下开始说，说完再点一下，我会听懂并回答）">🎤</button>
+          <button class="icon-btn" id="img2" title="上传植物照片">🖼️</button>
+          <input type="file" id="fileImg2" accept="image/*" hidden>
+          <textarea id="input2" rows="1" placeholder="试着这样说：我认识了睡莲，我猜想它的生存绝招是叶子上有一层蜡，雨水一滚就带走灰尘…"></textarea>
+          <button class="icon-btn send" id="send2" title="发送">➤</button>
+        </div>
+        <div class="quick" id="quick2"></div>
+      </div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <span class="save-tag" id="saveTag2"><span class="dot"></span><span>尚未保存</span></span>
+      <button class="btn gray sm" id="btnClear2">🗑 清空本阶段对话</button>
+      <span class="hint" style="margin-left:auto">共 <b id="chatCount2">0</b> 条对话</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 阶段三 ================= -->
+<section class="stage stage3" id="stage3">
+  <div class="hero">
+    <div class="pad">
+      <div class="kick">第三阶段 · 莲花山公园</div>
+      <h2>夜观莲花山公园：黑暗中的生存高手</h2>
+      <div class="q">子问题 3：夜晚的昆虫与蛙类如何利用生存智慧应对黑暗、觅食和避敌？</div>
+    </div>
+    <div class="orn">🌙</div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><div class="ic">📝</div><h2>我要做的事</h2>
+      <span class="note">边走边记，照片与语音都能存下来</span></div>
+    <ol class="todo">
+      <li>跟着队伍走生态小径，在观察站点仔细听、仔细看。</li>
+      <li>发现一种生物，就建一张记录卡：写下它的名字。</li>
+      <li>拍下它的照片，上传到卡片里。</li>
+      <li>点“录一段发现”，口述你的现场观察（例如：这只树蛙的脚趾上有圆圆的吸盘，它趴在叶子上不会掉下来）。</li>
+      <li>语音说完会自动转成文字；觉得不准，可以点“编辑”改，也可以再补一段文字说明。</li>
+      <li>争取记录 5 种以上：树蛙、萤火虫、鸣虫、蜘蛛……都算。</li>
+    </ol>
+    <p class="hint" style="margin-top:10px;background:var(--leaf-l);border-radius:10px;padding:10px 13px">
+      💾 一张卡片可以存下<b>照片</b>＋<b>语音</b>＋<b>文字</b>；导出的 HTML 里都能保留：图片点击可放大，语音可直接回听。</p>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><div class="ic">⚠️</div><h2>夜间观察要注意</h2>
+      <span class="note">安全与温柔，同样重要</span></div>
+    <ul class="safe" id="safeList"></ul>
+  </div>
+
+  <div class="card">
+    <div class="card-h">
+      <div class="ic">🎙️</div><h2>我的夜观电子记录表</h2>
+      <div class="prog-inline">
+        <div class="prog"><i id="recProg" style="width:0%"></i></div>
+        <span class="hint" id="recCount" style="white-space:nowrap"></span>
+      </div>
+      <button class="btn ghost sm" id="btnExport3" style="margin-left:auto">⬇ 导出记录（HTML）</button>
+    </div>
+    <div class="row" style="margin-bottom:8px;gap:10px;flex-wrap:wrap">
+      <input id="recName" type="text" placeholder="生物名称或生物序号（如：斑腿泛树蛙 / 03）"
+        style="flex:1;min-width:220px">
+      <input type="file" id="recImg" accept="image/*" multiple hidden>
+      <button class="btn ghost sm" id="btnRecImg" title="可从相册选择，也可直接调用相机拍照上传">🖼️ 上传照片</button>
+      <button class="btn ghost sm" id="btnRecMic">🎙️ 录入语音</button>
+      <button class="btn" id="btnAddRec">＋ 添加记录</button>
+    </div>
+    <div class="hint" id="recPendHint" style="margin-bottom:12px"></div>
+    <div class="rec-grid" id="recList"></div>
+    <div class="row" style="margin-top:14px">
+      <span class="save-tag" id="saveTag3"><span class="dot"></span><span>尚未保存</span></span>
+      <button class="btn gray sm" id="btnClear3">🗑 清空本阶段记录</button>
+    </div>
+  </div>
+</section>
+<!-- ================= 阶段四 ================= -->
+<section class="stage stage4" id="stage4">
+  <div class="hero">
+    <div class="pad">
+      <div class="kick">第四阶段 · 紫园图书馆</div>
+      <h2>整理报告及分享：编写《自然生存手册》</h2>
+      <div class="q">子问题 4：我能将探究到的多种生存智慧进行分类、归纳，并形成一份有理有据的《自然生存手册》吗？</div>
+    </div>
+    <div class="orn">🗂️</div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><div class="ic">📝</div><h2>我要做的事</h2>
+      <span class="note">从一堆记录里，长出自己的一本手册</span></div>
+    <ol class="todo">
+      <li>把阅读笔记、观察记录、识别结果放到一起，比较植物和动物的生存策略有什么区别。</li>
+      <li>按照模板绘制你的手册。</li>
+      <li>把手绘稿拍照上传，请小达尔文给你一份评价和建议。</li>
+      <li>小组展示，每组 5 分钟，说说你们最大的发现。</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><div class="ic">📄</div><h2>《自然界生存智慧档案》模板</h2>
+      <span class="note">照着它手绘或打印填写，再拍照上传给评审团</span></div>
+    <div class="dossier" id="dossier">
+      <div class="dt">自 然 界 生 存 智 慧 档 案</div>
+      <div class="dn">姓名：____________　　班级：____________　　日期：____________</div>
+      <div class="two">
+        <div class="box">可手绘生物形态<br>或粘贴生物图片</div>
+        <div class="box">可手绘生存本领示意图<br>或粘贴观察照片</div>
+      </div>
+      <div class="fld">生物名称：________________________　　生物类别：□ 植物　□ 动物</div>
+      <div class="fld">基础特征（形态、生长／生活习性）：
+        <div class="ln"></div><div class="ln"></div></div>
+      <div class="fld">生存智慧类别：
+        <div class="chk"><span>伪装拟态智慧</span><span>防御自保智慧</span><span>适应环境智慧</span>
+          <span>高效觅食／储能智慧</span><span>繁衍延续智慧</span><span>协同共生智慧</span><span>其他：__________</span></div></div>
+      <div class="fld">生存智慧关键词（精炼概括）：
+        <div class="ln"></div></div>
+      <div class="fld">生存本领作用解读（它的本领如何帮助自己适应环境、生存繁衍）：
+        <div class="ln"></div><div class="ln"></div><div class="ln"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-h"><div class="ic">🔭</div><h2>达尔文评审团</h2>
+      <span class="note">上传手绘档案照片，让评审团按量表给你打分</span></div>
+    <div class="agent">
+      <div class="av">🔭</div>
+      <div>
+        <div class="who">达尔文评审团 · 自然生存手册评审员</div>
+        <div class="role">身份：由博物学家达尔文、法布尔与一位深圳本地自然教育导师组成的评审团。它严格按照《学生评价单》的量表打分，先夸你做到了什么，再告诉你还能往哪里走。</div>
+        <div class="oath">📐 评分依据：第四阶段评价单（报告完成度 · 展示与表达 · 信息完整 · 类别准确 · 关键词 · 作用解读 · 图文呈现）</div>
+        <div class="oath" id="chanTag4">🔌 正在检测 AI 通道…</div>
+      </div>
+    </div>
+    <div class="row" style="margin-bottom:13px;align-items:flex-start;gap:14px">
+      <div style="flex:1;min-width:230px">
+        <label class="fld">上传手绘档案照片（可多张）</label>
+        <input type="file" id="hbImg" accept="image/*" multiple hidden>
+        <button class="btn ghost sm" id="btnHbImg">🖼️ 选择档案照片</button>
+        <div id="hbGallery" style="display:flex;gap:8px;flex-wrap:wrap;margin-top:9px"></div>
+      </div>
+      <div style="flex:1.3;min-width:250px">
+        <label class="fld">把档案上写的内容誊抄／口述到这里（照片不清楚时也用得上）</label>
+        <textarea id="hbText" rows="4" placeholder="例：生物名称：睡莲。基础特征：叶子圆圆的浮在水面，叶柄很长。生存智慧类别：适应环境智慧。关键词：蜡质叶面、通气组织。作用解读：……"></textarea>
+      </div>
+    </div>
+    <div class="row">
+      <button class="btn amber" id="btnHbReview">🔭 AI 评价我的档案</button>
+      <span class="save-tag" id="saveTag4" style="margin-left:auto"><span class="dot"></span><span>尚未保存</span></span>
+    </div>
+    <div id="hbResult" style="margin-top:16px"></div>
+  </div>
+
+</section>
+
+</main>
+
+<!-- ================= 弹窗 ================= -->
+<div class="mask" id="apiMask">
+  <div class="modal">
+    <div class="mh"><h3>⚙ AI 智能体设置</h3><button class="x" data-close>✕</button></div>
+    <div class="mb">
+      <div class="form-row">
+        <div class="lb">AI 通道</div>
+        <select id="apiMode">
+          <option value="free">🆓 免费通道（默认 · 无需注册，开箱即用，不支持识图）</option>
+          <option value="custom">🔑 自定义接口（填自己的密钥，可支持识图，更稳定）</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <div class="lb">快速选择服务商（仅自定义通道需要）</div>
+        <select id="apiPreset">
+          <option value="">— 自己填写 —</option>
+          <option value="https://open.bigmodel.cn/api/paas/v4|glm-4v-flash">智谱 BigModel · GLM-4V-Flash（免费额度，支持识图 ★推荐）</option>
+          <option value="https://open.bigmodel.cn/api/paas/v4|glm-4-flash">智谱 BigModel · GLM-4-Flash（免费额度，不支持识图）</option>
+          <option value="https://api.siliconflow.cn/v1|Qwen/Qwen2.5-VL-32B-Instruct">SiliconFlow · 通义 Qwen2.5-VL-32B（免费额度，支持识图）</option>
+          <option value="https://api.deepseek.com/v1|deepseek-chat">DeepSeek（deepseek-chat，不支持识图）</option>
+          <option value="https://api.siliconflow.cn/v1|Qwen/Qwen2.5-VL-72B-Instruct">SiliconFlow · 通义 Qwen2.5-VL-72B（支持识图）</option>
+          <option value="https://api.siliconflow.cn/v1|Qwen/Qwen2.5-7B-Instruct">SiliconFlow · 通义 Qwen2.5-7B（不支持识图）</option>
+          <option value="https://open.bigmodel.cn/api/paas/v4|glm-4v-flash">智谱 BigModel · GLM-4V-Flash（支持识图，有免费额度）</option>
+          <option value="https://open.bigmodel.cn/api/paas/v4|glm-4-flash">智谱 BigModel · GLM-4-Flash（不支持识图）</option>
+          <option value="https://dashscope.aliyuncs.com/compatible-mode/v1|qwen-vl-max-latest">阿里云百炼 · qwen-vl-max（支持识图）</option>
+          <option value="https://api.openai.com/v1|gpt-4o-mini">OpenAI · gpt-4o-mini（支持识图）</option>
+        </select>
+      </div>
+      <div class="form-row"><div class="lb">API 地址（Base URL，需支持 OpenAI 兼容格式）</div>
+        <input id="apiUrl" type="text" placeholder="https://…/v1"></div>
+      <div class="form-row"><div class="lb">模型名称</div>
+        <input id="apiModel" type="text" placeholder="如 glm-4v-flash"></div>
+      <div class="form-row"><div class="lb">API Key</div>
+        <input id="apiKey" type="password" placeholder="sk-…"></div>
+      <div class="form-row"><div class="lb">视觉能力（能否看懂图片）</div>
+        <select id="apiVision"><option value="1">支持识图（上传照片后 AI 能直接看）</option>
+          <option value="0">不支持识图（仅根据文字内容分析）</option></select></div>
+      <div class="form-row"><div class="lb">联网资料检索</div>
+        <select id="apiSearch"><option value="1">开启（问到不认识的物种时先查资料再回答）</option>
+          <option value="0">关闭（只用模型自己的知识，响应更快）</option></select></div>
+      <p class="hint" style="background:var(--leaf-l);border-radius:10px;padding:11px 13px;line-height:1.7">
+        🆓 <b>免费通道</b>：默认启用，不用注册、不用密钥，打开网页就能和小达尔文对话；它认识公园里绝大多数常见动植物，会临时检索资料再回答。偶尔会限流或稍慢，重试即可。<br>
+        🔭 <b>想让 AI 看懂手绘档案照片？</b>请切换到「自定义接口」，填一个支持识图的免费密钥（如智谱 GLM-4V-Flash、硅基流动 Qwen2.5-VL-32B，都有免费额度）。免费通道看不了图片，第四阶段请把档案内容誊抄到文本框里。<br>
+        🔒 <b>密钥只保存在本机浏览器</b>，不会上传给任何第三方。<br>
+        📴 <b>完全断网也能用</b>：会启用内置的「本地探究引擎 + 自然生存智慧知识库」兜底。<br>
+        ⚠️ 用 file:// 直接打开网页时，个别浏览器会拦截跨域请求；若调用失败，换 Edge/Chrome 或用本地小服务器打开。</p>
+      <div class="row" style="margin-top:14px">
+        <button class="btn" id="btnApiSave">保存设置</button>
+        <button class="btn gray" id="btnApiTest">测试连接</button>
+        <button class="btn gray" id="btnApiClear" style="margin-left:auto">清除密钥</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="expMask">
+  <div class="modal">
+    <div class="mh"><h3>📦 导出全部探究数据</h3><button class="x" data-close>✕</button></div>
+    <div class="mb">
+      <p class="hint" style="margin-bottom:13px">导出内容包含：AI 对话全文（含图片与语音）、夜观生物记录（含照片与语音）、手绘档案照片与 AI 评语、阅读感悟与教师评语。</p>
+      <div class="row">
+        <button class="btn" id="expHtml">📄 完整 HTML 档案（含图片+语音）</button>
+        <button class="btn ghost" id="expHtmlLight">📄 HTML 档案（不含语音，体积小）</button>
+      </div>
+      <div class="row" style="margin-top:9px">
+        <button class="btn gray" id="expJson">🧾 JSON 数据备份</button>
+        <button class="btn gray" id="expCsv">📊 CSV 表格（记录与对话）</button>
+        <button class="btn gray" id="expTxt">📝 纯文本记录</button>
+      </div>
+      <div class="row" style="margin-top:9px">
+        <button class="btn gray" id="expPrint">🖨 打印／存为 PDF</button>
+        <button class="btn gray" id="btnImport">📥 导入 JSON 备份</button>
+        <input type="file" id="importFile" accept=".json,application/json" hidden>
+      </div>
+      <p class="hint" style="margin-top:13px">提示：语音较多时完整 HTML 会很大，建议先导出“不含语音”的版本；语音本身可单独在记录卡里下载。</p>
+    </div>
+  </div>
+</div>
+
+<div class="mask" id="vidMask">
+  <div class="modal" style="max-width:520px">
+    <div class="mh"><h3 id="vidTitle">🎬 影片详情</h3><button class="x" data-close>✕</button></div>
+    <div class="mb" id="vidBody"></div>
+  </div>
+</div>
+
+<div class="mask" id="imgMask">
+  <div class="modal" style="max-width:760px;background:transparent;box-shadow:none">
+    <img id="imgModalSrc" style="width:100%;border-radius:14px;display:block;box-shadow:0 24px 60px rgba(0,0,0,.4)">
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+/* =========================================================================
+   当AI成为“达尔文的望远镜”——用探究阅读解码自然的生存智慧
+   四阶段探究阅读平台 · 单文件版
+   ========================================================================= */
+'use strict';
+
+/* ---------------- 工具 ---------------- */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => (
+  { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const pad2 = n => String(n).padStart(2, '0');
+function nowStr(ts) {
+  const d = ts ? new Date(ts) : new Date();
+  return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) +
+    ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+function fileStamp() {
+  const d = new Date();
+  return d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) +
+    '_' + pad2(d.getHours()) + pad2(d.getMinutes());
+}
+function toast(msg, err) {
+  const t = $('#toast'); t.textContent = msg;
+  t.classList.toggle('err', !!err); t.classList.add('on');
+  clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('on'), 2600);
+}
+function download(name, content, mime) {
+  const blob = content instanceof Blob ? content : new Blob([content], { type: mime || 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+function readFileAsDataURL(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(file);
+  });
+}
+function readFileAsText(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsText(file, 'utf-8');
+  });
+}
+function shrinkImage(dataURL, maxSide = 1280, quality = .82) {
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      let { width: w, height: h } = img;
+      const s = Math.min(1, maxSide / Math.max(w, h));
+      if (s >= 1) return res(dataURL);
+      const c = document.createElement('canvas');
+      c.width = Math.round(w * s); c.height = Math.round(h * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      try { res(c.toDataURL('image/jpeg', quality)); } catch (e) { res(dataURL); }
+    };
+    img.onerror = () => res(dataURL);
+    img.src = dataURL;
+  });
+}
+function pickFiles(input, cb) {
+  input.value = ''; input.click();
+  input.onchange = async () => {
+    const files = Array.from(input.files || []); if (!files.length) return;
+    const out = [];
+    for (const f of files) {
+      if (!f.type.startsWith('image/')) continue;
+      let d = await readFileAsDataURL(f);
+      d = await shrinkImage(d);
+      out.push(d);
+    }
+    if (out.length) cb(out);
+  };
+}
+
+/* 第二阶段智能体名称 */
+const AGENT_NAME = '小达尔文';
+
+/* ---------------- 存储：IndexedDB（关闭网页也不丢） ---------------- */
+const DB = (function () {
+  const NAME = 'nature_wisdom_db', STORE = 'kv', PFX = 'nwls_';
+  let dbp = null, idbDead = false;
+  const lsGet = (k, d) => { try { const s = localStorage.getItem(PFX + k); return s == null ? d : JSON.parse(s); } catch (e) { return d; } };
+  const lsSet = (k, v) => {
+    try { localStorage.setItem(PFX + k, JSON.stringify(v)); return true; }
+    catch (e) {
+      if (typeof toast === 'function') toast('本地存储空间不足，请及时导出数据以免丢失', true);
+      return false;
+    }
+  };
+  function open() {
+    if (dbp) return dbp;
+    dbp = new Promise((res, rej) => {
+      let rq;
+      try { rq = indexedDB.open(NAME, 1); } catch (e) { return rej(e); }
+      rq.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE, { keyPath: 'k' });
+      };
+      rq.onsuccess = e => res(e.target.result);
+      rq.onerror = () => rej(new Error('idb'));
+      rq.onblocked = () => rej(new Error('idb-blocked'));
+    });
+    return dbp;
+  }
+  async function get(k, def) {
+    if (idbDead) return lsGet(k, def);
+    try {
+      const db = await open();
+      return await new Promise(res => {
+        const rq = db.transaction(STORE, 'readonly').objectStore(STORE).get(k);
+        rq.onsuccess = () => res(rq.result ? rq.result.v : def);
+        rq.onerror = () => res(def);
+      });
+    } catch (e) { idbDead = true; return lsGet(k, def); }
+  }
+  async function set(k, v) {
+    if (idbDead) return lsSet(k, v);
+    try {
+      const db = await open();
+      const ok = await new Promise(res => {
+        const tx = db.transaction(STORE, 'readwrite');
+        tx.objectStore(STORE).put({ k, v });
+        tx.oncomplete = () => res(true); tx.onerror = () => res(false); tx.onabort = () => res(false);
+      });
+      if (!ok) throw new Error('idb-write');
+      return true;
+    } catch (e) { idbDead = true; return lsSet(k, v); }
+  }
+  return { get, set, dead: () => idbDead };
+})();
+
+/* 轻量数据（姓名、当前阶段、API 配置）放 localStorage，秒级恢复 */
+const LS = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { } }
+};
+
+/* ---------------- 数据：书单 ---------------- */
+const BOOKS = [
+  { t: '我喜欢大自然·我喜欢蔚蓝的海洋', a: '(英)特蕾西·特纳 著', p: '浙江科学技术出版社', c: '自然' },
+  { t: '身边的自然科学', a: '米莱童书 著/绘', p: '北京理工大学出版社', c: '自然' },
+  { t: '科学家带你玩转大自然·认知篇', a: '石探记科学家团队 著', p: '广西师范大学出版社', c: '自然' },
+  { t: '科学家带你玩转大自然·实践篇', a: '石探记科学家团队 著', p: '广西师范大学出版社', c: '自然' },
+  { t: '自然奇观小百科', a: '叁川上 编著', p: '江苏凤凰科学技术出版社', c: '百科' },
+  { t: '倾听自然：提高对自然的感知力', a: '(美)约瑟夫·巴拉特 著', p: '东方出版社', c: '自然' },
+  { t: '大自然的礼物', a: '小知了 著', p: '文化发展出版社', c: '自然' },
+  { t: '自然现象（注音版）', a: '(英)斯蒂芬妮·特恩布尔 等', p: '未来出版社', c: '自然' },
+  { t: '探索大自然', a: '(德)安德里亚·麦尔提 著', p: '湖北教育出版社', c: '自然' },
+  { t: '自然史·植物篇：最难解的植物密码', a: '(法)乔治·布封 原著', p: '北京少年儿童出版社', c: '植物' },
+  { t: '自然史·人类篇：最神奇的生命奥秘', a: '(法)乔治·布封 原著', p: '北京少年儿童出版社', c: '百科' },
+  { t: '自然史·动物篇：最美的动物百科', a: '(法)乔治·布封 原著', p: '北京少年儿童出版社', c: '动物' },
+  { t: '我与大自然的奇妙相遇·观察植物', a: '年高 著/绘', p: '外国文学出版社', c: '植物' },
+  { t: '我与大自然的奇妙相遇·追踪鸟类', a: '关翔宇 著', p: '外国文学出版社', c: '动物' },
+  { t: 'DK儿童自然大百科', a: '(英)英国DK公司 编著', p: '中信出版社', c: '百科' },
+  { t: '探索自然', a: '刘兆 主编', p: '知识出版社', c: '自然' },
+  { t: '自然灾害', a: '(法)佛朗伦斯·基查尔 著', p: '未来出版社', c: '自然' },
+  { t: '自然说：全景四季百科绘本', a: '(波)托马什·萨莫伊利克 著', p: '黑龙江少年儿童出版社', c: '自然' },
+  { t: '我的自然笔记', a: '朱爱朝 著·绘', p: '广西师范大学出版社', c: '自然' },
+  { t: '自然之美：大发现时代的博物艺术', a: '(英)大卫·爱登堡 著', p: '人民邮电出版社', c: '百科' },
+  { t: '自然界的危险', a: '(英)威尔登·欧文 著', p: '朝华出版社', c: '自然' },
+  { t: '穿越大自然：探究与保护', a: '(德)安妮特·哈克巴特 著', p: '长江少年儿童出版社', c: '自然' },
+  { t: '自然的灾难魔法', a: '孙常福 编著', p: '中国大百科全书出版社', c: '自然' },
+  { t: '深圳自然笔记', a: '南兆旭 著', p: '深圳报业集团出版社', c: '深圳' },
+  { t: '不可思议的大自然·水', a: '(波)安娜·斯考罗什卡 著', p: '台海出版社', c: '自然' },
+  { t: '魔法大自然', a: '(英)乔·斯格菲尔德 等 著', p: '接力出版社', c: '自然' },
+  { t: '大自然太有趣啦·森林里面有什么', a: '(日)谷本雄治 著', p: '电子工业出版社', c: '自然' },
+  { t: '藏在身边的自然博物馆·植物馆（在客厅）', a: '张颖 著', p: '人民邮电出版社', c: '植物' },
+  { t: '藏在身边的自然博物馆·植物馆（在身上）', a: '张颖 著', p: '人民邮电出版社', c: '植物' },
+  { t: '藏在身边的自然博物馆·植物馆（在郊外）', a: '张颖 著', p: '人民邮电出版社', c: '植物' },
+  { t: '藏在身边的自然博物馆·植物馆（在厨房）', a: '张颖 著', p: '人民邮电出版社', c: '植物' },
+  { t: '藏在身边的自然博物馆·动物馆（在湿地 在海洋）', a: '王灵捷 著', p: '人民邮电出版社', c: '动物' },
+  { t: '昆虫记（插图版）', a: '(法)让·亨利·法布尔 著', p: '译林出版社', c: '动物' },
+  { t: '植物知道生命的答案', a: '(美)丹尼尔·查莫维茨 著', p: '长江文艺出版社', c: '植物' },
+  { t: '植物博物馆', a: '(法)丽萨·卡尼尔 等 著', p: '北京联合出版公司', c: '植物' },
+  { t: '水生植物图鉴', a: '陈煜初 等 主编', p: '江苏凤凰科学技术出版社', c: '植物' },
+  { t: '蕨类植物的秘密生活', a: '(美)罗宾·C.莫兰 著', p: '商务印书馆', c: '植物' },
+  { t: '酷虫学校（系列）', a: '吴祥敏、夏吉安 著', p: '北方妇女儿童出版社', c: '动物' },
+  { t: '蛙蛙王国', a: '(瑞士)托马斯·马伦特 著', p: '科学普及出版社', c: '动物' },
+  { t: '深圳自然博物百科', a: '南兆旭 著', p: '海天出版社', c: '深圳' },
+  { t: '鲲鹏径——深圳浪漫地理的探索与发现', a: '南兆旭、蔡漫 著', p: '深圳出版社', c: '深圳' },
+  { t: '深圳观鸟地图', a: '张杰、蒲颖 编', p: '海天出版社', c: '深圳' },
+  { t: '深圳常见花鸟图鉴', a: '张永夏 等 编', p: '中国林业出版社', c: '深圳' }
+];
+
+/* ---------------- 数据：影视 ---------------- */
+const VIDEOS = [
+  {
+    t: '地球脉动（系列）', g: '纪录片', w: '适应、协作、伪装、迁徙、生态平衡', d: '单集 60 分钟 / 3 季',
+    links: [{ n: '第1季', u: 'https://www.bilibili.com/bangumi/play/ss20302' },
+    { n: '第2季', u: 'https://www.bilibili.com/bangumi/play/ss43768' }],
+    note: 'B站官方正版（第2/3季需大会员）', sk: 1
+  },
+  { t: '王朝', g: '纪录片', w: '家族守护、领地争夺、权力博弈、坚韧', d: '单集 50 分钟 / 5 集', links: [{ n: '腾讯视频', u: 'https://v.qq.com/x/cover/28wj897frl5hj40.html' }], note: '腾讯视频 官方正版（会员看全集）', sk: 2 },
+  { t: '我的章鱼老师', g: '纪录片', w: '伪装、拟态、智慧捕猎、情感联结', d: '85 分钟', links: [{ n: '腾讯视频', u: 'https://v.qq.com/x/cover/mzc00100b2lw16c/a33146su0t8.html' }], note: '腾讯视频 官方正版', sk: 3 },
+  { t: '动物本色', g: '纪录片', w: '拟态、信号交流、生存策略', d: '单集 45 分钟 / 4 集', links: [{ n: 'B站', u: 'https://www.bilibili.com/video/BV1fhpD6YEv1/' }], note: 'B站投稿合集，网飞原版', sk: 4 },
+  { t: '生命的力量 Ⅱ', g: '纪录片', w: '进化适应、独特习性、物种共生', d: '单集 50 分钟 / 6 集', links: [{ n: '央视网', u: 'https://tv.cctv.com/v/vs3/VIDA1411377869280584.html' }], note: '央视网 免费点播', sk: 5 },
+  { t: '动物谋略大揭秘', g: '纪录片', w: '伪装、围猎、借势、生存计谋', d: '单集 40 分钟 / 多集', links: [{ n: '央视网', u: 'https://www.cctv.cn/docu/special/C19570/02/index.shtml' }], note: '央视网 免费点播', sk: 6 },
+  { t: '单挑荒野', g: '纪录片', w: '人类向自然学习、资源利用、环境适应', d: '单集 45 分钟 / 9 集', links: [{ n: '第1季', u: 'https://www.bilibili.com/bangumi/play/ep687993' }], note: 'B站独家（Discovery出品）', sk: 7 },
+  { t: '我们的星球', g: '纪录片', w: '生态共生、物种依存、环境适应', d: '单集 50 分钟 / 4 季', links: [{ n: 'B站', u: 'https://www.bilibili.com/video/av68410615' }], note: 'B站合集', sk: 8 },
+  { t: '蜂蜜之地', g: '纪录电影', w: '人与自然共生、可持续生存、平衡之道', d: '87 分钟', links: [{ n: 'B站', u: 'https://www.bilibili.com/bangumi/play/ss33400' }], note: 'B站官方正版（独家）', sk: 9 },
+  { t: '大自然的女王', g: '纪录片', w: '雌性领导力、母系社会、群体协作', d: '单集 48 分钟 / 7 集', links: [{ n: '腾讯视频', u: 'https://v.qq.com/x/cover/mzc002009v58iqx/y4100xu5pqy.html' }], note: '腾讯视频', sk: 10 }
+];
+
+/* ---------------- 数据：评价单 ---------------- */
+const EVALS = {
+  1: {
+    core: '围绕“自然生存智慧”主题深度阅读，借助AI工具拓展学习资源，完成主题知识铺垫',
+    self: ['阅读专注投入，主动研读自然科普书籍', '能熟练使用AI阅读助手获取个性化书单', '认真梳理阅读笔记，标注核心知识点', '主动思考生物生存逻辑，提出探究疑问'],
+    peer: ['阅读时遵守秩序，不干扰他人学习', '乐于分享阅读发现与个人思考', '能有效利用数字资源拓展阅读范围', '阅读笔记完整，有独立见解'],
+    tea: ['阅读目标清晰，主题理解准确到位', '能灵活运用AI工具辅助自主阅读', '对“生存智慧”主题有初步探究意识', '阅读习惯良好，课堂参与度高']
+  },
+  2: {
+    core: '沿规划路线探究植物生存特征，运用科技工具识别植物，完成现场观察与记录',
+    self: ['遵守观察秩序，全程按路线完成探查', '熟练使用识别工具获取植物生存知识', '主动向AI智能体提问，深挖生存智慧', '认真记录观察发现，内容完整详实'],
+    peer: ['行进中遵守规则，不掉队、不打闹', '乐于和同伴交流植物观察发现', '能协助小组完成观察记录任务', '工具使用规范，探究方法得当'],
+    tea: ['观察细致，能发现植物典型生存特征', '科技工具运用合理，探究有一定深度', '观察记录清晰，核心信息突出', '团队协作良好，任务完成质量高']
+  },
+  3: {
+    core: '严守户外安全规范，观察夜间生物特征，探究夜行生物生存策略，留存观察成果',
+    self: ['严格遵守夜观安全守则，听从指挥', '观察敏锐，能主动发现多种夜间生物', '能借助AI工具理解生物生存适应原理', '能用语音助手完整记录观察发现'],
+    peer: ['夜间活动中互帮互助，顾及同伴感受', '观察时不惊扰生物，爱护自然环境', '主动分享自己的观察发现与思考', '记录及时准确，信息完整度高'],
+    tea: ['安全意识强，全程遵守户外规范', '观察能力突出，探究目标明确', '能深入思考生物生存的适应机制', '观察日志详实，探究过程痕迹明显']
+  },
+  4: {
+    core: '整合全阶段学习资料，完成探究报告，参与成果展示与交流反思',
+    self: ['能系统整合阅读、观察的全部资料', '借助AI辅助完成高质量探究报告', '主动参与小组研讨，敢于表达观点', '能反思探究过程，总结收获与不足'],
+    peer: ['小组合作中主动承担对应任务', '报告内容完整，图文结合清晰易懂', '成果分享时表达流畅，逻辑清晰', '能认真倾听他人分享，友善回应'],
+    tea: ['报告结构完整，生存智慧主题突出', '成果呈现丰富，体现独立思考', '交流分享逻辑清晰，表达准确', '反思有深度，体现探究能力提升']
+  }
+};
+const SAFETY = [
+  '紧跟队伍，不擅自离队，不单独走远。',
+  '手电筒照路不照眼，不长时间直射动物。',
+  '不捕捉、不伤害、不投喂，只观察和记录。',
+  '保持安静，先用耳朵“看见”夜晚。'
+];
+
+/* ================= 自然生存智慧知识库（内置，供离线探究引擎与 AI 参考） ================= */
+/* 植物：莲花山公园 / 校园常见 —— n名称 al别名 env生境 keys判对关键词 say标准答案 hints线索 ask追问 */
+const PLANTS = [
+  {
+    n: '睡莲', al: ['子午莲', '水浮莲'], env: '池塘、湖面', cat: '水生',
+    keys: ['蜡质', '蜡', '气孔', '通气', '叶柄', '浮水', '浮在', '水珠', '排水', '空心'],
+    say: '叶片上表面覆着一层蜡质，水珠滚落时带走灰尘；气孔也长在朝上的叶面，叶柄里还藏着一条条通气管道，把空气一路送到水下的根茎。它浮在水面抢占阳光，却不会被水"闷死"。',
+    hints: ['蹲下来看它的叶子：水珠落在上面，是摊开，还是滚成小球？', '它整天泡在水里，那它是怎么呼吸的？顺着叶柄往下想。', '注意叶子的正反面——气孔长在哪一面？为什么偏偏是那一面？'],
+    ask: '如果它的叶子被别的植物盖住了，它会用什么办法重新抢到阳光？'
+  },
+  {
+    n: '荷花', al: ['莲', '莲花', '菡萏'], env: '池塘、湖面', cat: '水生',
+    keys: ['荷叶效应', '自洁', '蜡质', '排水', '通气', '孔', '藕', '地下茎', '储', '千年', '种子'],
+    say: '荷叶表面布满微米级小突起和蜡质，这就是著名的"荷叶效应"——水珠滚走带走污泥，叶片永远干净好晒太阳；叶柄中空通气，把空气送到水底；地下茎（藕）储存大量养分，莲子还能沉睡上千年不死。',
+    hints: ['它的叶子永远是干净的，哪怕长在泥塘里——想想水在上面发生了什么？', '它冬天看着枯了，第二年又长出来，养藏在哪里？', '听说古莲子埋了一千年还能发芽，它给种子准备了什么？'],
+    ask: '荷叶不沾水，对植物自己到底有什么好处？仅仅是好看吗？'
+  },
+  {
+    n: '芦苇', al: ['苇', '芦柴'], env: '水边、湿地', cat: '水生',
+    keys: ['通气', '空心', '根状茎', '蔓延', '固堤', '防风', '群落', '净化'],
+    say: '茎中空形成通气组织，根泡在缺氧的泥里也能呼吸；地下根状茎横着疯长，一株能长成一大片，既抢占了地盘，又用密集的根网护住堤岸、净化水质。',
+    hints: ['它们总是一大片一大片出现，单株很少见——它们是怎么"复制"自己的？', '折断一根芦苇秆，里面是什么样的？为什么会这样？', '水边的土松软容易被冲走，它们扎堆生长会发生什么？'],
+    ask: '单独一株芦苇和一大片芦苇，谁更容易活下来？为什么？'
+  },
+  {
+    n: '落羽杉', al: ['池杉', '水杉'], env: '水边、浅水', cat: '水生',
+    keys: ['膝根', '呼吸根', '气根', '屈膝', '伸出水面', '透气', '呼吸'],
+    say: '它长在水里，根却要呼吸，于是从根上冒出一根根像膝盖一样的小柱子（膝根）伸出水面，专门给它换气；还会在冬天把小枝整条脱落，减少消耗。',
+    hints: ['看它的树干四周水面，有没有冒出一圈奇奇怪怪的"小笋"？', '别的树根都往土里扎，它为什么偏偏要往上长？', '那圈"小笋"是长给谁看的？它解决的是什么难题？'],
+    ask: '如果水位涨高，把"膝盖"淹没了，它还有别的办法吗？'
+  },
+  {
+    n: '凤眼莲', al: ['水葫芦', '凤眼蓝'], env: '水面、池塘', cat: '水生',
+    keys: ['气囊', '浮', '膨大', '叶柄', '繁殖', '快', '吸收', '净化', '入侵'],
+    say: '叶柄中部膨大成一个个气囊，像随身带着游泳圈，让它稳稳浮在水面；繁殖极快，几天就能铺满池塘，还能大量吸收水里的富营养物质——既是净水高手，也是让人头疼的入侵者。',
+    hints: ['捏一捏它的叶柄中间，是不是鼓鼓的、软软的？里面装的是什么？', '为什么一株水葫芦，一个月能变成一整池？', '同样的本事，在缺营养的水里和富营养的水里，结果一样吗？'],
+    ask: '它能净化水质，为什么又被称为"入侵植物"？好事还是坏事？'
+  },
+  {
+    n: '肾蕨', al: ['蕨', '蕨类', '蜈蚣草'], env: '林下阴湿处', cat: '阴生',
+    keys: ['孢子', '繁殖', '耐阴', '喜阴', '羽状', '卷', '拳卷', '孢子囊'],
+    say: '它不开花不结籽，靠叶背那一排排褐色孢子囊散播孢子繁衍；叶片是羽状复叶、幼叶拳卷着伸展，天生耐阴，在别的植物抢不到光的林下也能活。',
+    hints: ['翻过它的叶子背面，看看有没有一排排褐色的小点点？那些是什么？', '它不长在太阳底下，偏偏长在树荫里，为什么？', '不开花、不结果，它是怎么传宗接代的？'],
+    ask: '砍掉地上的叶子，它还能活吗？秘密藏在哪里？'
+  },
+  {
+    n: '苔藓', al: ['青苔', '苔'], env: '阴湿石面、树干', cat: '阴生',
+    keys: ['变水', '休眠', '耐旱', '孢子', '假根', '保水', '吸水'],
+    say: '它是"变水性"植物：干到脆了也不死，一沾水立刻复活继续光合作用；没有真正的根，靠假根固定、靠全身直接吸水储水，靠孢子繁殖，是最早登陆的开拓者。',
+    hints: ['旱了很久的青苔，一浇水果然又绿了——它干的时候真的"死"了吗？', '它没有根，那它是怎么喝水、怎么站稳的？', '石头上、树皮上一无所有，它凭什么先活下来？'],
+    ask: '苔藓能在光秃秃的石头上生活，这件事对后来长出来的植物有什么意义？'
+  },
+  {
+    n: '龟背竹', al: ['蓬莱蕉', '电线兰'], env: '林下、室内', cat: '阴生',
+    keys: ['裂', '孔洞', '洞', '漏', '透光', '气生根', '攀', '大叶', '排水'],
+    say: '宽大的叶片上故意长出孔洞和裂缝：暴雨打下来时水流和风穿洞而过，叶子不会被撕破；阳光还能从洞里漏给下层的叶子。它另有用气生根攀附大树往上爬，去抢更高的光。',
+    hints: ['别的叶子都追求完整，它的叶子为什么偏要"破"几个洞？', '下大雨时，一整片大叶子最怕什么？', '它长在树林底下，怎样才能拿到更多阳光？'],
+    ask: '如果把它种在空旷的太阳底下，这些孔洞还有用吗？'
+  },
+  {
+    n: '绿萝', al: ['黄金葛', '魔鬼藤'], env: '林下、室内', cat: '阴生',
+    keys: ['气生根', '气根', '耐阴', '弱光', '革质', '保水', '攀', '扦插'],
+    say: '它极耐阴，在很弱的光下也能维持生存；茎上长着气生根，一边吸空气中的水一边攀附向上；叶片革质厚实减少水分蒸发，随便剪一段插进水里就能长成新株。',
+    hints: ['它放在阴暗的房间里也活得很好，别的植物却会黄——它怎么做到的？', '摸摸它的叶子，是不是比一般的叶子厚、亮？为什么？', '掐一段插水里就能活，这算不算一种生存智慧？'],
+    ask: '它耐阴，可它拼命往上爬又是为了什么？两件事矛盾吗？'
+  },
+  {
+    n: '海芋', al: ['滴水观音', '姑婆芋'], env: '林下阴湿', cat: '阴生',
+    keys: ['滴水', '叶尖', '排水', '大叶', '毒', '草酸钙', '防御', '捕光'],
+    say: '它的叶尖会一滴滴往下滴水（滴水叶尖），把叶面上的水及时排掉，避免积水长霉、也避免叶片被压弯；大叶子在林下尽量捕光；汁液含草酸钙有毒，动物不敢啃。',
+    hints: ['清晨去看它，叶尖上常常挂着水珠，还会往下滴——为什么要主动排水？', '这么大的叶子如果积满水，会发生什么麻烦？', '它长得又嫩又绿，为什么虫子很少啃它？'],
+    ask: '排水和捕光，哪件事对它更重要？'
+  },
+  {
+    n: '吊兰', al: ['挂兰', '垂盆草'], env: '林缘、室内', cat: '草本',
+    keys: ['匍匐茎', '小植株', '小吊兰', '无性', '储水', '肉质根', '繁殖'],
+    say: '它会抽出长长的匍匐茎，末端直接长出一株株小吊兰，落地就能独立成株——不用等开花结籽也能复制自己；根是肉质的，能存住水抗旱。',
+    hints: ['看它垂下来的长枝，枝头那一小簇是什么？', '那些小植株落到了土里会怎样？', '它储水的地方在哪里？'],
+    ask: '用"克隆"和"开花结籽"两种办法繁殖，各有什么好处？'
+  },
+  {
+    n: '薄荷', al: ['野薄荷', '留兰香'], env: '草地、水边', cat: '草本',
+    keys: ['挥发油', '薄荷醇', '气味', '驱虫', '驱', '清凉', '匍匐', '地下茎'],
+    say: '叶子和茎里藏着挥发性精油（薄荷醇），虫子闻到就躲得远远的，等于自带驱蚊药水；它还有地下匍匐茎，能迅速霸占一片地。',
+    hints: ['揉碎一片叶子闻闻——那股冲鼻子的味道，是给谁闻的？', '花园里别的叶子被咬得千疮百孔，它却完好无损，为什么？', '它的气味是"武器"吗？打的是谁？'],
+    ask: '驱虫的气味是长出来的，长气味要消耗养分，它划算吗？'
+  },
+  {
+    n: '艾草', al: ['艾', '艾叶', '艾蒿'], env: '荒地、路边', cat: '草本',
+    keys: ['挥发油', '气味', '驱虫', '绒毛', '白毛', '反射', '蒸腾', '保水'],
+    say: '叶片背面密被白色绒毛，既能反射过强的阳光、减少水分蒸腾，也让虫子难以下口；再加上浓烈的挥发油气味，双重防御；地下根茎还能年年重新长出。',
+    hints: ['翻过它的叶子看看背面，是不是白白的一层？那层毛有什么用？', '太阳最毒的时候，它为什么不会被晒干？', '揉一揉，那股药味能赶走谁？'],
+    ask: '长毛和气味，两件"武器"都是为了解决同一个问题吗？'
+  },
+  {
+    n: '含羞草', al: ['感应草', '知羞草'], env: '草坪、路边', cat: '草本',
+    keys: ['闭合', '感震', '合拢', '叶子闭上', '运动', '吓', '防虫', '暴雨', '防'],
+    say: '一碰就合拢叶片，这是"感震运动"：能吓退想吃它的昆虫，也能在暴雨冰雹来临时收起叶子减少被打坏；晚上叶片还会自动闭合"睡觉"。',
+    hints: ['用手指轻轻碰它一下，发生了什么？', '它合起来的那一瞬间，是想吓唬谁？', '除了防虫，遇上暴雨时这个动作还有别的用处吗？'],
+    ask: '每次被碰都要合一次，很费力气，它为什么还保留这个本事？'
+  },
+  {
+    n: '合欢', al: ['绒花树', '马缨花'], env: '路边、公园', cat: '乔木',
+    keys: ['夜间', '闭合', '睡眠', '叶枕', '羽状', '合拢', '昼开夜合'],
+    say: '二回羽状复叶一到傍晚就成对合拢，这是"睡眠运动"：夜里合上叶片能减少热量散失和水分蒸发，还能避免月光干扰；白天再打开充分晒太阳。',
+    hints: ['白天去看它和傍晚会去看它，叶子形状不一样，你发现了吗？', '晚上把叶子合起来，能省下什么？', '树也会"睡觉"，信不信？'],
+    ask: '晚上合拢叶子，除了省水，还可能防住什么？'
+  },
+  {
+    n: '榕树', al: ['细叶榕', '小叶榕', '大榕树'], env: '公园、路边', cat: '乔木',
+    keys: ['气根', '气生根', '支柱根', '绞杀', '共生', '榕小蜂', '隐头', '乳汁', '独木成林'],
+    say: '它从枝上垂下气生根，扎进土里变成支柱根，最后"独木成林"；它还能绞杀宿主抢占位置；最妙的是隐头花序——花藏在果子里，只让专属的榕小蜂钻进去传粉，两者谁也离不开谁。',
+    hints: ['它树上垂下来的那些"胡须"是什么？落到土里会变成什么？', '别的树被它缠住以后，最后怎么样了？', '它的花藏在果实里面，那谁来帮它传粉？'],
+    ask: "'独木成林'听起来很厉害，它自己到底图什么？"
+  },
+  {
+    n: '樟树', al: ['香樟', '樟'], env: '公园、行道', cat: '乔木',
+    keys: ['樟脑', '挥发油', '气味', '驱虫', '防腐', '革质', '常绿'],
+    say: '全株含樟脑与挥发油，虫子不爱吃、木材也不容易腐烂和长虫；叶片革质厚亮，四季常绿，不用每年重新长叶，省下大量时间和养分。',
+    hints: ['掰一小片叶子搓一搓，那股香味有什么用？', '为什么樟木箱放衣服不生虫？', '它冬天不掉叶子，这么做省了什么、又冒了什么险？'],
+    ask: '常绿和落叶，两种过冬方式哪种更划算？'
+  },
+  {
+    n: '桉树', al: ['尤加利'], env: '林场、路边', cat: '乔木',
+    keys: ['挥发油', '化感', '抑制', '毒素', '树皮', '脱落', '油脂', '易燃'],
+    say: '它分泌挥发油和化感物质落到土里，抑制周围其他植物发芽，把水和养分留给自己；树皮年年脱落带走附着的虫卵；叶片含油极易燃烧，反而能借火烧掉竞争者、让它的种子趁机萌发。',
+    hints: ['桉树林底下常常寸草不生，你觉得是为什么？', '它的叶子有股冲鼻的油味，落到地上会怎样？', '摸摸它的树干，是不是每年都要脱一层皮？'],
+    ask: '用"化学武器"压制邻居，这算不算一种不公平的竞争？'
+  },
+  {
+    n: '木棉', al: ['红棉', '英雄树', '攀枝花'], env: '公园、路边', cat: '乔木',
+    keys: ['先花后叶', '刺', '尖刺', '棉', '飞絮', '借风', '木质', '储水'],
+    say: '它先开花后长叶，满树红花时没有一片叶子挡视线，最容易被鸟看见来传粉；树干上长满圆锥尖刺，防止动物攀爬啃咬；种子裹着棉毛，成熟后借风飘向远方。',
+    hints: ['它开花时满树红，你看见一片叶子了吗？为什么要"先花后叶"？', '伸手摸摸树干，是不是有刺？刺是防谁的？', '春天满城飞的白絮，是它的什么？为什么要长毛？'],
+    ask: '花要显眼，树要防身，种子要远行——它把本领都长在了哪些部位？'
+  },
+  {
+    n: '红花羊蹄甲', al: ['洋紫荆', '紫荆花', '羊蹄甲'], env: '公园、行道', cat: '乔木',
+    keys: ['羊蹄', '叶形', '花色', '吸引', '传粉', '常绿', '花期', '蜜'],
+    say: '叶片顶端裂成两半像羊蹄，能减少风阻和暴雨冲击；大而鲜艳的花配上花蜜，专门吸引蜂蝶来传粉；花期长、四季常绿，全年都有机会完成繁殖。',
+    hints: ['捡一片落叶看看形状，像什么？这个形状有什么好处？', '它的花又大又艳，是给谁看的？', '它几乎四季都在开花，为什么这么"勤快"？'],
+    ask: '花越大越显眼，风险也会变大吗？'
+  },
+  {
+    n: '凤凰木', al: ['红花楹', '火树'], env: '公园、行道', cat: '乔木',
+    keys: ['羽状', '闭合', '夜间', '遮光', '固氮', '豆科', '种子', '荚', '毒'],
+    say: '二回羽状复叶夜间会闭合，减少水分蒸发；它属于豆科，根上有根瘤菌固氮，在贫瘠的土里也能长得快；种子坚硬有荚、还带点毒性，动物不爱吃，保证了成活率。',
+    hints: ['它的叶子细细碎碎成千上万片，晚上会怎样？', '它长得又高又快，土并不肥沃，养分从哪来？', '它的种子又硬又结实，图的是什么？'],
+    ask: '长得快和活得久，它选了哪一个？'
+  },
+  {
+    n: '三角梅', al: ['叶子花', '簕杜鹃', '宝巾'], env: '围墙、花坛', cat: '灌木',
+    keys: ['苞片', '伪装', '假花', '刺', '枝刺', '耐旱', '三片', '吸引'],
+    say: '我们看到的"花"其实不是花，是三片苞片——它把叶子变成鲜艳的招牌，骗蜂蝶来给中间真正的小白花传粉；枝条上还有尖刺防啃咬，耐旱好养。',
+    hints: ['掐下一朵"花"看看，中间那根小小的白管才是真正的花，那外面三片彩色的是什么？', '它为什么要伪装？真正的花太小了会怎样？', '它的枝条上有刺，防的是谁？'],
+    ask: '伪装成花和真的开花，哪一种更省力？'
+  },
+  {
+    n: '马缨丹', al: ['五色梅', '臭草'], env: '路边、荒地', cat: '灌木',
+    keys: ['化感', '抑制', '气味', '驱虫', '变色', '花色', '有毒'],
+    say: '它释放化感物质抑制周围植物生长，气味浓烈让虫子退避三舍，还有毒；最妙的是同一花序上的小花会由黄变橙变红，用颜色告诉传粉者"哪朵新鲜有蜜"。',
+    hints: ['它周围的草总是长不好，为什么？', '揉碎它的叶子，那股味道好闻吗？虫子呢？', '同一株上居然有好几种颜色，它在"说"什么？'],
+    ask: '又毒又臭还有颜色信号，它到底在防谁、又在招谁？'
+  },
+  {
+    n: '蟛蜞菊', al: ['黄花蟛蜞菊', '地锦花'], env: '草坪、路边', cat: '草本',
+    keys: ['匍匐', '覆盖', '抢占', '蔓延', '节', '生根', '化感', '防晒'],
+    say: '茎一节节往前爬，每个节碰到土就生根长出新株，很快铺成一张厚地毯，把阳光全部盖住，别的草见不到光就活不下去；它还会分泌化感物质助阵。',
+    hints: ['它的茎是站着长还是趴着长？趴着有什么好处？', '一节一节往前爬，每到一个地方会发生什么？', '它铺满地面以后，底下那些草会怎样？'],
+    ask: '铺满地面抢占阳光——它自己为什么不怕被晒？'
+  },
+  {
+    n: '酢浆草', al: ['三叶草', '酸味草', '黄花酢浆草'], env: '草坪、花坛', cat: '草本',
+    keys: ['弹', '爆', '弹射', '种子', '传播', '感夜', '闭合', '酸'],
+    say: '果实成熟后轻轻一碰就"啪"地炸开，把种子弹射到几米外，谁也不靠；叶片晚上会合拢睡觉；体内含草酸，味道酸涩，虫子不爱吃。',
+    hints: ['轻轻碰一下它成熟的小果荚，你听到了什么？', '种子被弹出去，对它来说有什么好处？', '它的叶子晚上会变成什么样？'],
+    ask: '靠自己弹射和靠风传播，哪种更可靠？'
+  },
+  {
+    n: '狗牙根', al: ['结缕草', '百慕大草', '草坪草'], env: '草坪', cat: '草本',
+    keys: ['耐踩', '践踏', '匍匐', '分蘖', '深根', '耐旱', '再生'],
+    say: '被踩扁了也能活：茎横着爬、节上生根，分蘖极多，踩断的地方马上又能长出新芽；根系扎得很深，旱季也能喝到水，所以足球场和草坪都爱用它。',
+    hints: ['天天被踩的草地为什么不会死？', '它的根扎得有多深？为什么要这么深？', '被踩倒了以后，它是怎么重新站起来的？'],
+    ask: '长不高反而是优点？在什么情况下？'
+  },
+  {
+    n: '竹子', al: ['毛竹', '竹'], env: '林边、山坡', cat: '乔木',
+    keys: ['地下茎', '鞭', '快', '生长', '木质', '开花', '集体', '中空'],
+    say: '它靠地下鞭根悄悄向四周扩张，一冒头就疯狂拔高（一天能长几十厘米），抢在被遮挡前拿到阳光；茎中空却坚韧（节与节之间像桥墩）；还会约好几十年集体开花结籽后死去，用数量淹没吃种子的动物。',
+    hints: ['竹林一夜之间就能长高一大截，它凭什么长这么快？', '砍掉一根竹子，旁边又冒出一根，是从哪来的？', '听说竹子几十年才开一次花，而且是整片一起开，为什么？'],
+    ask: '一起开花一起死，对整个竹林有什么好处？'
+  },
+  {
+    n: '苏铁', al: ['铁树', '凤尾蕉'], env: '公园、花坛', cat: '灌木',
+    keys: ['古老', '孢子', '球', '共生', '固氮', '珊瑚根', '坚硬', '毒'],
+    say: '它是两亿多年前的"活化石"：叶又硬又尖还带刺，动物无从下口；根部长着珊瑚状的根，和蓝藻合作固氮，在贫瘠的土里也能活；雌雄异株，靠风和小虫传粉。',
+    hints: ['它的叶子又硬又扎手，这是在防什么？', '它长得很慢，土也不肥，养分从哪来？', '它被称为"活化石"，说明它坚持了多久？'],
+    ask: '坚持两亿年不变，和拼命进化，哪一种更聪明？'
+  },
+  {
+    n: '兰花', al: ['地生兰', '石斛', '兰'], env: '林下、温室', cat: '草本',
+    keys: ['拟态', '欺骗', '欺骗性', '伪装', '陷阱', '陷阱花', '气生根', '花粉块', '共生'],
+    say: '许多兰花根本不产花蜜，却把花朵伪装成有蜜的样子，甚至伪装成雌蜂，骗昆虫白跑一趟还替它传了粉；花粉整块黏到虫身上，一次带走效率极高；气生根能从空气里吸水，还能跟真菌合作要营养。',
+    hints: ['它那么香那么漂亮，却是"骗子"——它骗了谁？骗了什么？', '昆虫辛辛苦苦飞过去，最后得到了什么？', '它的根常常露在外面，为什么？'],
+    ask: '不产蜜的花，为什么还能吸引昆虫？'
+  },
+  {
+    n: '美人蕉', al: ['红艳蕉'], env: '花坛、水边', cat: '草本',
+    keys: ['根状茎', '储', '储水', '大叶', '花色', '吸引', '假瓣', '雄蕊'],
+    say: '地下根状茎又肥又壮，存满养分和水分，旱了也不怕；花朵鲜红醒目，还把雄蕊变成鲜艳的假花瓣来吸引传粉者，真正的花粉只留一点点，精打细算。',
+    hints: ['挖开它的根看看，是不是又粗又肉？那是什么？', '它最鲜艳的那几片，真的是花瓣吗？', '它把养分藏在哪里过冬？'],
+    ask: '把雄蕊变成花瓣，省下了什么，又可能损失什么？'
+  },
+  {
+    n: '长春花', al: ['日日春', '四时春'], env: '花坛、路边', cat: '草本',
+    keys: ['生物碱', '毒', '苦', '花期', '长', '耐旱', '乳汁'],
+    say: '它体内含有多种生物碱，又苦又有毒，虫子和动物都不碰；花期极长，几乎天天有花，全年都有机会结果；还特别耐旱耐晒。',
+    hints: ['它为什么叫"日日春"？开花时间长有什么用？', '它长得那么娇嫩，虫子却不吃它，为什么？', '大太阳底下别的花蔫了，它还好好的？'],
+    ask: '有毒的东西，为什么还会有人专门种它？'
+  },
+  {
+    n: '大王椰子', al: ['王棕', '棕榈', '蒲葵'], env: '行道、草坪', cat: '乔木',
+    keys: ['单干', '抗风', '纤维', '叶片', '排水', '扇形', '柔韧', '根'],
+    say: '它只有一根不分叉的树干，却极其柔韧，台风来时能弯下腰再弹回来；叶片是巨大的扇形或羽状，雨水顺着沟槽快速排走，不会被积水压断；根浅而密，抓地稳。',
+    hints: ['台风过后，很多树断了，它还好好的——它硬还是软？', '它高高的不分叉，为什么不会被风吹折？', '下大雨时，它巨大的叶子怎么排水？'],
+    ask: '硬抗和弯腰，哪一种更适合活下去？'
+  },
+  {
+    n: '旅人蕉', al: ['旅人木'], env: '公园、温室', cat: '草本',
+    keys: ['储水', '叶柄', '基部', '水', '扇形', '排列', '光合作用'],
+    say: '巨大的叶柄基部像 reservoir 一样能存不少雨水，旅行者割开就能取水；叶片排成一个平面互不遮挡，每片都能晒到太阳，是"排布"上的智慧。',
+    hints: ['掰开它的叶柄基部，据说会有水流出来，水存在哪里？', '它那么多大叶子，为什么互不遮挡？', '叶子排成一把大扇子，图的是什么？'],
+    ask: '把水存在自己身上，什么时候最有用？'
+  }
+];
+
+/* 夜行生物：n名称 al别名 cat类别 keys say ask */
+const CREATURES = [
+  {
+    n: '树蛙', al: ['斑腿泛树蛙', '泛树蛙', '树蛙类'], cat: '两栖类',
+    keys: ['趾垫', '吸盘', '吸附', '黏', '保护色', '夜视', '抱对', '变色'],
+    say: '它的脚趾末端膨大成吸盘，靠黏液和无数微小沟槽产生的"毛细吸附"，能在光滑的叶片和玻璃上稳稳站住；皮肤颜色和湿度会随环境变化，白天躲着不动减少失水，夜里才出来捕食；繁殖时抱对，把卵产在水面旁的树叶上，蝌蚪孵出后直接掉进水里。',
+    ask: '吸盘靠的是"吸"还是"粘"？你能想到人类模仿它做出了什么吗？'
+  },
+  {
+    n: '黑框蟾蜍', al: ['蟾蜍', '癞蛤蟆', '蛤蟆'], cat: '两栖类',
+    keys: ['毒', '耳后腺', '蟾酥', '毒液', '粗糙', '伪装', '大量产卵', '鼓'],
+    say: '眼后那对鼓起的腺体能分泌白色毒液（蟾酥），鸟兽一尝就再也不敢碰；皮肤粗糙呈土褐色，蹲着不动时和泥地几乎融为一体；它一次能产下成千上万粒卵，靠数量保证总有后代活下来。',
+    ask: '又丑又有毒，为什么对人类也很重要？'
+  },
+  {
+    n: '萤火虫', al: ['萤火', '亮火虫'], cat: '昆虫',
+    keys: ['发光', '荧光素', '荧光素酶', '求偶', '信号', '交流', '警戒', '捕食'],
+    say: '它腹部末端有专门的发光器，荧光素在荧光素酶和氧气的作用下发出冷光——几乎不发热，效率极高。它们用一闪一闪的密码互相"对暗号"找对象，也用光警告天敌"我很苦，别吃我"。幼虫还会捕食蜗牛。',
+    ask: '它发光为什么不烫？人类造的灯能做到吗？'
+  },
+  {
+    n: '蟋蟀', al: ['蛐蛐', '促织', '鸣虫'], cat: '昆虫',
+    keys: ['摩擦', '发声', '音锉', '刮器', '求偶', '听器', '前足', '警戒'],
+    say: '雄虫把左右翅膀竖起来相互摩擦——一边是音锉，一边是刮器，就唱出了声音，用来吸引雌虫和警告其他雄虫。有趣的是它的"耳朵"不长在头上，而长在前足胫节上，能顺着腿骨传声判断方向。',
+    ask: '它的耳朵长在腿上，这样做有什么好处？'
+  },
+  {
+    n: '螳螂', al: ['刀螂', '祷告虫'], cat: '昆虫',
+    keys: ['捕捉足', '拟态', '复眼', '三角头', '立体', '伪装', '雌食雄'],
+    say: '前足特化成带刺的捕捉足，合起来像一把折叠刀，出击只要几十分之一秒；三角形的头能转动，一对大复眼让它有立体视觉，能精确判断距离；体色常常和枝叶一样，既是伪装也是埋伏。',
+    ask: '它一动不动地等，和主动去追，哪种更省力气？'
+  },
+  {
+    n: '蜘蛛', al: ['园蛛', '络新妇', '蛛'], cat: '蛛形类',
+    keys: ['结网', '蛛丝', '丝', '振动', '感知', '吐丝', '飞航', '缠绕'],
+    say: '蛛丝按重量算比钢丝还强韧，还能拉长不断。它织好网后退到一边或藏在隐蔽处，靠腿上的感觉毛感知网的振动，就知道猎物在哪个方向、有多大了；小时候还会吐丝借风"飞航"去远方。',
+    ask: '它在网上也怕被吃掉，所以它把自己藏在哪里？'
+  },
+  {
+    n: '蝙蝠', al: ['蝠', '夜蝠'], cat: '哺乳类',
+    keys: ['回声', '定位', '超声波', '翼膜', '倒挂', '捕食', '听'],
+    say: '它在喉咙里发出人耳听不到的超声波，声波撞到障碍物和飞虫后返回，它用大耳朵和精密的听觉在脑子里"画"出一幅声音地图，在完全黑暗里也能抓到蚊子。指骨之间那层翼膜让它成为唯一真正会飞的哺乳动物；倒挂着休息，一松手就能起飞。',
+    ask: '人类模仿它发明了什么？你觉得还能用来做什么？'
+  },
+  {
+    n: '蛾', al: ['蛾子', '夜蛾', '天蛾'], cat: '昆虫',
+    keys: ['趋光', '保护色', '拟态', '鳞粉', '拟眼', '眼斑', '伪装', '夜行'],
+    say: '它们靠月光导航，所以一见灯光就容易迷失方向、绕着灯打转；翅膀上的鳞粉既能保温又能让蜘蛛网粘不住，一挣就脱；很多种类翅膀上还画着两个巨大的"假眼睛"，猛一看像只猫头鹰，把小鸟吓得掉头就跑。',
+    ask: '为什么路灯越多，有的蛾反而越少？'
+  },
+  {
+    n: '蜗牛', al: ['蛞蝓', '鼻涕虫', '螺'], cat: '软体类',
+    keys: ['壳', '黏液', '保护', '休眠', '耐旱', '齿舌', '膜'],
+    say: '它爬过的地方留下一道亮痕，那是黏液——既减少摩擦保护身体，又能粘住自己不掉下去。天旱时它缩进壳里，用一层黏液膜封住壳口，几个月不吃不喝也能等到下雨；嘴里还有一条带几千颗小牙的齿舌，慢慢刮食叶片。',
+    ask: '背着房子走路，又重又慢，它得到了什么？'
+  },
+  {
+    n: '马陆', al: ['千足虫', '千脚虫'], cat: '其他',
+    keys: ['卷曲', '卷', '臭液', '化学', '防御', '外骨骼', '分解'],
+    say: '一受惊就立刻卷成一个紧密的圆盘，把柔软的腹部朝里、坚硬的外骨骼朝外；体侧还有腺孔能分泌难闻甚至有毒的液体，鸟和蚂蚁闻了就退。它平时吃落叶，是森林里重要的"清洁工"。',
+    ask: '先卷起来还是先放臭气？它为什么会这样安排？'
+  },
+  {
+    n: '壁虎', al: ['守宫', '檐蛇', '蝎虎'], cat: '爬行类',
+    keys: ['刚毛', '范德华', '吸附', '断尾', '再生', '夜视', '蜕皮'],
+    say: '它的脚趾上有数百万根极细的刚毛，每根末端又分成更多小分叉，靠分子间作用力（范德华力）牢牢贴在墙上，还能轻松撕下来——不留一点胶水。遇到危险它会主动断掉尾巴，那截尾巴还能扭动好一阵子吸引天敌，自己则溜之大吉，之后再长回来。',
+    ask: '断一条尾巴换一条命，划算吗？'
+  },
+  {
+    n: '变色树蜥', al: ['马鬃蛇', '雷公蛇'], cat: '爬行类',
+    keys: ['变色', '保护色', '领域', '警戒', '伪装', '晒太阳'],
+    say: '它的体色能在深浅、条纹之间切换：晒太阳时颜色变深多吸热，遇敌时变暗融进树影，繁殖期还会显出鲜艳的喉部向对手示威。',
+    ask: '变色是为了躲藏，还是为了说话？'
+  },
+  {
+    n: '蟑螂', al: ['大蠊', '美洲大蠊', '甴曱'], cat: '昆虫',
+    keys: ['扁平', '钻缝', '触角', '气流', '快', '夜行', '卵鞘', '杂食'],
+    say: '身体扁得像一张纸，一毫米的缝也能挤进去；尾部的两根尾毛能感知极其微弱的气流变化，人还没抬脚它就先跑了；什么都吃，卵包在坚硬的卵鞘里被保护着，难怪几亿年都没被淘汰。',
+    ask: '被人类消灭了那么久，它为什么还在？'
+  },
+  {
+    n: '蚂蚁', al: ['蚁', '黑蚂蚁'], cat: '昆虫',
+    keys: ['信息素', '路径', '分工', '社群', '兵蚁', '协作', '气味'],
+    say: '找到食物的蚂蚁回巢时一路留下信息素，同伴沿着这条"气味公路"排成长队搬运；巢里有蚁后、工蚁、兵蚁的严格分工，单个蚂蚁很弱小，整个群体却几乎打不败。',
+    ask: '一只蚂蚁几乎什么都做不成，一群蚂蚁为什么厉害？'
+  },
+  {
+    n: '鼠妇', al: ['潮虫', '西瓜虫', '球鼠妇'], cat: '其他',
+    keys: ['卷', '假死', '喜湿', '鳃', '呼吸', '潮湿'],
+    say: '一碰就卷成一个小球（所以叫西瓜虫），或者干脆装死；它用腹部像鳃一样的附肢呼吸，必须待在潮湿的地方，所以总藏在石头和落叶底下，白天绝不出来晒。',
+    ask: '它为什么总躲在石头底下，而不是石头上面？'
+  },
+  {
+    n: '白蚁', al: ['螱', '大水蚁'], cat: '昆虫',
+    keys: ['社群', '共生', '鞭毛虫', '消化', '木质', '菌圃', '分工'],
+    say: '它们吃木头，自己却消化不了，于是肠道里养着无数鞭毛虫帮忙分解纤维素——这是典型的协同共生；蚁巢有通风的土堡结构，能在烈日下保持恒温恒湿，还有专门的兵蚁守卫。',
+    ask: '它吃木头要请"房客"帮忙，这算不算一种合作智慧？'
+  }
+];
+
+/* 六大生存智慧类别 */
+const WIS_CATS = ['伪装拟态智慧', '防御自保智慧', '适应环境智慧', '高效觅食/储能智慧', '繁衍延续智慧', '协同共生智慧'];
+const CAT_KEYS = {
+  '伪装拟态智慧': ['伪装', '拟态', '保护色', '隐身', '假冒', '欺骗', '假眼', '眼斑', '像'],
+  '防御自保智慧': ['防御', '自保', '毒', '刺', '臭', '警戒', '断尾', '卷曲', '壳', '驱'],
+  '适应环境智慧': ['适应', '耐阴', '耐旱', '耐寒', '通气', '储水', '抗风', '排水', '休眠', '盐'],
+  '高效觅食/储能智慧': ['觅食', '捕食', '捕猎', '储', '储能', '结网', '捕捉', '回声', '齿舌', '光合'],
+  '繁衍延续智慧': ['繁衍', '繁殖', '传粉', '播种', '种子', '弹射', '抱对', '产卵', '开花', '克隆', '无性'],
+  '协同共生智慧': ['共生', '协同', '合作', '互助', '互利', '分工', '群落', '菌', '固氮']
+};
+
+/* ================= AI 通道 =================
+   1) 免费通道（默认，无需注册、无需密钥）：Pollinations openai-fast
+   2) 自定义通道：任意 OpenAI 兼容接口（可支持识图），在「⚙ AI 设置」里填
+   3) 离线兜底：内置探究引擎 + 本地知识库
+=========================================== */
+const FREE_API = { url: 'https://text.pollinations.ai/openai', model: 'openai-fast', vision: false };
+
+const API = {
+  cfg() { return LS.get('nw_api', { mode: 'free', url: '', model: '', key: '', vision: '1', search: '1' }); },
+  custom() {
+    const c = this.cfg(), filled = !!(c.url && c.model && c.key);
+    return c.mode ? (c.mode === 'custom' && filled) : filled;
+  },
+  base() { const c = this.cfg(); return this.custom() ? c.url.replace(/\/+$/, '') : FREE_API.url; },
+  model() { const c = this.cfg(); return this.custom() ? c.model : FREE_API.model; },
+  key() { const c = this.cfg(); return this.custom() ? c.key : 'free'; },
+  vision() { const c = this.cfg(); return this.custom() ? c.vision !== '0' : FREE_API.vision; },
+  search() { const c = this.cfg(); return c.search !== '0'; },
+  label() { return this.custom() ? ('自定义接口 · ' + this.model()) : ('免费通道 · ' + FREE_API.model); },
+  ok() { return true; }          /* 总有可用通道（最差走本地引擎） */
+};
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+async function callAPI(sys, msgs, images, opt) {
+  opt = opt || {};
+  const arr = [];
+  (msgs || []).forEach(m => arr.push({ role: m.role, content: m.text }));
+  const last = arr.length - 1;
+  if (images && images.length && API.vision() && last >= 0) {
+    const parts = [{ type: 'text', text: arr[last].content }];
+    images.forEach(d => parts.push({ type: 'image_url', image_url: { url: d } }));
+    arr[last] = { role: arr[last].role, content: parts };
+  }
+  const payload = {
+    model: API.model(),
+    messages: [{ role: 'system', content: sys }].concat(arr),
+    temperature: opt.temperature != null ? opt.temperature : .8,
+    max_tokens: opt.max_tokens || 900
+  };
+  let lastErr = null;
+  for (let k = 0; k < 2; k++) {                    /* 免费通道偶尔限流，重试一次 */
+    let ctl = null, timer = null;
+    try {
+      ctl = new AbortController();
+      timer = setTimeout(() => { try { ctl.abort(); } catch (e) { } }, opt.timeout || 60000);
+      const r = await fetch(API.base() + '/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + API.key() },
+        body: JSON.stringify(payload), signal: ctl.signal
+      });
+      clearTimeout(timer);
+      if (!r.ok) {
+        let msg = ''; try { const j = await r.json(); msg = (j && j.error && (j.error.message || j.error)) || ''; } catch (e) { }
+        lastErr = new Error('HTTP ' + r.status + ' ' + (msg || r.statusText).slice(0, 80));
+        if (r.status === 402 || r.status === 429 || r.status >= 500) { await sleep(1200); continue; }
+        throw lastErr;
+      }
+      const j = await r.json();
+      const t = j && j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content;
+      if (!t || !String(t).trim()) throw new Error('接口返回为空');
+      return String(t).trim();
+    } catch (e) {
+      if (timer) clearTimeout(timer);
+      lastErr = (e && e.name === 'AbortError') ? new Error('请求超时') : e;
+      if (k === 0 && /超时|网络|fetch|Failed/i.test(lastErr.message || '')) { await sleep(900); continue; }
+      throw lastErr;
+    }
+  }
+  throw lastErr || new Error('调用失败');
+}
+function stripJSON(t) {
+  const m = (t || '').match(/\{[\s\S]*\}/);
+  return m ? m[0] : null;
+}
+function safeJSON(t) { try { return JSON.parse(t); } catch (e) { return null; } }
+
+/* ---------------- 联网资料检索（维基百科，境外可访问时生效，失败静默） ---------------- */
+async function wikiSearch(q) {
+  try {
+    const ctl = new AbortController();
+    const timer = setTimeout(() => { try { ctl.abort(); } catch (e) { } }, 4500);
+    const u = 'https://zh.wikipedia.org/w/api.php?origin=*&format=json&utf8=1&action=query' +
+      '&prop=extracts&exintro=1&explaintext=1&redirects=1&titles=' + encodeURIComponent(q);
+    const r = await fetch(u, { signal: ctl.signal });
+    clearTimeout(timer);
+    if (!r.ok) return null;
+    const j = await r.json();
+    const pages = j && j.query && j.query.pages || {};
+    for (const k in pages) {
+      const ex = pages[k] && pages[k].extract;
+      if (ex && ex.length > 40) return ex.slice(0, 900);
+    }
+  } catch (e) { }
+  return null;
+}
+
+/* ---------------- 物种资料卡：本地库 → 缓存 → 联网 → AI 知识 ---------------- */
+const SYS_LOOKUP = `你是博物学资料员，负责为一个物种整理"生存智慧资料卡"，供一位小学四年级的自然向导使用。
+只输出一个 JSON 对象，不要任何前后缀、不要 markdown 代码块：
+{"name":"正式中文名","alias":["别名"],"type":"植物或动物","habitat":"它生活在什么样的环境，20字内","features":"外形与习性关键特征，40字内","wisdom":"它的生存智慧：用什么器官、什么原理解决了什么难题，80~140字，要具体","keys":["关键词1","关键词2","关键词3"],"hints":["不直接说答案的观察线索1","线索2","线索3"],"ask":"猜对之后可以继续追问的一个问题","doubt":布尔值}
+规则：
+1. 如果你确实不知道这个物种，把 doubt 设为 true，wisdom 留空字符串，其余字段尽量填。
+2. 关键词是该物种生存机制的"专业名词或特征短语"，例如"蜡质叶面""通气组织""拟态""警戒色"。
+3. hints 只能引导观察（去看、去摸、去闻、去比较），绝不能说出答案本身。
+4. 全部用中文，语言四年级孩子听得懂。`;
+
+function cardCache() { return LS.get('nw_lookup', {}); }
+function cardSave(k, v) {
+  const c = cardCache(), ks = Object.keys(c);
+  if (ks.length > 60) delete c[ks[0]];
+  c[k] = v; LS.set('nw_lookup', c);
+}
+async function lookupSpecies(name) {
+  if (!name) return null;
+  const ck = 's|' + name;
+  const c = cardCache();
+  if (c[ck]) return c[ck];
+  let wiki = null;
+  if (API.search()) wiki = await wikiSearch(name);
+  let out = '';
+  try {
+    out = await callAPI(SYS_LOOKUP, [{
+      role: 'user',
+      text: '请整理这个物种的资料卡：' + name + (wiki ? '\n\n【联网检索到的资料，供参考】\n' + wiki : '')
+    }], null, { max_tokens: 1400, timeout: 50000, temperature: .5 });
+  } catch (e) { }
+  let j = safeJSON(stripJSON(out) || '');
+  if (j && j.name) {
+    j.src = 'ai';
+    if (wiki) j.wiki = wiki.slice(0, 500);
+    cardSave(ck, j);
+    return j;
+  }
+  if (wiki) return { name: name, type: '', habitat: '', features: '', wisdom: wiki.slice(0, 600), keys: [], hints: [], ask: '', doubt: false, src: 'wiki' };
+  return null;
+}
+
+/* ---------------- 本地知识库检索 ---------------- */
+function findPlant(t) {
+  if (!t) return null;
+  const s = t.replace(/[\s，。、《》（）()]/g, '');
+  let best = null;
+  PLANTS.forEach(p => {
+    [p.n].concat(p.al).forEach(a => {
+      const k = a.replace(/[\s，。、《》（）()]/g, '');
+      if (k.length >= 2 && s.indexOf(k) >= 0) {
+        if (!best || k.length > best._len) { best = p; best._len = k.length; }
+      }
+    });
+  });
+  return best;
+}
+function findCreature(t) {
+  if (!t) return null;
+  const s = t.replace(/[\s，。、《》（）()]/g, '');
+  let best = null;
+  CREATURES.forEach(c => {
+    [c.n].concat(c.al).forEach(a => {
+      const k = a.replace(/[\s，。、《》（）()]/g, '');
+      if (k.length >= 2 && s.indexOf(k) >= 0) {
+        if (!best || k.length > best._len) { best = c; best._len = k.length; }
+      }
+    });
+  });
+  return best;
+}
+/* 从学生的话里抽出物种名 */
+function extractName(t) {
+  if (!t) return '';
+  let m = t.match(/我认识(?:了|到)?\s*([^\s，。、！？,.;；]{2,10})/);
+  if (m) return m[1].replace(/[，。、！？]$/, '');
+  m = t.match(/(?:发现|看到|找到)(?:了|到)?\s*([^\s，。、！？,.;；]{2,10})/);
+  if (m) return m[1];
+  m = t.match(/^\s*([^\s，。、！？,.;；]{2,10})(?:的|是|有)/);
+  if (m) return m[1];
+  return '';
+}
+function hasGuess(t) {
+  return /猜想|我猜|绝招|本领是|因为它|它靠|它用|它能够|它可以|是为了|可能是|大概是/i.test(t || '');
+}
+function hits(text, keys) {
+  const s = (text || '');
+  return (keys || []).filter(k => k && s.indexOf(k) >= 0);
+}
+
+/* ---------------- 提示词 ---------------- */
+const SYS2 = `你是"小达尔文 · 自然探究助手"🍃——陪孩子在莲花山公园做自然探究的少年博物学向导，对象是小学四年级学生。你说话活泼、爱追问，会先自己检索头脑里的博物学知识来回答问题。
+
+【铁律，必须严格遵守】
+1. 学生的提问格式是："我认识了XX植物，我猜想它的生存绝招是XX"。
+2. 当学生的猜想命中了要点（意思接近即可，不要求用词一致）：先说"🎉 猜对了！"，再完整揭晓该植物的生存智慧（60~120字，要有具体的器官和原理），最后抛出一个更深的追问。
+3. 当学生的猜想没命中要点：**绝对禁止**直接或间接说出答案，禁止出现"答案是／它的生存绝招是／其实它是靠"这类揭晓句式。你只能给**一条**观察线索，引导他去摸、去看、去闻、去比较（例如"蹲下来看看水珠在叶子上是什么形状"），语气鼓励，然后请他再猜一次。
+4. 学生如果还没说植物名称，就请他先用形色APP识别，并把句式教给他。
+5. 每次只给一条线索，不要一次把三四条都给完。
+6. 全部回复控制在150字以内，用四年级孩子听得懂的话，多用比喻，多用问句。
+7. 严禁输出任何 JSON 或格式标记，只输出要说的话（可用 <b> 加粗关键词）。`;
+
+const SYS4 = `你是"达尔文评审团"——由博物学家达尔文、昆虫诗人法布尔和一位深圳自然教育导师组成的三人评审组。你要按《学生评价单》的口径，评审小学四年级学生手绘的《自然界生存智慧档案》。
+
+【评分维度与分值】信息完整（生物名称/类别/基础特征）20分；生存智慧类别判断20分；生存智慧关键词提炼20分；生存本领作用解读25分；图文呈现与规范15分。总分100。
+
+【等级】优秀 90~100；良好 75~89；合格 60~74；待改进 60 以下。
+
+【打分要准】逐项对照学生实际写了什么来打分：没写名称就扣信息分；没写类别就扣类别分；关键词没提炼就扣关键词分；只描述现象、没讲"本领如何帮助它生存繁衍"就扣作用解读分；没有图就扣图文分。不要一律给高分。
+
+【输出】只输出一个 JSON 对象，不要任何前后缀、不要 markdown 代码块：
+{"name":"生物名称","cat":"植物或动物","scores":{"info":数字,"cat_ok":数字,"keywords":数字,"explain":数字,"present":数字},"total":总分,"level":"优秀","comment":"一段60~100字、具体、鼓励为主的评语","good":["亮点1","亮点2"],"tips":["建议1","建议2"],"encourage":"一句达尔文风格的鼓励"}
+
+【要求】先肯定再建议；建议必须是可操作的一句话，直接指出档案里缺了什么；语言温暖，不说空话；如果看不清图片，就依据文字内容打分，并在 comment 中说明。`;
+
+/* ---------------- 统一入口 ---------------- */
+async function askSage(opt) {
+  /* opt: {kind:'plant'|'review', text, images, history, state, plantRef} */
+  if (opt.kind === 'plant') return await askPlant(opt);
+  if (opt.kind === 'review') return await askReview(opt);
+  return { text: '' };
+}
+
+/* AI 万一在"没猜对"时说漏了答案，就用一条观察线索替换掉 */
+function guardLeak(reply, card, state) {
+  const bad = /(答案是|生存绝招是|生存绝招就是|生存智慧是|生存智慧在于|其实它是靠|其实它靠|真正的原因是|正确答|揭晓答|它靠的是)/;
+  if (!bad.test(reply || '')) return reply;
+  const hints = (card && card.hints) || [];
+  if (hints.length) {
+    const hi = Math.min((state && state.tries) || 0, hints.length - 1);
+    return '有意思的猜想！不过这一次我还不能替你揭晓答案——我们约好了，本领要你自己找出来。<br>' +
+      '💡 <b>线索 ' + (hi + 1) + '：</b>' + hints[hi] + '<br>' +
+      '去看看、去摸摸、去闻闻，回来再猜一次。实在想不出来，可以点下面的「🔓 揭晓答案」。';
+  }
+  return '有意思的猜想！先不急着揭晓——你再蹲下来看看它的叶子（或身体）摸起来是什么感觉，和旁边的比一比，回来告诉我你发现了什么不同。';
+}
+
+async function askPlant(opt) {
+  const text = opt.text || '';
+  let p = opt.plantRef || findPlant(text);
+  let card = null;
+  if (p) {
+    card = { name: p.n, habitat: p.env, features: '', wisdom: p.say, keys: p.keys, hints: p.hints, ask: p.ask, doubt: false, src: 'kb' };
+  }
+  if (!card) {
+    const nm = extractName(text);
+    if (nm) {
+      try { card = await lookupSpecies(nm); } catch (e) { card = null; }
+      if (card) { try { toast('🔎 已检索到「' + card.name + '」的资料卡'); } catch (e) { } }
+    }
+  }
+  if (!card && !hasGuess(text) && !findPlant(text)) {
+    /* 连名字都没有 → 本地引擎引导，不浪费 AI 额度 */
+    return { text: localSage2(text, opt.state), local: true };
+  }
+  try {
+    let sys = SYS2;
+    if (card) {
+      sys += '\n\n【资料卡·仅供你判断，禁止整段照抄，也不要在学生猜错时泄露】\n' +
+        '物种：' + card.name + '（' + (card.type || '') + '）\n' +
+        '生境：' + (card.habitat || '未知') + '\n' +
+        '特征：' + (card.features || '未知') + '\n' +
+        '生存智慧：' + (card.wisdom || '未知') + '\n' +
+        '关键词（命中任意一个就算猜对）：' + (card.keys || []).join('、') + '\n' +
+        '可给的观察线索（一次只给一条）：' + (card.hints || []).join(' / ') + '\n' +
+        '猜对后的追问：' + (card.ask || '');
+      if (card.doubt) sys += '\n⚠️ 资料卡标有"不确定"。此时请如实对孩子说你也不太确定这种生物，请他用形色APP确认名字，并给他 2~3 个可以去现场观察的问题，不要编造答案。';
+    } else {
+      sys += '\n\n⚠️ 没有这个物种的资料。请如实说你不确定，请学生用形色APP确认名字，并给他 2~3 个现场可以观察的问题。';
+    }
+    sys += '\n\n【输出格式，务必遵守】只输出一个 JSON 对象，不要任何前后缀、不要代码块：' +
+      '{"hit":true或false,"reply":"你要对孩子说的话（150字以内，可用 <b> 加粗关键词，不要换行符）"}' +
+      '\n其中 hit 表示"学生的猜想是否命中要点"，true 才可以在 reply 里揭晓答案；hit 为 false 时 reply 只能给一条观察线索。';
+    const out = await callAPI(sys, opt.history || [{ role: 'user', text: text }], opt.images, { max_tokens: 1400 });
+    const j = safeJSON(stripJSON(out) || '');
+    if (j && j.reply) {
+      let reply = String(j.reply);
+      if (!j.hit) reply = guardLeak(reply, card, opt.state);
+      else if (!/猜对/.test(reply)) reply = '<span class="ok">🎉 猜对了！</span>' + reply;
+      return { text: reply, remote: true, card: card, hit: !!j.hit };
+    }
+    /* 模型没按格式输出 → 原话照用；只在"没说猜对"时做一次泄题检查 */
+    let plain = String(out || '').replace(/^\s*\{[\s\S]*?\}\s*$/, '').trim();
+    if (plain) {
+      const t = /猜对/.test(plain) ? plain : guardLeak(plain, card, opt.state);
+      return { text: t, remote: true, card: card };
+    }
+    return { text: localSage2(text, opt.state), local: true, card: card };
+  } catch (e) {
+    console.warn('AI 调用失败：', e);
+    toast('AI 通道暂时不可用（' + e.message + '），先用内置引擎陪你探究', true);
+    return { text: localSage2(text, opt.state), local: true, card: card };
+  }
+}
+
+async function askReview(opt) {
+  const imgs = (opt.images || []).slice(0, 3);
+  const canSee = API.vision() && imgs.length > 0;
+  let user = '【学生档案誊抄内容】\n' + (opt.text || '（学生没有填写文字内容）');
+  if (imgs.length && !canSee) {
+    user += '\n\n（学生上传了 ' + imgs.length + ' 张档案照片，但当前 AI 通道看不了图片，请依据上面的文字内容评分，并在 comment 中说明"未看到图片"。）';
+  }
+  let sys = SYS4;
+  try {
+    const out = await callAPI(sys, [{ role: 'user', text: user }], canSee ? imgs : null,
+      { max_tokens: 1600, temperature: .4, timeout: 70000 });
+    const j = safeJSON(stripJSON(out) || '');
+    if (j && j.scores) {
+      const r = normReview(j, opt.text, opt.hasImg);
+      r.remote = true; r.seen = canSee; r.raw = out;
+      return { review: r };
+    }
+    /* 模型没按格式输出 → 再要一次 */
+    const out2 = await callAPI(sys + '\n\n上一次你输出的内容不是合法 JSON，请这次严格只输出 JSON 对象本身。',
+      [{ role: 'user', text: user }, { role: 'assistant', text: out.slice(0, 400) },
+      { role: 'user', text: '请重新只输出 JSON 对象，不要任何前后缀。' }],
+      null, { max_tokens: 1400, temperature: .2, timeout: 60000 });
+    const j2 = safeJSON(stripJSON(out2) || '');
+    if (j2 && j2.scores) {
+      const r = normReview(j2, opt.text, opt.hasImg);
+      r.remote = true; r.seen = canSee; r.raw = out2;
+      return { review: r };
+    }
+    return { review: localReview(opt.text, opt.hasImg, out), local: true, raw: out };
+  } catch (e) {
+    console.warn('评审 AI 调用失败：', e);
+    toast('评审 AI 通道不可用（' + e.message + '），改用内置量表评分', true);
+    return { review: localReview(opt.text, opt.hasImg), local: true };
+  }
+}
+
+/* ---------------- 兜底：第二阶段本地引擎（绝不直接给答案） ---------------- */
+function localSage2(text, state) {
+  state = state || { plant: null, tries: 0, revealed: false };
+  const p = findPlant(text);
+  if (!p) {
+    if (hasGuess(text)) {
+      return {
+        kind: 'unknown',
+        text: '嗯……你说的这株植物，我随身的小本子里还没有它的档案。<br>' +
+          '你能打开形色 APP 拍张照，把它的名字告诉我吗？<br>' +
+          '句式这样就行：<b>「我认识了____，我猜想它的生存绝招是____」</b>。<br>' +
+          '在那之前，先回答我三个问题：它长在<b>有水的地方</b>、<b>晒得到太阳的地方</b>，还是<b>大树底下晒不到太阳的地方</b>？'
+      };
+    }
+    return {
+      kind: 'unknown',
+      text: '你好呀，我是小达尔文 🍃，今天我们到莲花山公园去找植物。<br>' +
+        '想和我一起破解一种植物的生存绝招，先按这个句式开口：<br><b>「我认识了____，我猜想它的生存绝招是____」</b>。<br>' +
+        '先告诉我它叫什么名字——你可以用形色 APP 拍一下叶子或花，识别率最高哦。'
+    };
+  }
+  if (state.revealed) {
+    return { kind: 'after', text: p.say + '<br><br>还想再深挖一点吗？' + p.ask };
+  }
+  const hit = hits(text, p.keys);
+  if (!hasGuess(text)) {
+    return {
+      kind: 'nudge',
+      text: '你已经锁定目标：<b>' + p.n + '</b> 🌿<br>' +
+        '现在轮到你了——把你的猜想说出来，我才好判断你观察到哪里了。<br>' +
+        '句式在这里：<b>「我认识了' + p.n + '，我猜想它的生存绝招是____」</b>。'
+    };
+  }
+  if (hit.length) {
+    return {
+      kind: 'right', plant: p.n,
+      text: '<span class="ok">🎉 猜对了！</span>你抓住了关键——「' + hit.slice(0, 2).join('、') + '」。<br>' +
+        '是的，<b>' + p.n + '</b>的生存智慧是这样的：' + p.say + '<br><br>🔍 <b>再往深里想一层：</b>' + p.ask
+    };
+  }
+  const hi = Math.min(state.tries || 0, p.hints.length - 1);
+  return {
+    kind: 'hint', plant: p.n,
+    text: '有意思的猜想！不过这一次，我还不能替你揭晓答案——我们约好了，本领要你自己找出来。<br>' +
+      '💡 <b>线索 ' + (hi + 1) + '：</b>' + p.hints[hi] + '<br>' +
+      '去看看、去摸摸、去闻闻，回来再猜一次。实在想不出来，可以点下面的「🔓 揭晓答案」。'
+  };
+}
+
+/* ---------------- 第四阶段：评分规范化 ---------------- */
+function normReview(j, src, hasImg) {
+  const s = j.scores || {};
+  const num = v => Math.max(0, Math.min(v, Math.round(Number(v) || 0)));
+  const sc = {
+    info: Math.min(20, num(s.info)), cat_ok: Math.min(20, num(s.cat_ok)),
+    keywords: Math.min(20, num(s.keywords)), explain: Math.min(25, num(s.explain)),
+    present: Math.min(15, num(s.present))
+  };
+  let total = num(j.total) || (sc.info + sc.cat_ok + sc.keywords + sc.explain + sc.present);
+  total = Math.min(100, total);
+  return {
+    name: j.name || guessName(src), cat: j.cat || guessCat(src),
+    scores: sc, total: total, level: j.level || levelOf(total),
+    comment: j.comment || '', good: j.good || [], tips: j.tips || [], encourage: j.encourage || '',
+    hasImg: !!hasImg, local: false
+  };
+}
+function guessName(s) {
+  const m = (s || '').match(/(?:生物名称|名称|名字)\s*[：:]\s*([^\n，,。]{1,20})/);
+  return m ? m[1].trim() : '';
+}
+function guessCat(s) {
+  if (/动物/.test(s || '')) return '动物';
+  if (/植物/.test(s || '')) return '植物';
+  return '';
+}
+function levelOf(t) { return t >= 90 ? '优秀' : t >= 75 ? '良好' : t >= 60 ? '合格' : '待改进'; }
+
+function localReview(src, hasImg, raw) {
+  const s = (src || '').trim();
+  const len = s.length;
+  const name = guessName(s);
+  const cat = guessCat(s);
+  const hasFeat = /(形态|特征|习性|叶子|叶|茎|根|花|身体|颜色|大小)/.test(s);
+  const catMark = WIS_CATS.filter(c => s.indexOf(c) >= 0 || s.indexOf(c.split('智慧')[0]) >= 0);
+  const kw = (s.match(/(?:关键词)\s*[：:]?\s*([^\n]{2,40})/) || [])[1] || '';
+  const kwList = kw ? kw.split(/[、,，\s]+/).filter(x => x.length >= 2) : [];
+  const cause = /(因为|所以|因此|这样|才能|帮助它|让它|使它|能够)/.test(s);
+  const deep = /(天敌|捕食|繁殖|后代|种子|传粉|适应|环境|生存|繁衍|竞争|阳光|水分|温度)/.test(s);
+
+  let info = Math.min(20, (name ? 10 : 0) + (cat ? 5 : 0) + (hasFeat ? 5 : (len > 60 ? 3 : 0)));
+  let cat_ok = Math.min(20, catMark.length ? 20 : (/(类别)/.test(s) ? 8 : 0));
+  let keywords = Math.min(20, kwList.length >= 2 ? 20 : kwList.length === 1 ? 15 : (/(关键词)/.test(s) ? 8 : 4));
+  let explain = Math.min(25, (deep ? 12 : 4) + (cause ? 8 : 2) + (len > 140 ? 5 : len > 80 ? 3 : 1));
+  let present = Math.min(15, (hasImg ? 8 : 0) + (len > 100 ? 7 : len > 50 ? 5 : 2));
+  const total = info + cat_ok + keywords + explain + present;
+
+  const good = [], tips = [];
+  if (name) good.push('清楚写出了生物名称「' + name + '」，档案有明确的研究对象。');
+  if (cat) good.push('标注了生物类别（' + cat + '），分类意识到位。');
+  if (catMark.length) good.push('把生存智慧归到了「' + catMark[0] + '」，说明你懂得分门别类。');
+  if (kwList.length >= 2) good.push('关键词提炼得很精炼：' + kwList.slice(0, 3).join('、') + '。');
+  if (deep && cause) good.push('能从"适应环境、生存繁衍"的角度解释本领的作用，有了因果推理。');
+  if (hasImg) good.push('配上了手绘图／照片，档案图文并茂。');
+  if (!good.length) good.push('你已经动手记录了观察到的生物，这是成为自然观察者的第一步。');
+
+  if (!name) tips.push('先给档案定个主角：在"生物名称"处写下它的名字（可用形色 APP 识别确认）。');
+  if (!cat) tips.push('别忘了勾选生物类别：□植物 □动物，这是分类归纳的起点。');
+  if (!catMark.length) tips.push('对照六大类别，给它贴上标签：伪装拟态／防御自保／适应环境／高效觅食储能／繁衍延续／协同共生。');
+  if (kwList.length < 2) tips.push('把绝招浓缩成 2~3 个关键词，例如"蜡质叶面、通气组织"，比一句话更好记。');
+  if (!cause) tips.push('用"因为……所以……"改写作用解读：本领→直接好处→对生存繁衍的帮助。');
+  if (!deep) tips.push('在作用解读里点出它到底解决了什么难题：天敌、干旱、缺光、还是传粉？');
+  if (!hasImg) tips.push('画一画它的样子，或者在档案里贴一张现场照片，图文结合更有说服力。');
+
+  const enc = '——达尔文说，能够生存下来的，不是最强大的，也不是最聪明的，而是最能适应变化的。你已经像一位真正的博物学家那样在观察了。';
+  let comment = '';
+  if (total >= 90) comment = '这是一份堪称范本的档案！' + (name ? '你笔下的' + name : '你研究的生物') + '被你读透了：特征、类别、关键词、作用环环相扣，看得出你在现场真的蹲下来看过、想过。';
+  else if (total >= 75) comment = '档案已经很完整了，' + (name ? name : '这位主角') + '的本领被你讲得清清楚楚。再补上一两处细节，就能进入"优秀"行列。';
+  else if (total >= 60) comment = '骨架已经搭起来了，' + (name ? name : '你的生物') + '的名字和绝招都记下了。下面几步能让你的档案更扎实。';
+  else comment = '你已经迈出了最难的第一步——把观察到的东西记录下来。跟着下面的建议补一补，档案会立刻不一样。';
+
+  return {
+    name: name, cat: cat,
+    scores: { info: info, cat_ok: cat_ok, keywords: keywords, explain: explain, present: present },
+    total: total, level: levelOf(total), comment: comment,
+    good: good.slice(0, 4), tips: tips.slice(0, 4), encourage: enc, hasImg: !!hasImg, local: true,
+    raw: raw || ''
+  };
+}
+
+/* ================= 应用状态 ================= */
+const S = {
+  name: '', chat2: [], recs3: [],
+  hb: { imgs: [], text: '', result: null },
+  _pending: {}
+};
+const KEY = { chat2: 'nw_chat2', recs3: 'nw_recs3', hb: 'nw_hb4', meta: 'nw_meta' };
+
+function save(part) {
+  S._pending[part] = true;
+  clearTimeout(save._t);
+  save._t = setTimeout(async () => {
+    for (const p of Object.keys(S._pending)) {
+      delete S._pending[p];
+      try { await DB.set(KEY[p], S[p]); } catch (e) { }
+    }
+    LS.set('nw_meta', { name: S.name, stage: curStage });
+  }, 320);
+}
+function flashTag(id) {
+  const el = $(id); if (!el) return;
+  el.classList.add('on');
+  el.querySelector('span:last-child').textContent = '已保存 · ' + nowStr().slice(11);
+  clearTimeout(flashTag._t);
+  flashTag._t = setTimeout(() => {
+    el.classList.remove('on');
+    el.querySelector('span:last-child').textContent = '空闲';
+  }, 4000);
+}
+
+/* ================= 录音 & 语音转文字 ================= */
+const Rec = {
+  mr: null, chunks: [], stream: null, t0: 0,
+  async start() {
+    this.stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    let mime = 'audio/webm';
+    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) mime = 'audio/webm;codecs=opus';
+    else if (MediaRecorder.isTypeSupported('audio/mp4')) mime = 'audio/mp4';
+    this.mr = new MediaRecorder(this.stream, { mimeType: mime });
+    this.chunks = []; this.t0 = Date.now();
+    this.mr.ondataavailable = e => { if (e.data && e.data.size) this.chunks.push(e.data); };
+    this.mr.start();
+  },
+  stop() {
+    return new Promise(res => {
+      if (!this.mr) return res(null);
+      const mime = this.mr.mimeType || 'audio/webm';
+      this.mr.onstop = async () => {
+        const blob = new Blob(this.chunks, { type: mime });
+        const dur = Math.round((Date.now() - this.t0) / 1000);
+        this.stream && this.stream.getTracks().forEach(t => t.stop());
+        const data = await readFileAsDataURL(blob);
+        this.mr = null;
+        res({ data, mime, dur });
+      };
+      this.mr.stop();
+    });
+  }
+};
+const Speech = {
+  rec: null, buf: '',
+  ok() { return !!(window.SpeechRecognition || window.webkitSpeechRecognition); },
+  start(onText, onErr) {
+    if (!this.ok()) { onErr && onErr('浏览器不支持语音转文字'); return false; }
+    const R = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const r = new R();
+    r.lang = 'zh-CN'; r.continuous = true; r.interimResults = true;
+    this.buf = '';
+    r.onresult = e => {
+      let fin = '';
+      for (let i = e.resultIndex; i < e.results.length; i++) fin += e.results[i][0].transcript;
+      this.buf += fin;
+      onText && onText(this.buf, !e.results[e.results.length - 1].isFinal);
+    };
+    r.onerror = e => { onErr && onErr(e.error); };
+    r.onend = () => { if (this.rec === r) { try { r.start(); } catch (x) { } } };
+    try { r.start(); this.rec = r; return true; } catch (e) { onErr && onErr('无法启动'); return false; }
+  },
+  stop() {
+    if (this.rec) { const r = this.rec; this.rec = null; try { r.onend = null; r.stop(); } catch (e) { } }
+    const t = this.buf; this.buf = ''; return t;
+  }
+};
+function fmtDur(s) { return pad2(Math.floor(s / 60)) + ':' + pad2(s % 60); }
+
+/* ================= 阶段切换 ================= */
+let curStage = 1;
+function goStage(n) {
+  curStage = n;
+  $$('.nav-btn').forEach(b => b.classList.toggle('on', +b.dataset.stage === n));
+  $$('.stage').forEach(s => s.classList.toggle('on', s.id === 'stage' + n));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  LS.set('nw_meta', { name: S.name, stage: n });
+}
+
+/* ================= 阶段一 ================= */
+function renderBooks() {
+  const q = ($('#bookSearch').value || '').trim().toLowerCase();
+  const list = BOOKS.map((b, i) => ({ b: b, no: i + 1 }))
+    .filter(o => !q || (o.b.t + o.b.a + o.b.p).toLowerCase().indexOf(q) >= 0);
+  $('#bookGrid').innerHTML = list.map(o =>
+    '<div class="book"><div class="no">' + pad2(o.no) + '</div>' +
+    '<div class="info"><div class="bt">' + esc(o.b.t) + '</div>' +
+    '<div class="ba">' + esc(o.b.a) + '</div>' +
+    '<div class="bp">' + esc(o.b.p) + '</div></div></div>').join('') ||
+    '<div class="empty">没有匹配的书目，换个关键词试试～</div>';
+  $('#bookCount').textContent = '共 ' + BOOKS.length + ' 本 · 当前显示 ' + list.length + ' 本';
+}
+function renderVideos() {
+  $('#videoGrid').innerHTML = VIDEOS.map((v, i) =>
+    '<div class="vid" data-vid="' + i + '" title="点击跳转到播放页面｜可以重点看：' + esc(v.w || '') + '">' +
+    '<div class="no">' + pad2(i + 1) + '</div>' +
+    '<div class="vmain"><div class="vt">' + esc(v.t) + '</div>' +
+    '<div class="vmeta">' + esc(v.g) + ' · ' + esc(v.d) + '</div></div>' +
+    '<div class="go">▶ 观看</div></div>').join('');
+  $('#videoGrid').querySelectorAll('.vid').forEach(el => {
+    el.onclick = () => openVideo(+el.dataset.vid);
+  });
+}
+function openVideo(i) {
+  const v = VIDEOS[i]; if (!v) return;
+  /* 只有一个播放源 → 直接跳转；多个 → 弹出小窗让你选 */
+  if (v.links.length === 1) { jumpTo(v.links[0].u, v.t); return; }
+  $('#vidTitle').textContent = '🎬 ' + v.t;
+  $('#vidBody').innerHTML =
+    '<div class="kv"><b>序号</b><span>No.' + pad2(i + 1) + '</span></div>' +
+    '<div class="kv"><b>类型</b><span>' + esc(v.g) + '</span></div>' +
+    '<div class="kv"><b>时长</b><span>' + esc(v.d) + '</span></div>' +
+    (v.w ? '<p class="hint" style="margin:10px 0 4px">🧠 可以重点看：' + esc(v.w) + '</p>' : '') +
+    '<div class="sec-t" style="margin:14px 0 8px">选择播放源（新窗口打开）</div>' +
+    '<div class="vid-links">' + v.links.map(l =>
+      '<a href="' + esc(l.u) + '" target="_blank" rel="noopener noreferrer">▶ ' + esc(l.n) + ' 打开</a>').join('') + '</div>' +
+    '<p class="hint" style="margin-top:11px">出处：' + esc(v.note) + '　·　建议在老师或家长指导下观看。</p>';
+  $('#vidMask').classList.add('on');
+}
+function jumpTo(u, name) {
+  const w = window.open(u, '_blank', 'noopener');
+  if (!w) toast('浏览器拦截了新窗口，请允许弹出窗口后重试', true);
+  else toast('已在新窗口打开：' + (name || ''));
+}
+
+/* ================= 图片查看 ================= */
+function viewImg(src) { $('#imgModalSrc').src = src; $('#imgMask').classList.add('on'); }
+$$('.mask').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m || e.target.hasAttribute('data-close')) m.classList.remove('on'); });
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') $$('.mask').forEach(m => m.classList.remove('on'));
+});
+
+/* ================= 聊天通用渲染 ================= */
+function msgHTML(m) {
+  const isMe = m.role === 'me';
+  let h = '<div class="msg' + (isMe ? ' me' : '') + '"><div class="a">' + (isMe ? '🙋' : '🔭') + '</div><div class="bub">';
+  h += '<div class="who">' + (isMe ? (S.name || '我') : (m.who || AGENT_NAME)) + ' · ' + nowStr(m.ts) + '</div>';
+  if (m.text) h += '<div>' + m.text + '</div>';
+  if (m.imgs && m.imgs.length) h += m.imgs.map(d =>
+    '<img class="chatimg" src="' + d + '" onclick="viewImg(\'' + d + '\')" style="cursor:zoom-in">').join('');
+  if (m.audio) h += '<div class="aud"><audio controls src="' + m.audio.data + '"></audio>' +
+    '<div class="tip">' + (m.audio.text ? '🎙 ' + esc(m.audio.text) : '🎙 语音 ' + fmtDur(m.audio.dur || 0)) + '</div></div>';
+  h += '</div></div>';
+  return h;
+}
+function renderChat(box, msgs) {
+  box.innerHTML = msgs.map(msgHTML).join('');
+  box.scrollTop = box.scrollHeight;
+}
+function pushTyping(box) {
+  const d = document.createElement('div');
+  d.className = 'msg'; d.id = 'typingEl';
+  d.innerHTML = '<div class="a">🔭</div><div class="bub"><span class="typing"><i></i><i></i><i></i></span></div>';
+  box.appendChild(d); box.scrollTop = box.scrollHeight;
+}
+function popTyping() { const e = $('#typingEl'); if (e) e.remove(); }
+
+/* ================= 阶段二：小达尔文 · 自然探究助手 ================= */
+let st2 = { plant: null, tries: 0, revealed: false };
+let pend2 = { imgs: [], audio: null };
+
+function resetPend2() {
+  pend2 = { imgs: [], audio: null };
+  $('#prevBar2').style.display = 'none';
+}
+function showPend2() {
+  const bar = $('#prevBar2');
+  const has = pend2.imgs.length || pend2.audio;
+  bar.style.display = has ? 'flex' : 'none';
+  if (!has) return;
+  let h = '<div style="display:flex;gap:6px;align-items:center">';
+  pend2.imgs.forEach(d => h += '<img src="' + d + '" onclick="viewImg(\'' + d + '\')">');
+  if (pend2.audio) h += '<audio controls src="' + pend2.audio.data + '"></audio>';
+  h += '</div>';
+  $('#prevTxt2').innerHTML = h;
+}
+function addMsg2(role, text, extra) {
+  const m = Object.assign({ id: uid(), role: role, text: text || '', imgs: [], audio: null, ts: Date.now() }, extra || {});
+  S.chat2.push(m); save('chat2'); renderChat($('#chatBody2'), S.chat2);
+  $('#chatCount2').textContent = S.chat2.filter(x => x.role === 'me').length;
+  return m;
+}
+
+async function send2() {
+  const ta = $('#input2'), text = (ta.value || '').trim();
+  if (!text && !pend2.imgs.length && !pend2.audio) { toast('先说点什么，或上传一张植物照片', true); return; }
+  ta.value = ''; ta.style.height = '';
+  const imgs = pend2.imgs.slice(), audio = pend2.audio;
+  addMsg2('me', text || '🎙 语音提问', { imgs: imgs, audio: audio, who: S.name || '我' });
+  resetPend2();
+  pushTyping($('#chatBody2'));
+  const p = findPlant(text);
+  if (p && st2.plant !== p.n) st2 = { plant: p.n, tries: 0, revealed: false };
+  const history = S.chat2.slice(0, -1).filter(m => m.role === 'me' || m.role === 'ai').slice(-8)
+    .map(m => ({ role: m.role === 'me' ? 'user' : 'assistant', text: (m.text || '').replace(/<[^>]+>/g, '') || '（图片／语音）' }));
+  history.push({ role: 'user', text: text || '（我发了一张照片／一段语音）' });
+  let out;
+  try {
+    out = await askSage({ kind: 'plant', text: text, images: imgs, history: history, state: st2, plantRef: p });
+  } catch (e) { out = { text: localSage2(text, st2), local: true }; }
+  if (out && out.card && out.card.name && st2.plant !== out.card.name) st2.plant = out.card.name;
+  if (out && out.remote && out.hit === false) st2.tries = (st2.tries || 0) + 1;
+  if (out && out.remote && out.hit === true) st2.revealed = true;
+  popTyping();
+  if (typeof out.text === 'string') {
+    addMsg2('ai', out.text, { who: AGENT_NAME });
+  } else {
+    const r = out.text || {};
+    if (r.kind === 'switch') {
+      addMsg2('ai', '太好了，你已经锁定目标：<b>' + r.plant + '</b> 🌿<br>现在轮到你了——说出你的猜想：<br><b>「我认识了' +
+        r.plant + '，我猜想它的生存绝招是____」</b>', { who: AGENT_NAME });
+    } else if (r.kind === 'right') {
+      st2.revealed = true;
+      addMsg2('ai', r.text, { who: AGENT_NAME });
+    } else if (r.kind === 'hint') {
+      st2.tries++;
+      addMsg2('ai', r.text, { who: AGENT_NAME });
+    } else {
+      addMsg2('ai', r.text || '（我好像走神了…再说一遍？）', { who: AGENT_NAME });
+    }
+  }
+  flashTag('#saveTag2');
+}
+const SYS_REVEAL = '你是博物学向导，面向小学四年级学生。学生猜了很多次都没猜出来，现在请你直接揭晓这个物种的生存智慧：说出它的名字、它用什么器官解决了什么难题（80~120字，要具体、有画面感），最后抛出一个可以继续观察的追问。只输出要说的话，不要 JSON，不要 Markdown。';
+
+async function reveal2() {
+  let name = st2.plant || '';
+  if (!name) {
+    const lastMe = S.chat2.filter(m => m.role === 'me').slice(-1)[0];
+    name = extractName((lastMe && lastMe.text) || '');
+  }
+  if (!name) { toast('先告诉我你在研究哪种植物～', true); return; }
+  st2.revealed = true;
+  addMsg2('me', '🔓 我实在猜不出来，请揭晓答案吧', { who: S.name || '我' });
+  pushTyping($('#chatBody2'));
+  const p = PLANTS.filter(x => x.n === name)[0];
+  const escHTML = s => String(s || '').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  let txt = '';
+  if (p) {
+    txt = '好——既然你认真猜过这么多次，我就破例一次。<br>' +
+      '🌿 <b>' + p.n + '</b>的生存智慧是：' + p.say +
+      '<br><br>🔍 但真正的博物学家不会停在答案上：' + p.ask;
+  } else {
+    let card = null;
+    try { card = await lookupSpecies(name); } catch (e) { }
+    if (card && card.wisdom) {
+      txt = '好——你认真猜了这么多次，我就破例揭晓一次。<br>🌿 <b>' + escHTML(card.name || name) +
+        '</b>的生存智慧是：' + escHTML(card.wisdom) +
+        '<br><br>🔍 但真正的博物学家不会停在答案上：' + escHTML(card.ask ||
+          '它在野外还要面对哪些别的难题？你能找出它的第二个绝招吗？');
+    } else {
+      try {
+        const out = await callAPI(SYS_REVEAL, [{ role: 'user', text: '请揭晓：' + name + ' 的生存智慧是什么？' }],
+          null, { max_tokens: 1200, timeout: 50000 });
+        txt = '好——你认真猜了这么多次，我就破例揭晓一次。<br>🌿 ' + escHTML(out);
+      } catch (e) {
+        popTyping();
+        toast('现在连不上 AI，先用形色 APP 确认名字，再把观察到的特征说给我听', true);
+        return;
+      }
+    }
+  }
+  popTyping();
+  addMsg2('ai', txt, { who: AGENT_NAME });
+}
+
+/* ================= 阶段三：夜观电子记录表（图片 / 语音 / 文字） ================= */
+let recState = { id: null, recording: false, t0: 0, timer: null, buf: '' };
+
+let pendRecImgs = [];
+let pendRecVoice = null;
+function pendHint() {
+  const el = $('#recPendHint');
+  if (!el) return;
+  let s = [];
+  if (pendRecImgs.length) s.push('📷 待带入照片 ' + pendRecImgs.length + ' 张');
+  if (pendRecVoice) s.push('🎙 待带入语音 1 段' + (pendRecVoice.text ? '（已转成文字）' : '（未转写出文字）'));
+  el.textContent = s.length ? s.join('　·　') + '，点「＋ 添加记录」生成卡片' : '';
+}
+function addRec3() {
+  const nm = ($('#recName').value || '').trim();
+  if (!nm) { toast('先写下生物名称或序号', true); return; }
+  const nImg = pendRecImgs.length, nV = pendRecVoice ? 1 : 0;
+  const r = {
+    id: uid(), name: nm, imgs: pendRecImgs.slice(),
+    voices: pendRecVoice ? [pendRecVoice] : [], note: '', ts: Date.now()
+  };
+  pendRecImgs = []; pendRecVoice = null; pendHint();
+  S.recs3.push(r); save('recs3'); renderRecs3();
+  $('#recName').value = '';
+  toast((nImg || nV) ? '记录卡已建立，已带入 ' + (nImg ? nImg + ' 张照片' : '') +
+    (nImg && nV ? '、' : '') + (nV ? '1 段语音' : '') : '记录卡已建立，去拍照片、录语音吧');
+}
+function renderRecs3() {
+  const box = $('#recList');
+  if (!S.recs3.length) {
+    box.innerHTML = '<div class="empty" style="grid-column:1/-1">还没有记录卡。先建一张，再拍照片、录语音，至少记满 5 种夜行生物。</div>';
+  } else {
+    box.innerHTML = S.recs3.map((r, i) => {
+      let h = '<div class="rec"><div class="rh"><span class="no">' + (i + 1) + '</span>' +
+        '<div><div class="nm">' + esc(r.name) + '</div>' +
+        '<div class="ct">照片 ' + ((r.imgs && r.imgs.length) || 0) + ' 张 · 语音 ' +
+        ((r.voices && r.voices.length) || 0) + ' 段</div></div>' +
+        '<button class="del" data-delr="' + i + '" title="删除">✕</button></div>';
+      h += '<div class="shots">';
+      if (r.imgs && r.imgs.length) h += r.imgs.map(d => '<img src="' + d + '" onclick="viewImg(\'' + d + '\')" style="cursor:zoom-in">').join('');
+      else h += '<span class="hint" style="padding:6px 2px">暂无照片</span>';
+      h += '<button class="btn gray sm" data-imgr="' + i + '" style="margin-left:auto">＋ 照片</button></div>';
+      h += '<div class="vs">';
+      if (r.voices && r.voices.length) {
+        h += r.voices.map((v, k) => '<div class="voice"><div class="vt">' +
+          (v.text ? esc(v.text) : '<span class="hint">（未转写成功，可点编辑补上文字）</span>') + '</div>' +
+          '<div class="vm"><audio controls src="' + v.data + '"></audio>' +
+          '<span class="tm">' + fmtDur(v.dur || 0) + '</span>' +
+          '<button class="btn gray sm" data-ev="' + i + '_' + k + '">编辑</button>' +
+          '<button class="btn gray sm" data-dv="' + i + '_' + k + '">✕</button></div></div>').join('');
+      } else h += '<div class="hint">还没有语音记录</div>';
+      h += '</div>';
+      h += '<div class="rnote">' +
+        (r.note ? '<div class="nt">' + esc(r.note).replace(/\n/g, '<br>') + '</div>' : '') +
+        '<button class="btn ghost sm" data-nt="' + i + '">' + (r.note ? '✎ 修改文字说明' : '✎ 加一段文字说明') + '</button></div>';
+      h += '<div class="racts">' +
+        '<button class="btn sm ' + (recState.recording && recState.id === r.id ? 'gray' : 'amber') + '" data-rec="' + i + '">' +
+        (recState.recording && recState.id === r.id ? '⏹ 停止录音（' + fmtDur(Math.round((Date.now() - recState.t0) / 1000)) + '）' : '🎙 录一段发现') + '</button>' +
+        '<button class="btn ghost sm" data-exv="' + i + '">⬇ 导出本卡</button></div>';
+      return h + '</div>';
+    }).join('');
+  }
+  const n = S.recs3.length;
+  $('#recProg').style.width = Math.min(100, n / 5 * 100) + '%';
+  $('#recCount').innerHTML = '已记录 <b>' + n + '</b> / 5 种夜行生物' + (n >= 5 ? ' ✅' : '');
+
+  box.querySelectorAll('button[data-delr]').forEach(b => b.onclick = () => {
+    S.recs3.splice(+b.dataset.delr, 1); save('recs3'); renderRecs3();
+  });
+  box.querySelectorAll('button[data-imgr]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.imgr;
+    const inp = $('#recImg');
+    pickFiles(inp, arr => { S.recs3[i].imgs = (S.recs3[i].imgs || []).concat(arr); save('recs3'); renderRecs3(); flashTag('#saveTag3'); });
+  });
+  box.querySelectorAll('button[data-rec]').forEach(b => b.onclick = () => toggleRec(+b.dataset.rec));
+  box.querySelectorAll('button[data-dv]').forEach(b => b.onclick = () => {
+    const p = b.dataset.dv.split('_'), i = +p[0], k = +p[1];
+    S.recs3[i].voices.splice(k, 1); save('recs3'); renderRecs3();
+  });
+  box.querySelectorAll('button[data-ev]').forEach(b => b.onclick = () => {
+    const p = b.dataset.ev.split('_'), i = +p[0], k = +p[1];
+    const t = prompt('把这段话改成正确的文字（语音转写可能不准）：', S.recs3[i].voices[k].text || '');
+    if (t != null) { S.recs3[i].voices[k].text = t; save('recs3'); renderRecs3(); }
+  });
+  box.querySelectorAll('button[data-nt]').forEach(b => b.onclick = () => {
+    const i = +b.dataset.nt;
+    const t = prompt('写下你观察到的内容（也可以把语音转错的文字改对）：\n例如：它趴在叶子上不动，脚趾头圆圆的像吸盘。', S.recs3[i].note || '');
+    if (t != null) { S.recs3[i].note = t; save('recs3'); renderRecs3(); flashTag('#saveTag3'); }
+  });
+  box.querySelectorAll('button[data-exv]').forEach(b => b.onclick = () => {
+    exportHTML([S.recs3[+b.dataset.exv]], true);
+  });
+}
+/* 建卡前先录一段语音（录完自动带入卡片） */
+let pendMicOn = false;
+async function togglePendMic() {
+  const btn = $('#btnRecMic');
+  if (!btn) return;
+  if (pendMicOn) {
+    let txt = ''; try { txt = Speech.stop(); } catch (e) { }
+    const a = await Rec.stop();
+    pendMicOn = false;
+    btn.classList.remove('amber'); btn.textContent = '🎙️ 录入语音';
+    if (a) {
+      pendRecVoice = { data: a.data, mime: a.mime, dur: a.dur, text: (txt || '').trim(), ts: Date.now() };
+      toast(txt ? '语音已录好并转成文字，点「＋ 添加记录」带入' : '语音已录好（未识别到文字，可在卡片里点「编辑」补上）');
+    }
+    pendHint();
+    return;
+  }
+  try {
+    await Rec.start();
+    pendMicOn = true;
+    btn.classList.add('amber'); btn.textContent = '⏹ 停止录音';
+    Speech.start(t => { recState.buf = t; }, e => { });
+    toast('开始录音，说完再点一次「停止录音」');
+  } catch (e) { toast('无法录音：' + e.message, true); }
+}
+
+async function toggleRec(i) {
+  const r = S.recs3[i];
+  if (recState.recording) {
+    let txt = '';
+    try { txt = Speech.stop(); } catch (e) { }
+    const a = await Rec.stop();
+    clearInterval(recState.timer);
+    recState.recording = false; recState.id = null;
+    if (a) {
+      r.voices.push({ data: a.data, mime: a.mime, dur: a.dur, text: (txt || '').trim(), ts: Date.now() });
+      save('recs3'); flashTag('#saveTag3');
+      toast(txt ? '语音已保存并转成文字' : '语音已保存（未识别到文字，可点「编辑」补上）');
+    }
+    renderRecs3();
+    return;
+  }
+  try {
+    await Rec.start();
+    recState = { id: r.id, recording: true, t0: Date.now(), timer: null };
+    recState.timer = setInterval(() => renderRecs3(), 1000);
+    Speech.start((t, interim) => { recState.buf = t; },
+      err => { if (err !== 'no-speech') toast('语音转文字未启动：' + err, true); });
+    toast('开始录音，说完再点一次「停止录音」');
+    renderRecs3();
+  } catch (e) {
+    toast('无法录音：' + e.message, true);
+  }
+}
+
+/* ================= 阶段四：档案上传与 AI 评审 ================= */
+function renderHbGallery() {
+  const g = $('#hbGallery');
+  if (!S.hb.imgs.length) { g.innerHTML = '<span class="hint">未选择照片</span>'; return; }
+  g.innerHTML = S.hb.imgs.map((d, i) =>
+    '<div style="position:relative"><img src="' + d + '" style="width:86px;height:86px;object-fit:cover;border-radius:9px;border:1px solid var(--line);cursor:zoom-in" onclick="viewImg(\'' + d + '\')">' +
+    '<button class="btn gray sm" data-hbi="' + i + '" style="position:absolute;top:-6px;right:-6px;padding:2px 6px;border-radius:99px;font-size:11px">✕</button></div>').join('');
+  g.querySelectorAll('button[data-hbi]').forEach(b => b.onclick = () => {
+    S.hb.imgs.splice(+b.dataset.hbi, 1); save('hb'); renderHbGallery();
+  });
+}
+async function doReview() {
+  const btn = $('#btnHbReview');
+  const txt = ($('#hbText').value || '').trim();
+  const imgs = S.hb.imgs.slice();
+  if (!txt && !imgs.length) { toast('先上传档案照片，或把内容誊抄到文本框', true); return; }
+  if (!txt && imgs.length && !API.vision()) {
+    if (!confirm('当前 AI 通道看不了图片。\n把档案上写的内容誊抄到文本框，评分会准确得多。\n\n仍要只凭照片继续评价吗？')) return;
+  }
+  S.hb.text = txt; S.hb.imgs = imgs; save('hb');
+  btn.disabled = true; btn.innerHTML = '🔭 评审团正在翻阅档案…（' + (API.custom() ? '自定义接口' : '免费通道') + '）';
+  $('#hbResult').innerHTML = '<div class="empty"><span class="typing"><i></i><i></i><i></i></span> 　达尔文、法布尔和自然导师正在讨论你的档案…</div>';
+  const r = await askSage({ kind: 'review', text: txt, images: imgs, hasImg: imgs.length > 0 });
+  const rev = r.review || localReview(txt, imgs.length > 0);
+  rev.ts = Date.now();
+  S.hb.result = rev; save('hb'); flashTag('#saveTag4');
+  renderReview(rev);
+  btn.disabled = false; btn.innerHTML = '🔭 AI 评价我的档案';
+}
+function renderReview(r) {
+  const dims = [
+    ['信息完整性（名称·类别·基础特征）', r.scores.info, 20],
+    ['生存智慧类别判断', r.scores.cat_ok, 20],
+    ['生存智慧关键词提炼', r.scores.keywords, 20],
+    ['生存本领作用解读', r.scores.explain, 25],
+    ['图文呈现与规范', r.scores.present, 15]
+  ];
+  let h = '<div style="border-top:1px solid var(--line);padding-top:16px">';
+  h += '<div class="verdict"><div class="big">' + r.total + '</div>' +
+    '<div><div class="lv">' + (r.name ? esc(r.name) + ' · ' : '') + '<span style="color:var(--green)">' + esc(r.level) + '</span></div>' +
+    '<div class="cm">' + esc(r.comment || '') + '</div></div>' +
+    (r.local ? '<span class="tag b">内置引擎评分</span>' :
+      '<span class="tag">生成式 AI 评分' + (r.seen ? '（已看图）' : '（依据文字）') + '</span>') + '</div>';
+  h += dims.map(d => '<div class="score-row"><div class="lb">' + d[0] + '</div>' +
+    '<div class="bar"><i style="width:' + (d[1] / d[2] * 100) + '%"></i></div>' +
+    '<div class="vv">' + d[1] + '/' + d[2] + '</div></div>').join('');
+  if (r.good && r.good.length) h += '<div class="rv-block"><h4>🌟 评审团看到的亮点</h4><ul>' +
+    r.good.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul></div>';
+  if (r.tips && r.tips.length) h += '<div class="rv-block"><h4>🔧 下一步可以这样做</h4><ul>' +
+    r.tips.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul></div>';
+  if (r.encourage) h += '<div class="rv-block"><h4>💌 写在最后</h4><ul><li>' + esc(r.encourage) + '</li></ul></div>';
+  h += '<div class="row" style="margin-top:14px"><button class="btn ghost sm" onclick="exportHTML([],false,4)">⬇ 导出这份评语（HTML）</button>' +
+    '<span class="hint">评价依据：《学生评价单》第四阶段 · 报告完成度 / 展示与表达 · 档案六项指标</span></div>';
+  h += '</div>';
+  $('#hbResult').innerHTML = h;
+}
+
+/* ================= 导出 ================= */
+const EX_CSS = `*{box-sizing:border-box}body{font-family:"PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+margin:0;padding:0;background:#f6f8f5;color:#22332a;line-height:1.8;font-size:14.5px}
+.wrap{max-width:940px;margin:0 auto;padding:28px 24px 70px}
+.hero{background:linear-gradient(120deg,#123527,#2b6346);color:#fff;border-radius:16px;padding:24px 28px;margin-bottom:20px}
+.hero h1{font-size:22px;margin:0 0 6px}.hero .s{font-size:12.5px;color:#bfe0cd;letter-spacing:1px}
+.hero .m{margin-top:12px;font-size:13px;color:#dff0e6}
+.card{background:#fff;border:1px solid #e2e8e1;border-radius:14px;padding:20px 22px;margin-bottom:16px}
+h2{font-size:17px;margin:0 0 12px;color:#245c40;border-left:4px solid #d9a441;padding-left:10px}
+h3{font-size:14.5px;margin:16px 0 8px;color:#357551}
+table{width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:8px}
+th,td{border:1px solid #e2e8e1;padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#e7f2ea;color:#245c40}
+.msg{border-left:3px solid #4e9a70;padding:8px 0 8px 12px;margin-bottom:10px;background:#fafcfa;border-radius:0 8px 8px 0}
+.msg.me{border-left-color:#b8862f;background:#fdfaf3}
+.msg .who{font-size:11.5px;color:#7a8a80;margin-bottom:3px}
+.msg img{max-width:230px;border-radius:8px;margin:5px 6px 0 0;border:1px solid #e2e8e1}
+audio{height:32px;vertical-align:middle}
+.rec{border:1px solid #e2e8e1;border-radius:12px;padding:14px;margin-bottom:12px;background:#fcfdfc}
+.rec .t{font-weight:700;color:#1c4433}
+ul{margin:4px 0;padding-left:20px}li{margin:2px 0}
+.bar{height:8px;background:#eef3ef;border-radius:99px;overflow:hidden;max-width:260px}
+.bar i{display:block;height:100%;background:#4e9a70}
+.empty{color:#8a9a90;font-size:13px}
+.vd{display:flex;align-items:center;gap:14px;background:#f4faf6;border:1px solid #e2e8e1;border-radius:12px;padding:12px 16px;margin-bottom:12px}
+.vd .big{font-size:30px;font-weight:700;color:#245c40}
+img.thumb{cursor:zoom-in}
+#lb{position:fixed;inset:0;background:rgba(10,22,16,.9);display:none;place-items:center;z-index:99;cursor:zoom-out;padding:20px}
+#lb img{max-width:94vw;max-height:92vh;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.5)}
+#lb .x{position:absolute;top:18px;right:24px;color:#fff;font-size:26px;cursor:pointer;opacity:.8}
+@media print{body{background:#fff}.card{break-inside:avoid}#lb{display:none!important}}`;
+
+/* 导出页里的“点图放大”脚本 */
+const EX_JS = `document.addEventListener('click',function(e){var t=e.target;
+if(t.tagName==='IMG'&&t.classList.contains('thumb')){var l=document.getElementById('lb');
+l.innerHTML='<span class="x">&times;</span>';var i=document.createElement('img');i.src=t.src;l.appendChild(i);l.style.display='grid';}
+else if(t.id==='lb'||t.classList.contains('x')){document.getElementById('lb').style.display='none';}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'){var l=document.getElementById('lb');if(l)l.style.display='none';}});`;
+
+const EX_IMG = ' class="thumb" title="点击放大"';
+
+function expHead(title, sub) {
+  return '<div class="hero"><h1>' + esc(title) + '</h1><div class="s">' + esc(sub) + '</div>' +
+    '<div class="m">小探索家：<b>' + esc(S.name || '（未填写）') + '</b>　·　导出时间：' + nowStr() +
+    '　·　共记录夜行生物 ' + S.recs3.length + ' 种、AI 对话 ' +
+    (S.chat2.length + S.recs3.reduce((a, r) => a + (r.chat ? r.chat.length : 0), 0)) + ' 条</div></div>';
+}
+function chatBlockHTML(msgs, audio, who) {
+  if (!msgs || !msgs.length) return '<p class="empty">（本阶段暂无对话记录）</p>';
+  return msgs.map(m => {
+    let h = '<div class="msg' + (m.role === 'me' ? ' me' : '') + '">' +
+      '<div class="who">' + (m.role === 'me' ? esc(m.who || S.name || '我') : esc(m.who || (who || 'AI 智能体'))) + ' · ' + nowStr(m.ts) + '</div>';
+    if (m.text) h += '<div>' + m.text.replace(/<button[\s\S]*?<\/button>/g, '') + '</div>';
+    if (m.imgs && m.imgs.length) h += '<div>' + m.imgs.map(d => '<img src="' + d + '"' + EX_IMG + '>').join('') + '</div>';
+    if (m.audio) {
+      h += '<div>' + (audio ? '<audio controls src="' + m.audio.data + '"></audio>' : '<span class="empty">［语音已保留，本次导出未包含音频］</span>') +
+        '<div class="empty">' + (m.audio.text ? '🎙 转写：' + esc(m.audio.text) : '🎙 语音 ' + fmtDur(m.audio.dur || 0)) + '</div></div>';
+    }
+    return h + '</div>';
+  }).join('');
+}
+function reviewBlockHTML(r) {
+  if (!r) return '';
+  const dims = [['信息完整性', r.scores.info, 20], ['生存智慧类别判断', r.scores.cat_ok, 20],
+  ['关键词提炼', r.scores.keywords, 20], ['作用解读', r.scores.explain, 25], ['图文呈现', r.scores.present, 15]];
+  return '<div class="vd"><div class="big">' + r.total + '</div><div><b>' +
+    (r.name ? esc(r.name) + ' · ' : '') + esc(r.level) + '</b>（' + (r.local ? '内置引擎' : '生成式 AI') + '）<br>' +
+    '<span style="font-size:13px">' + esc(r.comment || '') + '</span></div></div>' +
+    '<table>' + dims.map(d => '<tr><td style="width:190px">' + d[0] + '</td><td style="width:180px">' +
+      '<div class="bar"><i style="width:' + (d[1] / d[2] * 100) + '%"></i></div></td><td>' + d[1] + ' / ' + d[2] + '</td></tr>').join('') + '</table>' +
+    (r.good && r.good.length ? '<h3>🌟 亮点</h3><ul>' + r.good.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '') +
+    (r.tips && r.tips.length ? '<h3>🔧 下一步建议</h3><ul>' + r.tips.map(x => '<li>' + esc(x) + '</li>').join('') + '</ul>' : '') +
+    (r.encourage ? '<h3>💌 写在最后</h3><ul><li>' + esc(r.encourage) + '</li></ul>' : '');
+}
+function buildHTML(parts, audio, recsOnly) {
+  let b = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">' +
+    '<title>' + (recsOnly ? '夜观记录卡' : '自然生存智慧探究档案') + ' · ' + esc(S.name || '小探索家') + '</title>' +
+    '<style>' + EX_CSS + '</style></head><body><div class="wrap">' +
+    expHead('当AI成为“达尔文的望远镜”——用探究阅读解码自然的生存智慧',
+      recsOnly ? '夜观记录卡导出' : '学生探究档案（含全部 AI 对话与语音记录）');
+  b += '<div id="lb"></div>';
+  if (recsOnly) {
+    b += '<div class="card"><h2>夜观记录卡</h2>' +
+      (recsOnly || []).map(r => '<div class="rec"><div class="t">' + esc(r.name) + '</div>' +
+        (r.imgs && r.imgs.length ? '<h3>📷 现场照片（' + r.imgs.length + ' 张，点击可放大）</h3><div>' +
+          r.imgs.map(d => '<img src="' + d + '" style="max-width:150px;border-radius:8px;margin:6px 6px 0 0;border:1px solid #e2e8e1"' + EX_IMG + '>').join('') + '</div>' : '') +
+        ((r.voices && r.voices.length) ? '<h3>🎙 语音记录（' + r.voices.length + ' 条，可点击播放回听）</h3>' + r.voices.map(v =>
+          '<div style="margin-bottom:8px">' + (audio ? '<audio controls src="' + v.data + '"></audio>' : '<span class="empty">［未包含音频］</span>') +
+          '<div>' + (v.text ? esc(v.text) : '<span class="empty">（未转写）</span>') + '</div></div>').join('') : '') +
+        (r.note ? '<h3>✎ 文字说明</h3><div style="white-space:pre-wrap">' + esc(r.note) + '</div>' : '') +
+        '</div>').join('') + '</div>';
+  } else {
+    parts = parts || [2, 3, 4];
+    if (!Array.isArray(parts)) parts = [parts];
+    if (parts.indexOf(2) >= 0) {
+      b += '<div class="card"><h2>第二阶段 · 行走研读莲花山公园</h2>' +
+        '<h3>🌱 与「小达尔文」的全部对话（' + S.chat2.length + ' 条）</h3>' +
+        chatBlockHTML(S.chat2, audio, AGENT_NAME) + '</div>';
+    }
+    if (parts.indexOf(3) >= 0) {
+      b += '<div class="card"><h2>第三阶段 · 夜观莲花山公园</h2>' +
+        (S.recs3.length ? S.recs3.map((r, i) => '<div class="rec"><div class="t">' + (i + 1) + '. ' + esc(r.name) + '</div>' +
+          (r.imgs && r.imgs.length ? '<h3>📷 现场照片（' + r.imgs.length + ' 张，点击可放大）</h3><div>' +
+            r.imgs.map(d => '<img src="' + d + '" style="max-width:150px;border-radius:8px;margin:6px 6px 0 0;border:1px solid #e2e8e1"' + EX_IMG + '>').join('') + '</div>' : '') +
+          ((r.voices && r.voices.length) ? '<h3>🎙 现场语音（' + r.voices.length + ' 条，可点击播放回听）</h3>' + r.voices.map(v =>
+            '<div style="margin-bottom:8px">' + (audio ? '<audio controls src="' + v.data + '"></audio>' : '<span class="empty">［未包含音频］</span>') +
+            '<div>' + (v.text ? esc(v.text) : '<span class="empty">（未转写）</span>') + '</div></div>').join('') : '') +
+          (r.note ? '<h3>✎ 文字说明</h3><div style="white-space:pre-wrap">' + esc(r.note) + '</div>' : '') +
+          '</div>').join('') : '<p class="empty">（暂无记录）</p>') + '</div>';
+    }
+    if (parts.indexOf(4) >= 0) {
+      b += '<div class="card"><h2>第四阶段 · 整理报告与成果分享</h2>';
+      if (S.hb.imgs && S.hb.imgs.length) b += '<h3>📄 手绘档案照片（点击可放大）</h3><div>' +
+        S.hb.imgs.map(d => '<img src="' + d + '" style="max-width:300px;border-radius:10px;margin:6px 8px 0 0;border:1px solid #e2e8e1"' + EX_IMG + '>').join('') + '</div>';
+      if (S.hb.text) b += '<h3>档案誊抄内容</h3><div style="white-space:pre-wrap;background:#fcfdfc;border:1px solid #e2e8e1;border-radius:10px;padding:12px">' + esc(S.hb.text) + '</div>';
+      if (S.hb.result) b += '<h3>🔭 达尔文评审团评语</h3>' + reviewBlockHTML(S.hb.result);
+      b += '</div>';
+    }
+  }
+  b += '<div style="text-align:center;color:#8a9a90;font-size:12.5px;padding:10px 0 30px">' +
+    '本档案由《当AI成为“达尔文的望远镜”——用探究阅读解码自然的生存智慧》探究平台自动生成 · 深圳市每周半天计划</div>' +
+    '</div><script>' + EX_JS + '<\/script></body></html>';
+  return b;
+}
+function exportHTML(recs, audio, parts) {
+  const html = buildHTML(parts, !!audio, recs && recs.length ? recs : null);
+  const nm = (S.name ? S.name + '_' : '') +
+    (recs && recs.length ? '夜观记录卡_' + recs[0].name + '_' : '自然生存智慧档案_') + fileStamp() + '.html';
+  download(nm, html, 'text/html;charset=utf-8');
+  toast('已导出 HTML：' + nm);
+}
+function exportJSON() {
+  const data = { v: 3, name: S.name, ts: Date.now(), chat2: S.chat2, recs3: S.recs3, hb: S.hb };
+  download((S.name ? S.name + '_' : '') + '备份_' + fileStamp() + '.json', JSON.stringify(data), 'application/json;charset=utf-8');
+  toast('已导出 JSON 备份');
+}
+function exportCSV() {
+  const rows = [['阶段', '类型', '标题', '内容', '时间']];
+  S.chat2.forEach(m => rows.push(['二', m.role === 'me' ? '学生提问' : 'AI回复(小达尔文)', '', (m.text || '').replace(/<[^>]+>/g, '').replace(/\n/g, ' '), nowStr(m.ts)]));
+  S.recs3.forEach(r => {
+    (r.voices || []).forEach(v => rows.push(['三', '语音记录', r.name, (v.text || '（未转写）').replace(/\n/g, ' '), nowStr(v.ts)]));
+    if (r.note) rows.push(['三', '文字说明', r.name, r.note.replace(/\n/g, ' '), nowStr(r.ts)]);
+  });
+  if (S.hb.result) rows.push(['四', '档案AI评语', S.hb.result.name || '', S.hb.result.level + ' ' + S.hb.result.total + '分 | ' + (S.hb.result.comment || '').replace(/\n/g, ' '), nowStr(S.hb.result.ts)]);
+  const csv = '\ufeff' + rows.map(r => r.map(c => '"' + String(c == null ? '' : c).replace(/"/g, '""') + '"').join(',')).join('\r\n');
+  download((S.name ? S.name + '_' : '') + '记录_' + fileStamp() + '.csv', csv, 'text/csv;charset=utf-8');
+  toast('已导出 CSV');
+}
+function exportTXT() {
+  let t = '当AI成为“达尔文的望远镜”——用探究阅读解码自然的生存智慧\n';
+  t += '小探索家：' + (S.name || '（未填写）') + '　导出：' + nowStr() + '\n\n';
+  t += '【第二阶段·与小达尔文的 AI 对话全文】\n' +
+    (S.chat2.map(m => (m.role === 'me' ? '学生：' : '小达尔文：') + (m.text || '').replace(/<[^>]+>/g, '')).join('\n') || '（无）');
+  t += '\n\n【第三阶段·夜观记录】\n' + (S.recs3.map((r, i) => (i + 1) + '. ' + r.name +
+    '（照片 ' + ((r.imgs && r.imgs.length) || 0) + ' 张）\n' +
+    (r.voices || []).map(v => '   语音：' + (v.text || '（未转写）')).join('\n') +
+    (r.note ? '\n   文字：' + r.note : '')).join('\n') || '（无）');
+  t += '\n\n【第四阶段·档案评语】\n';
+  if (S.hb.result) {
+    t += '生物：' + (S.hb.result.name || '') + '　等级：' + S.hb.result.level + '　总分：' + S.hb.result.total + '\n' +
+      S.hb.result.comment + '\n亮点：' + (S.hb.result.good || []).join('；') + '\n建议：' + (S.hb.result.tips || []).join('；');
+  } else t += '（未评价）';
+  download((S.name ? S.name + '_' : '') + '记录_' + fileStamp() + '.txt', t, 'text/plain;charset=utf-8');
+  toast('已导出纯文本');
+}
+function exportDossier() {
+  const h = '<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8">' +
+    '<title>自然界生存智慧档案（空白模板）</title><style>' +
+    '@page{size:A4;margin:14mm}body{font-family:"Songti SC","Noto Serif SC",serif;max-width:760px;margin:0 auto;padding:24px;color:#22332a}' +
+    'h1{text-align:center;letter-spacing:6px;font-size:24px;border-bottom:2px solid #b8862f;padding-bottom:10px;margin-bottom:16px}' +
+    '.r{font-size:15px;margin-bottom:12px}.two{display:flex;gap:14px;margin-bottom:14px}' +
+    '.box{flex:1;height:150px;border:2px dashed #b9862f;border-radius:10px;display:grid;place-items:center;color:#a99a7d;text-align:center}' +
+    '.ln{border-bottom:1px solid #333;height:30px}.ln.x2{height:60px}' +
+    '.chk{display:flex;flex-wrap:wrap;gap:14px;font-size:15px;margin-top:6px}.chk span::before{content:"□";margin-right:5px;font-size:17px}' +
+    '.ft{margin-top:14px;font-size:14px;color:#5a6a60}</style></head><body>' +
+    '<h1>自 然 界 生 存 智 慧 档 案</h1>' +
+    '<div class="r">姓名：____________　　班级：____________　　日期：____________</div>' +
+    '<div class="two"><div class="box">可手绘生物形态<br>或粘贴生物图片</div><div class="box">可手绘生存本领示意图<br>或粘贴观察照片</div></div>' +
+    '<div class="r">生物名称：<span style="border-bottom:1px solid #333;display:inline-block;width:280px"></span>　　生物类别：□ 植物　□ 动物</div>' +
+    '<div class="r">基础特征（形态、生长／生活习性）：<div class="ln"></div><div class="ln"></div></div>' +
+    '<div class="r">生存智慧类别：<div class="chk"><span>伪装拟态智慧</span><span>防御自保智慧</span><span>适应环境智慧</span><span>高效觅食／储能智慧</span><span>繁衍延续智慧</span><span>协同共生智慧</span><span>其他：__________</span></div></div>' +
+    '<div class="r">生存智慧关键词（精炼概括）：<div class="ln"></div></div>' +
+    '<div class="r">生存本领作用解读（它的本领如何帮助自己适应环境、生存繁衍）：<div class="ln"></div><div class="ln"></div><div class="ln"></div></div>' +
+    '<div class="ft">当AI成为“达尔文的望远镜”——用探究阅读解码自然的生存智慧 · 第四阶段《自然生存手册》</div>' +
+    '</body></html>';
+  download('自然界生存智慧档案_空白模板.html', h, 'text/html;charset=utf-8');
+  toast('已下载空白档案模板，可打印后手绘');
+}
+async function doImport(file) {
+  try {
+    const j = JSON.parse(await readFileAsText(file));
+    ['chat2', 'recs3', 'hb'].forEach(k => { if (j[k] != null) S[k] = j[k]; });
+    if (j.name) S.name = j.name;
+    await DB.set(KEY.chat2, S.chat2); await DB.set(KEY.recs3, S.recs3);
+    await DB.set(KEY.hb, S.hb);
+    restoreAll();
+    toast('导入成功');
+  } catch (e) { toast('导入失败：' + e.message, true); }
+}
+
+/* ================= 还原界面 ================= */
+function restoreAll() {
+  renderChat($('#chatBody2'), S.chat2);
+  $('#chatCount2').textContent = S.chat2.filter(x => x.role === 'me').length;
+  renderRecs3(); renderHbGallery(); pendHint();
+  $('#hbText').value = S.hb.text || '';
+  if (S.hb.result) renderReview(S.hb.result);
+}
+function updateChanTag() {
+  const custom = API.custom();
+  const t = custom
+    ? '🔑 已接入自定义接口：' + API.model() + (API.vision() ? '（支持识图）' : '（不支持识图）')
+    : '🆓 免费 AI 通道（无需密钥，不支持识图；档案评价请把内容誊抄到文本框）';
+  ['#chanTag2', '#chanTag4'].forEach(id => { const el = $(id); if (el) el.textContent = t; });
+}
+
+/* ================= 事件绑定 ================= */
+function bind() {
+  /* 导航 */
+  $$('#nav .nav-btn').forEach(b => b.onclick = () => goStage(+b.dataset.stage));
+
+  /* 阶段一 */
+  $('#bookSearch').oninput = renderBooks;
+
+  /* 阶段二：与小达尔文对话 */
+  $('#send2').onclick = send2;
+  $('#input2').onkeydown = e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); send2(); } };
+  $('#input2').oninput = function () { this.style.height = 'auto'; this.style.height = Math.min(130, this.scrollHeight) + 'px'; };
+  $('#img2').onclick = () => {
+    pickFiles($('#fileImg2'), arr => { pend2.imgs = pend2.imgs.concat(arr); showPend2(); });
+  };
+  $('#rmPrev2').onclick = () => { resetPend2(); };
+
+  let mic2on = false;
+  $('#mic2').onclick = async function () {
+    const btn = this;
+    if (mic2on) {
+      let t = ''; try { t = Speech.stop(); } catch (e) { }
+      const a = await Rec.stop();
+      mic2on = false; btn.classList.remove('rec', 'on'); btn.textContent = '🎤';
+      if (a) { pend2.audio = a; pend2.audio.text = (t || '').trim(); }
+      if (t && t.trim()) {
+        $('#input2').value = t.trim();
+        $('#input2').dispatchEvent(new Event('input'));
+        toast('听到啦，我这就去想答案…');
+        await send2();                 /* 语音识别后，直接交给 AI 生成回答 */
+      } else {
+        showPend2();
+        toast('语音已录下。这个浏览器没能转成文字，请在输入框补一句你的猜想再发送', true);
+      }
+      return;
+    }
+    try {
+      await Rec.start();
+      mic2on = true; btn.classList.add('rec', 'on'); btn.textContent = '⏹';
+      if (!Speech.ok()) toast('这个浏览器不支持语音转文字，录完请手动补一句文字', true);
+      Speech.start(t => { $('#input2').value = t; }, e => { });
+      toast('请说出你的猜想，说完再点一次麦克风，我会听懂并回答');
+    } catch (e) { toast('无法录音：' + e.message, true); }
+  };
+  $('#quick2').innerHTML =
+    '<button onclick="quickSay(\'我认识了睡莲，我猜想它的生存绝招是\')">📖 句式模板</button>' +
+    '<button onclick="quickSay(\'我还观察到，它的叶子\')">🍃 我还观察到…</button>' +
+    '<button onclick="reveal2()">🔓 实在猜不出来，揭晓答案</button>' +
+    '<button onclick="quickSay(\'我想换一种植物研究：\')">🔄 换一种植物</button>';
+  $('#btnExport2').onclick = () => exportHTML([], true, [2]);
+  $('#btnClear2').onclick = () => {
+    if (!confirm('确定清空第二阶段的全部对话？此操作不可恢复。')) return;
+    S.chat2 = []; save('chat2'); st2 = { plant: null, tries: 0, revealed: false };
+    renderChat($('#chatBody2'), []); $('#chatCount2').textContent = '0';
+    seedChat2();
+  };
+
+  /* 阶段三 */
+  $('#btnRecImg').onclick = () => {
+    pickFiles($('#recImg'), arr => {
+      pendRecImgs = pendRecImgs.concat(arr); pendHint();
+    });
+  };
+  $('#btnRecMic').onclick = togglePendMic;
+  $('#btnAddRec').onclick = addRec3;
+  $('#recName').onkeydown = e => { if (e.key === 'Enter') addRec3(); };
+  $('#btnExport3').onclick = () => exportHTML([], true, [3]);
+  $('#btnClear3').onclick = () => {
+    if (!confirm('确定清空第三阶段的全部记录（含照片与语音）？')) return;
+    S.recs3 = []; save('recs3'); renderRecs3();
+  };
+
+  /* 阶段四 */
+  $('#btnHbImg').onclick = () => {
+    pickFiles($('#hbImg'), arr => { S.hb.imgs = S.hb.imgs.concat(arr); save('hb'); renderHbGallery(); flashTag('#saveTag4'); });
+  };
+  $('#hbText').oninput = () => { S.hb.text = $('#hbText').value; save('hb'); };
+  $('#btnHbReview').onclick = doReview;
+
+  /* 导出 / 导入 */
+  $('#btnExportAll').onclick = () => $('#expMask').classList.add('on');
+  $('#expHtml').onclick = () => { $('#expMask').classList.remove('on'); exportHTML([], true); };
+  $('#expHtmlLight').onclick = () => { $('#expMask').classList.remove('on'); exportHTML([], false); };
+  $('#expJson').onclick = () => { $('#expMask').classList.remove('on'); exportJSON(); };
+  $('#expCsv').onclick = () => { $('#expMask').classList.remove('on'); exportCSV(); };
+  $('#expTxt').onclick = () => { $('#expMask').classList.remove('on'); exportTXT(); };
+  $('#expPrint').onclick = () => { $('#expMask').classList.remove('on'); setTimeout(() => window.print(), 200); };
+  $('#btnImport').onclick = () => $('#importFile').click();
+  $('#importFile').onchange = async e => {
+    const f = e.target.files[0]; if (f) await doImport(f);
+    e.target.value = '';
+  };
+
+  /* AI 设置 */
+  $('#btnApi').onclick = () => $('#apiMask').classList.add('on');
+  $('#apiMode').onchange = updateChanTag;
+  $('#apiPreset').onchange = function () {
+    if (!this.value) return;
+    const p = this.value.split('|');
+    $('#apiUrl').value = p[0]; $('#apiModel').value = p[1];
+    $('#apiVision').value = /vl|4v|vision|qwen-vl/i.test(p[1]) ? '1' : '0';
+    $('#apiMode').value = 'custom';
+  };
+  $('#btnApiSave').onclick = () => {
+    const c = {
+      mode: $('#apiMode').value,
+      url: $('#apiUrl').value.trim(), model: $('#apiModel').value.trim(),
+      key: $('#apiKey').value.trim(), vision: $('#apiVision').value, search: $('#apiSearch').value
+    };
+    LS.set('nw_api', c); $('#apiMask').classList.remove('on');
+    updateChanTag();
+    toast(c.mode === 'custom' && c.url && c.model && c.key ? '已接入自定义接口：' + c.model : '已切换为免费 AI 通道');
+  };
+  $('#btnApiTest').onclick = async function () {
+    this.disabled = true; this.textContent = '测试中…';
+    try {
+      const t0 = Date.now();
+      const t = await callAPI('你是一个测试助手。', [{ role: 'user', text: '只回复两个字：正常' }], null, { timeout: 45000 });
+      toast('连接成功（' + ((Date.now() - t0) / 1000).toFixed(1) + 's）：' + t.slice(0, 24));
+    } catch (e) { toast('连接失败：' + e.message, true); }
+    this.disabled = false; this.textContent = '测试连接';
+  };
+  $('#btnApiClear').onclick = () => {
+    LS.set('nw_api', { mode: 'free', url: '', model: '', key: '', vision: '1', search: '1' });
+    $('#apiMode').value = 'free';
+    $('#apiUrl').value = ''; $('#apiModel').value = ''; $('#apiKey').value = '';
+    updateChanTag();
+    toast('已恢复为免费 AI 通道');
+  };
+}
+function quickSay(t) {
+  const ta = $('#input2'); ta.value = t; ta.focus(); ta.dispatchEvent(new Event('input'));
+}
+/* 阶段二开场白 */
+function seedChat2() {
+  const m = {
+    id: uid(), role: 'ai', ts: Date.now(), who: AGENT_NAME, imgs: [], audio: null,
+    text: '你好呀！我是<b>小达尔文 🍃</b>，今天我们到莲花山公园去找植物。' +
+      '你先用形色 APP 认出一株植物，然后按这个句式开口：<br>' +
+      '<b>「我认识了____，我猜想它的生存绝招是____」</b><br>' +
+      '我保证：猜对了我就揭晓答案；猜错了，我只给你一条线索。<br>' +
+      '公园里的植物我大多认识——不认识的，我会先去查资料再陪你探究。<br>' +
+      '本领要你自己找出来才好玩。准备好了吗？'
+  };
+  S.chat2.push(m); save('chat2'); renderChat($('#chatBody2'), S.chat2);
+  return m;
+}
+
+/* ================= 启动 ================= */
+(async function init() {
+  bind();
+  renderBooks(); renderVideos();
+  $('#safeList').innerHTML = SAFETY.map(s => '<li>' + esc(s) + '</li>').join('');
+
+  const meta = LS.get('nw_meta', { name: '', stage: 1 });
+  S.name = meta.name || '';
+  const c = API.cfg();
+  $('#apiMode').value = c.mode || (c.url && c.key ? 'custom' : 'free');
+  $('#apiUrl').value = c.url || ''; $('#apiModel').value = c.model || '';
+  $('#apiKey').value = c.key || ''; $('#apiVision').value = c.vision || '1';
+  $('#apiSearch').value = c.search || '1';
+  updateChanTag();
+
+  try {
+    S.chat2 = await DB.get(KEY.chat2, []) || [];
+    S.recs3 = await DB.get(KEY.recs3, []) || [];
+    S.hb = await DB.get(KEY.hb, { imgs: [], text: '', result: null }) || { imgs: [], text: '', result: null };
+  } catch (e) { console.warn(e); }
+
+  restoreAll();
+  if (meta.stage) goStage(+meta.stage || 1);
+  if (!S.chat2.length) seedChat2();
+  if (!Speech.ok()) {
+    console.warn('当前浏览器不支持 Web Speech API');
+  }
+  /* 调试与二次开发入口：控制台里可用 NW 访问全部学生数据 */
+  window.NW = S;
+  window.NWAPI = {
+    exportHTML: exportHTML, exportJSON: exportJSON, exportCSV: exportCSV,
+    exportTXT: exportTXT, exportDossier: exportDossier, goStage: goStage,
+    api: API, lookupSpecies: lookupSpecies
+  };
+})();
+</script>
+</body>
+</html>

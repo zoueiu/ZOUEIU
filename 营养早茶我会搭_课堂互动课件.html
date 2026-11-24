@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>营养早茶我会“搭” · 课堂互动课件</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+  <script>tailwind.config={theme:{extend:{colors:{primary:'#1F3A5F',orange:'#F28C28',ink:'#2B3A4A'}}}}</script>
+  <style>
+    body{background:linear-gradient(135deg,#F3F7FF,#EFFAF3);font-family:"Microsoft YaHei",sans-serif;color:#2B3A4A}
+    .card{background:#fff;border-radius:1rem;box-shadow:0 4px 16px rgba(31,58,95,.10);padding:1rem}
+    .food-card{cursor:pointer;transition:all .2s}.food-card:hover{transform:scale(1.05)}
+    .food-card.on{outline:3px solid #F28C28;background:#FFF6EC}
+    .boy-transition{transition:all 1s ease-in-out}
+    .plate-item{position:absolute;width:3.5rem;height:3.5rem;border-radius:9999px;background:rgba(255,255,255,.9);box-shadow:0 4px 10px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;opacity:0;transform:scale(.9);transition:all .3s}
+    .pill-dot{width:26px;height:26px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;box-shadow:0 2px 4px rgba(0,0,0,.18);margin:3px}
+    .pill-dot:hover{transform:scale(1.15)}
+    .pill-dot.sel{outline:3px solid #1F3A5F;transform:scale(1.2)}
+    .pill-dot.placed{cursor:default;opacity:.95}
+    .tray{border:2px dashed #C9D4E2;border-radius:.75rem;min-height:92px;padding:.4rem;transition:all .2s;cursor:pointer}
+    .tray:hover{background:#F7FAFF;border-color:#1F3A5F}
+    .tray.ok{border-color:#2E9E6B;background:#EFFAF3}
+    .layer{height:0;overflow:hidden;transition:height .7s ease,width .7s ease;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:11px;white-space:nowrap;border-radius:6px;margin:0 auto}
+    .nav-step{cursor:pointer;transition:all .2s}
+    .nav-step.active{background:#1F3A5F;color:#fff}
+    .nav-step.done{background:#2E9E6B;color:#fff}
+    .reveal{animation:fade .5s ease}
+    @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+    .badge{display:inline-block;padding:2px 9px;border-radius:9999px;font-size:11px;font-weight:700}
+    .tower-wrap{background:linear-gradient(#F8FBFF,#EAF3FF);border-radius:1rem;padding:1rem;border:2px solid #DCE6F5}
+    .gallery-card{background:#fff;border-radius:1rem;box-shadow:0 4px 16px rgba(31,58,95,.10);padding:.9rem;border:2px solid #E6EDF7}
+    .gallery-card .mini-layer{height:14px;border-radius:3px;margin:1px auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:800}
+  </style>
+</head>
+<body>
+<header class="bg-white/95 backdrop-blur shadow-sm sticky top-0 z-50">
+  <div class="max-w-6xl mx-auto px-4 py-2 flex flex-wrap items-center justify-between gap-2">
+    <div>
+      <h1 class="text-lg sm:text-xl font-black text-primary flex items-center"><i class="fa fa-cutlery mr-2 text-orange"></i>营养早茶我会“搭”</h1>
+      <p class="text-[11px] text-gray-500">教科版四年级《营养要均衡》跨学科活动 · 一课时</p>
+    </div>
+    <div class="flex gap-1 flex-wrap text-[11px]" id="nav"></div>
+  </div>
+</header>
+
+<main class="max-w-6xl mx-auto px-4 py-3">
+
+  <!-- STEP 1 点菜品 -->
+  <section id="step1" class="step">
+    <div class="card mb-3">
+      <h2 class="text-lg font-bold text-primary mb-1"><span class="badge bg-primary text-white mr-2">1</span>点菜品：想吃早茶，点什么好？</h2>
+      <p class="text-sm text-gray-700">查看菜单，以小组为单位讨论，共同商议出 <b>5 道菜</b>，记录在学习单里。</p>
+      <div class="mt-2 flex items-center gap-2 flex-wrap">
+        <label class="text-sm font-bold">小组名称</label>
+        <input id="groupName" maxlength="12" class="border-2 border-gray-200 rounded-lg px-3 py-1 text-sm w-44" placeholder="例如：早茶小队" value="第一小组">
+      </div>
+      <p class="mt-1 text-sm font-bold text-orange">已选择 <span id="count1">0</span>/5</p>
+    </div>
+    <div class="card">
+      <div id="food-grid1" class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-6 gap-2"></div>
+      <div class="mt-3 flex items-center justify-between flex-wrap gap-2">
+        <div id="chosen1" class="text-xs text-gray-600 flex-1 min-w-[200px]">还没选菜</div>
+        <button id="toStep2" class="px-5 py-2 bg-primary text-white rounded-full text-sm font-bold opacity-50 cursor-not-allowed" disabled>记录好啦，说理由 →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 2 说理由 -->
+  <section id="step2" class="step" hidden>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="card">
+        <h2 class="text-lg font-bold text-primary mb-2"><span class="badge bg-primary text-white mr-2">2</span>说一说选菜的理由</h2>
+        <div id="chosen2" class="space-y-2"></div>
+        <label class="block text-sm font-bold mt-3 mb-1">你们为什么这样选？（记录在学习单）</label>
+        <textarea id="reason" rows="4" class="w-full border-2 border-gray-200 rounded-lg p-2 text-sm" placeholder="例如：我们选了虾饺和菜心，因为有荤有素……"></textarea>
+      </div>
+      <div class="card flex flex-col justify-between">
+        <div>
+          <div class="text-4xl text-orange mb-2"><i class="fa fa-question-circle"></i></div>
+          <h3 class="text-xl font-bold mb-2">哪个小组点的菜更好？</h3>
+          <p class="text-sm text-gray-600">先别急着回答。带着这个问题，去 <b>调菜单</b>——把你们选的菜“投喂”给智能体朋友，看看会发生什么。</p>
+        </div>
+        <div class="mt-4 flex gap-2">
+          <button class="px-4 py-2 bg-gray-200 rounded-full text-sm" data-goto="1">← 返回点菜</button>
+          <button class="px-5 py-2 bg-orange text-white rounded-full text-sm font-bold" data-goto="3">去调菜单 →</button>
+        </div>
+      </div>
+    </div>
+    <div class="card mt-4">
+      <div class="flex justify-between items-center flex-wrap gap-2 mb-2">
+        <div>
+          <h3 class="font-bold text-primary"><i class="fa fa-comments mr-2 text-orange"></i>全班选菜理由墙 <span id="reasonCount" class="text-xs font-normal text-gray-500"></span></h3>
+          <p class="text-xs text-gray-500 mt-1">各组把理由提交上来，看看别人为什么这样选。</p>
+        </div>
+        <div class="flex gap-2">
+          <button id="submitReason" class="px-4 py-1.5 bg-orange text-white rounded-full text-xs font-bold"><i class="fa fa-share mr-1"></i>提交本组理由</button>
+          <button id="refreshReasons" class="px-3 py-1.5 bg-gray-200 rounded-full text-xs"><i class="fa fa-refresh mr-1"></i>刷新</button>
+          <button id="clearReasons" class="px-3 py-1.5 bg-red-50 text-red-600 rounded-full text-xs"><i class="fa fa-trash mr-1"></i>清空</button>
+        </div>
+      </div>
+      <div id="reasonWall" class="grid grid-cols-1 md:grid-cols-2 gap-2"></div>
+      <div class="mt-3 border-t pt-3">
+        <div class="flex flex-wrap gap-2 items-center">
+          <button class="genShareBtn px-4 py-1.5 bg-blue-600 text-white rounded-full text-xs font-bold"><i class="fa fa-link mr-1"></i>生成班级链接</button>
+          <button class="copyShareBtn px-4 py-1.5 bg-gray-200 rounded-full text-xs hidden"><i class="fa fa-copy mr-1"></i>复制链接</button>
+          <span class="text-[11px] text-gray-500">把链接发到群里，其他设备打开即可看到全班的理由和作品。</span>
+        </div>
+        <input class="shareLinkBox w-full mt-2 border rounded-lg p-2 text-[11px] text-gray-600 hidden" readonly placeholder="班级链接会显示在这里">
+        <p class="shareTip text-[10px] text-gray-400 mt-1 hidden"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 3 调菜单（核心：智能体小男孩） -->
+  <section id="step3" class="step" hidden>
+    <div class="card mb-3">
+      <h2 class="text-lg font-bold text-primary mb-1"><span class="badge bg-primary text-white mr-2">3</span>调菜单：投喂智能体朋友</h2>
+      <p class="text-sm text-gray-700">点击下方按钮提交，观察小朋友的<b>变化和感受</b>，并分析营养摄入情况。可以修改菜单，再投喂一次。</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      <!-- 左：男孩 -->
+      <div class="card flex flex-col items-center">
+        <h3 class="font-bold mb-2">我们的智能体朋友</h3>
+        <div id="boy-container" class="relative w-full max-w-[230px] aspect-square flex items-center justify-center">
+          <div id="boy" class="boy-transition w-36 h-48 bg-contain bg-no-repeat bg-center" style="background-image:url('')"></div>
+          <div id="plate-area" class="absolute inset-0 pointer-events-none"></div>
+        </div>
+        <div id="feeling" class="mt-2 bg-slate-100 rounded-xl p-2 w-full text-center min-h-[54px] flex items-center justify-center text-sm">等待投喂...</div>
+        <button id="resetBtn" class="mt-2 px-4 py-1.5 bg-gray-300 text-gray-600 rounded-full text-xs opacity-50 cursor-not-allowed" disabled><i class="fa fa-refresh mr-1"></i>重新开始</button>
+      </div>
+      <!-- 右：分析 + 菜单 -->
+      <div class="lg:col-span-2 space-y-4">
+        <div class="card">
+          <h3 class="font-bold mb-2">膳食营养分析</h3>
+          <div class="h-[190px]"><canvas id="nutrition-chart"></canvas></div>
+        </div>
+        <div class="card">
+          <h3 class="font-bold mb-2">当前菜单（点击菜名可移除，点击下方菜品可添加）</h3>
+          <div id="current-menu" class="flex flex-wrap gap-2 mb-3"></div>
+          <div id="food-grid3" class="grid grid-cols-3 sm:grid-cols-5 lg:grid-cols-6 gap-2 max-h-[230px] overflow-auto"></div>
+          <div class="mt-3 flex flex-wrap gap-2 items-center">
+            <button id="feedBtn" class="px-5 py-2 bg-primary text-white rounded-full text-sm font-bold opacity-50 cursor-not-allowed" disabled><i class="fa fa-check-circle mr-1"></i>投喂这 5 道菜</button>
+            <span id="feedCount" class="text-xs text-gray-500">请选择 5 道菜</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="compareBox" class="card mt-4 hidden">
+      <h3 class="font-bold mb-2">修改前 / 修改后 —— 小朋友的变化</h3>
+      <div id="compareCards" class="grid grid-cols-1 md:grid-cols-3 gap-2 items-center"></div>
+      <p id="compareTip" class="text-xs text-gray-600 mt-2"></p>
+    </div>
+    <div class="card mt-4 flex justify-between flex-wrap gap-2">
+      <button class="px-4 py-2 bg-gray-200 rounded-full text-sm" data-goto="2">← 返回说理由</button>
+      <button class="px-5 py-2 bg-orange text-white rounded-full text-sm font-bold" data-goto="4">菜单调好了，去搭食物塔 →</button>
+    </div>
+  </section>
+
+  <!-- STEP 4 搭食物塔（玉米粒实验） -->
+  <section id="step4" class="step" hidden>
+    <div class="card mb-3">
+      <h2 class="text-lg font-bold text-primary mb-1"><span class="badge bg-primary text-white mr-2">4</span>搭建食物塔：营养粒实验</h2>
+      <p class="text-sm text-gray-700"><b>1 颗营养粒 = 20 克食材</b>。根据你们最终菜单的营养比例，领到了不同颜色的营养粒和茶水。先把它们<b>按颜色分一分</b>。</p>
+      <p id="pillHint" class="text-xs text-orange mt-1">点击一颗营养粒，再点它该去的托盘；也可以直接拖过去。</p>
+    </div>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="card">
+        <h3 class="font-bold mb-2">营养粒池（点选分类）</h3>
+        <div id="pillPool" class="min-h-[90px] border-2 border-dashed border-gray-300 rounded-lg p-2 flex flex-wrap content-start"></div>
+        <div class="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-2" id="trays"></div>
+        <div class="mt-3 flex flex-wrap gap-2 items-center">
+          <button id="autoSort" class="px-3 py-1.5 bg-gray-200 rounded-full text-xs">看老师演示分一分</button>
+          <span id="sortProgress" class="text-xs text-gray-600">已分 0 / 0</span>
+        </div>
+      </div>
+      <div class="card">
+        <div class="flex justify-between items-center mb-2">
+          <h3 class="font-bold">搭一搭：食物塔</h3>
+          <button id="stackBtn" class="px-4 py-1.5 bg-green-600 text-white rounded-full text-xs font-bold opacity-50 cursor-not-allowed" disabled>粘一粘，叠起来</button>
+        </div>
+        <div class="tower-wrap">
+          <div id="tower" class="flex flex-col items-center justify-end min-h-[280px] gap-1"></div>
+        </div>
+        <p class="text-xs text-gray-600 mt-2">越靠近塔底，吃得越多；塔尖的油盐类最少。茶水单独喝，不搭进塔里。</p>
+      </div>
+    </div>
+    <div class="card mt-4">
+      <h3 class="font-bold mb-2">怎么分工能完成得更快？</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-sm">
+        <div class="bg-blue-50 rounded-lg p-2 text-center"><b>记录员</b><div class="text-xs text-gray-600">核对营养粒与学习单</div></div>
+        <div class="bg-green-50 rounded-lg p-2 text-center"><b>抓取员</b><div class="text-xs text-gray-600">按颜色取营养粒</div></div>
+        <div class="bg-orange-50 rounded-lg p-2 text-center"><b>粘贴员</b><div class="text-xs text-gray-600">沾湿后粘在塑料膜上</div></div>
+        <div class="bg-purple-50 rounded-lg p-2 text-center"><b>讲解员</b><div class="text-xs text-gray-600">说明每层为什么这么宽</div></div>
+      </div>
+    </div>
+    <div class="card mt-4 flex justify-between flex-wrap gap-2">
+      <button class="px-4 py-2 bg-gray-200 rounded-full text-sm" data-goto="3">← 返回调菜单</button>
+      <button class="px-5 py-2 bg-orange text-white rounded-full text-sm font-bold" data-goto="5">搭好了，比一比 →</button>
+    </div>
+  </section>
+
+  <!-- STEP 5 说一说，比一比 + 总结 -->
+  <section id="step5" class="step" hidden>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div class="card">
+        <h2 class="text-lg font-bold text-primary mb-2"><span class="badge bg-primary text-white mr-2">5</span>说一说，比一比</h2>
+        <p class="text-sm text-gray-700">对比各组食物塔的层级宽度和比例。</p>
+        <div id="towerMini" class="tower-wrap mt-3"><div id="towerMiniInner" class="flex flex-col items-center justify-end min-h-[220px] gap-1"></div></div>
+      </div>
+      <div class="card flex flex-col justify-between">
+        <div>
+          <h3 class="text-xl font-bold mb-3">我们的发现</h3>
+          <p class="text-base leading-relaxed">菜品搭配要 <b class="text-orange">营养多样、均衡</b>；营养比例图和膳食宝塔有着相似的结构。</p>
+          <div class="mt-4 p-3 bg-green-50 rounded-xl">
+            <p class="font-bold text-green-800">营养多样、均衡是基础，我们可以追求个性的需求。</p>
+          </div>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-2">
+          <button class="px-4 py-2 bg-gray-200 rounded-full text-sm" data-goto="4">← 返回食物塔</button>
+          <button id="submitWork" class="px-5 py-2 bg-orange text-white rounded-full text-sm font-bold"><i class="fa fa-share mr-1"></i>展示到班级作品墙</button>
+          <button id="gotoGallery" class="px-5 py-2 bg-green-600 text-white rounded-full text-sm font-bold"><i class="fa fa-th mr-1"></i>查看班级作品墙</button>
+          <button id="restartAll" class="px-5 py-2 bg-primary text-white rounded-full text-sm font-bold"><i class="fa fa-refresh mr-1"></i>再上一轮</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEP 6 班级作品墙 -->
+  <section id="step6" class="step" hidden>
+    <div class="card mb-3">
+      <div class="flex justify-between items-center flex-wrap gap-2">
+        <div>
+          <h2 class="text-lg font-bold text-primary mb-1"><i class="fa fa-th mr-2 text-orange"></i>班级作品墙</h2>
+          <p class="text-sm text-gray-700">各组点了什么菜、搭了什么塔，都在这里。<span id="workCount" class="font-bold text-orange"></span></p>
+        </div>
+        <div class="flex gap-2">
+          <button id="refreshGallery" class="px-3 py-1.5 bg-gray-200 rounded-full text-xs"><i class="fa fa-refresh mr-1"></i>刷新</button>
+          <button id="clearGallery" class="px-3 py-1.5 bg-red-50 text-red-600 rounded-full text-xs"><i class="fa fa-trash mr-1"></i>清空</button>
+        </div>
+      </div>
+      <div class="mt-3 border-t pt-3">
+        <div class="flex flex-wrap gap-2 items-center">
+          <button class="genShareBtn px-4 py-1.5 bg-blue-600 text-white rounded-full text-xs font-bold"><i class="fa fa-link mr-1"></i>生成班级链接</button>
+          <button class="copyShareBtn px-4 py-1.5 bg-gray-200 rounded-full text-xs hidden"><i class="fa fa-copy mr-1"></i>复制链接</button>
+          <span class="text-[11px] text-gray-500">把链接发到群里，其他设备打开即可看到全部作品与理由。</span>
+        </div>
+        <input class="shareLinkBox w-full mt-2 border rounded-lg p-2 text-[11px] text-gray-600 hidden" readonly placeholder="班级链接会显示在这里">
+        <p class="shareTip text-[10px] text-gray-400 mt-1 hidden"></p>
+      </div>
+    </div>
+    <div id="gallery" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+    <div class="card mt-4 flex justify-between flex-wrap gap-2">
+      <button class="px-4 py-2 bg-gray-200 rounded-full text-sm" data-goto="5">← 返回比一比</button>
+      <button class="px-4 py-2 bg-primary text-white rounded-full text-sm" data-goto="1">我也要点菜 →</button>
+    </div>
+  </section>
+
+</main>
+
+<footer class="bg-primary text-white/80 text-center py-2 text-[11px] mt-4">
+  营养早茶我会“搭” · 课堂互动课件
+</footer>
+
+<script>
+  // ===== 基础资源（完整 URL，任意位置可显示）=====
+  const BASE='https://anson0601.github.io/-/';
+  const img=p=>BASE+p.replace(/^\.\//,'').split('/').map(encodeURIComponent).join('/');
+
+  const foods=[
+    {id:1,name:'红米肠',image:'./image1/红米肠.jpg',category:'谷物',ratio:{water:0,grains:47.6,vegetables:14.3,protein:33.3,dairy:0,fats:4.8}},
+    {id:2,name:'水晶虾饺',image:'./image1/虾饺.jpg',category:'蛋白质',ratio:{water:0,grains:27.6,vegetables:13.8,protein:55.2,dairy:0,fats:3.4}},
+    {id:3,name:'鲜虾干蒸',image:'./image1/干蒸.jpg',category:'蔬菜',ratio:{water:0,grains:25.8,vegetables:19.4,protein:51.6,dairy:0,fats:3.2}},
+    {id:4,name:'芋头蒸排骨',image:'./image2/芋头排骨.jpg',category:'乳制品',ratio:{water:0,grains:33.3,vegetables:14.3,protein:47.6,dairy:0,fats:4.8}},
+    {id:5,name:'凤爪',image:'./image2/凤爪.jpg',category:'蛋白质',ratio:{water:0,grains:6.1,vegetables:3,protein:60.6,dairy:6.1,fats:24.2}},
+    {id:6,name:'糯米鸡',image:'./image2/糯米鸡.jpg',category:'蛋白质',ratio:{water:0,grains:50,vegetables:12.5,protein:29.2,dairy:4.2,fats:4.2}},
+    {id:7,name:'陈皮牛肉丸',image:'./image3/陈皮牛肉丸.jpg',category:'水果',ratio:{water:0,grains:14.3,vegetables:21.4,protein:57.1,dairy:0,fats:7.1}},
+    {id:8,name:'肠粉',image:'./image3/肠粉.jpg',category:'谷物',ratio:{water:28.1,grains:42.1,vegetables:10.5,protein:17.5,dairy:0,fats:1.8}},
+    {id:9,name:'艇仔粥',image:'./image3/艇仔粥.jpg',category:'蛋白质',ratio:{water:31.7,grains:38.1,vegetables:9.5,protein:15.9,dairy:3.2,fats:1.6}},
+    {id:10,name:'白灼菜心',image:'./image4/白灼菜心.jpg',category:'蛋白质',ratio:{water:10.8,grains:0,vegetables:86.5,protein:0,dairy:0,fats:2.7}},
+    {id:11,name:'白灼芥兰',image:'./image4/白灼芥蓝.jpg',category:'谷物',ratio:{water:10.8,grains:0,vegetables:86.5,protein:0,dairy:0,fats:2.7}},
+    {id:12,name:'三丝炒面',image:'./image4/三丝炒面.jpg',category:'水果',ratio:{water:0,grains:52.2,vegetables:21.7,protein:21.7,dairy:0,fats:4.3}},
+    {id:13,name:'蛋挞',image:'./image5/蛋挞.jpg',category:'谷物',ratio:{water:0,grains:28.6,vegetables:0,protein:14.3,dairy:33.3,fats:23.8}},
+    {id:14,name:'黄金糕',image:'./image5/黄金糕.jpg',category:'乳制品',ratio:{water:0,grains:52.6,vegetables:0,protein:15.8,dairy:15.8,fats:15.8}},
+    {id:15,name:'萝卜糕',image:'./image5/萝卜糕.jpg',category:'蛋白质',ratio:{water:0,grains:19.5,vegetables:58.5,protein:9.8,dairy:2.4,fats:9.8}},
+    {id:16,name:'菠萝包',image:'./image6/菠萝包.jpg',category:'蔬菜',ratio:{water:9.1,grains:45.5,vegetables:0,protein:18.2,dairy:13.6,fats:13.6}},
+    {id:17,name:'叉烧包',image:'./image6/叉烧包.jpg',category:'脂肪',ratio:{water:25,grains:50,vegetables:0,protein:20,dairy:0,fats:5}},
+    {id:18,name:'豆浆',image:'./image6/豆浆.jpg',category:'混合',ratio:{water:78.6,grains:3.6,vegetables:0,protein:0,dairy:17.9,fats:0}}
+  ];
+  const boyImages={normal:img('./boy/normal.png'),fat:img('./boy/fat.jpg'),muscular:img('./boy/muscular.jpg'),slim:img('./boy/slim.jpg')};
+  const feelings={
+    balanced:['太美味了！营养均衡，感觉很健康！','吃得刚刚好，身体充满活力！','这些食物搭配很棒，我感觉很舒服。'],
+    highProtein:['好多蛋白质，感觉肌肉都要长出来了！','全是肉，有点撑但很满足。','蛋白质摄入充足，精力充沛！'],
+    highCarbs:['碳水好多，有点昏昏欲睡...','吃了太多主食，肚子有点胀。','能量满满，但需要多吃点蔬菜。'],
+    highFat:['好油腻啊，有点不舒服。','脂肪摄入太多了，感觉身体变沉了。','这些食物热量好高，得运动一下了。'],
+    highVeggie:['好多蔬菜水果，感觉很清爽！','维生素充足，皮肤都变好了！','有点饿，可能需要加点主食。']
+  };
+  const CAT={
+    water:{name:'水',color:'#91ABDF',key:'water'},
+    grains:{name:'谷薯类',color:'#F4D503',key:'grains'},
+    vegetables:{name:'蔬果类',color:'#4DD60C',key:'vegetables'},
+    protein:{name:'肉蛋类',color:'#E41908',key:'protein'},
+    dairy:{name:'奶豆坚果类',color:'#F6F3D2',key:'dairy'},
+    fats:{name:'油盐类',color:'#FE9B1C',key:'fats'}
+  };
+  const KEYS=['water','grains','vegetables','protein','dairy','fats'];
+  const LABELS=['油盐类','乳制品','肉类','蔬果类','谷薯类','水类'];
+  const CHART_COLORS=['rgba(254,155,28,.9)','rgba(246,243,210,.9)','rgba(228,25,8,.9)','rgba(77,214,12,.9)','rgba(244,242,7,.9)','rgba(145,171,223,.9)'];
+  const CHART_BORDER=['rgb(254,155,28)','rgb(243,234,157)','rgb(228,25,8)','rgb(77,214,12)','rgb(244,242,7)','rgb(145,171,223)'];
+
+  let selected=[],finalMenu=[],beforeMenu=null,beforeState=null,chart=null,feeds=0,currentStep=1;
+  const $=id=>document.getElementById(id);
+  const avg=farr=>farr.reduce((a,f)=>{KEYS.forEach(k=>a[k]+=f.ratio[k]/farr.length);return a},{water:0,grains:0,vegetables:0,protein:0,dairy:0,fats:0});
+
+  // ===== 导航 =====
+  const steps=[['1','点菜品'],['2','说理由'],['3','调菜单'],['4','搭食物塔'],['5','比一比'],['6','作品墙']];
+  function renderNav(){
+    $('nav').innerHTML=steps.map(([n,t])=>`<span class="nav-step px-2.5 py-1 rounded-full ${n==currentStep?'active':(n<currentStep?'done':'bg-gray-100 text-gray-500')}" data-goto="${n}">${n}. ${t}</span>`).join('');
+    document.querySelectorAll('.nav-step').forEach(el=>el.addEventListener('click',()=>goto(+el.dataset.goto)));
+  }
+  function goto(n){
+    if(n>currentStep+1 && n!==6) return;
+    currentStep=n;
+    document.querySelectorAll('.step').forEach((s,i)=>s.hidden=(i+1)!==n);
+    renderNav();
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(n===4) initPills();
+    if(n===5) renderMiniTower();
+    if(n===6) renderGallery();
+  }
+  document.querySelectorAll('[data-goto]').forEach(el=>el.addEventListener('click',()=>goto(+el.dataset.goto)));
+
+  // ===== 菜品网格（两处同步）=====
+  function renderGrids(){
+    [['food-grid1',1],['food-grid3',3]].forEach(([cid])=>{
+      $(cid).innerHTML=foods.map(f=>`
+        <div class="food-card text-center ${selected.some(x=>x.id===f.id)?'on':''}" data-id="${f.id}">
+          <img src="${img(f.image)}" class="w-full h-14 object-cover rounded-md" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+          <div class="h-14 items-center justify-center text-[10px] text-gray-400 hidden">${f.name}</div>
+          <div class="text-[11px] mt-1 font-bold text-gray-700 truncate">${f.name}</div>
+        </div>`).join('');
+      $(cid).querySelectorAll('.food-card').forEach(el=>el.addEventListener('click',()=>toggle(+el.dataset.id)));
+    });
+    $('count1').textContent=selected.length;
+    $('feedCount').textContent=selected.length===5?'可以投喂啦':`请选择 5 道菜（还差 ${5-selected.length} 道）`;
+    $('chosen1').innerHTML=selected.length?('已选：'+selected.map(f=>f.name).join('、')):'还没选菜';
+    $('toStep2').disabled=selected.length!==5;
+    $('toStep2').className=selected.length===5?'px-5 py-2 bg-primary text-white rounded-full text-sm font-bold':'px-5 py-2 bg-primary text-white rounded-full text-sm font-bold opacity-50 cursor-not-allowed';
+    $('feedBtn').disabled=selected.length!==5;
+    $('feedBtn').className=selected.length===5?'px-5 py-2 bg-primary text-white rounded-full text-sm font-bold':'px-5 py-2 bg-primary text-white rounded-full text-sm font-bold opacity-50 cursor-not-allowed';
+    renderCurrentMenu();
+    renderChosen2();
+  }
+  function toggle(id){
+    if(selected.length>=5&&!selected.some(f=>f.id===id))return;
+    selected=selected.some(f=>f.id===id)?selected.filter(f=>f.id!==id):[...selected,foods.find(f=>f.id===id)];
+    renderGrids();
+  }
+  function renderCurrentMenu(){
+    $('current-menu').innerHTML=selected.length?selected.map(f=>`<span class="badge bg-blue-100 text-primary cursor-pointer" data-rm="${f.id}">${f.name} <i class="fa fa-times"></i></span>`).join(''):'<span class="text-xs text-gray-400">还没选菜</span>';
+    document.querySelectorAll('[data-rm]').forEach(el=>el.addEventListener('click',()=>toggle(+el.dataset.rm)));
+  }
+  function renderChosen2(){
+    $('chosen2').innerHTML=selected.length?selected.map(f=>`<div class="flex items-center gap-2 bg-blue-50 rounded-lg p-2"><img src="${img(f.image)}" class="w-9 h-9 rounded object-cover"><b class="text-sm">${f.name}</b><span class="badge bg-orange text-white">${f.category}</span></div>`).join(''):'<p class="text-sm text-gray-500">请先选 5 道菜</p>';
+  }
+
+  // ===== 投喂动画 + 男孩 + 营养图（原网页核心）=====
+  function fly(f){
+    const p=document.createElement('div');p.className='plate-item';
+    p.innerHTML=`<img src="${img(f.image)}" class="w-8 h-8 rounded-full object-cover">`;
+    $('plate-area').appendChild(p);setTimeout(()=>p.style.opacity='1',10);
+    setTimeout(()=>{const c=$('boy-container');p.style.transition='all .8s cubic-bezier(.34,1.56,.64,1)';p.style.left=(c.offsetWidth/2-25)+'px';p.style.top=(c.offsetHeight*.35+20)+'px';p.style.transform='scale(.7)';setTimeout(()=>{p.style.opacity='0';setTimeout(()=>p.remove(),300)},500)},300);
+  }
+  function calcHit(r){
+    const t=Object.values(r).reduce((a,b)=>a+b,0);
+    const fat=r.fats/t*100,pro=r.protein/t*100,veg=r.vegetables/t*100;
+    if(fat>10)return'highFat';if(pro>30)return'highProtein';if(veg>30)return'highVeggie';return'balanced';
+  }
+  function feed(){
+    if(selected.length!==5)return;
+    if(feeds===0){beforeMenu=selected.map(f=>f.name);}
+    feeds++;
+    finalMenu=[...selected];
+    selected.forEach((f,i)=>setTimeout(()=>fly(f),i*140));
+    setTimeout(()=>{
+      const r=avg(finalMenu),hit=calcHit(r);
+      const key={highFat:'fat',highProtein:'muscular',highVeggie:'slim',balanced:'normal'}[hit];
+      const boy=$('boy');boy.style.backgroundImage=`url('${boyImages[key]}')`;
+      boy.style.transform={fat:'scale(1.1)',muscular:'scale(1.05)',slim:'scale(.95)',balanced:'scale(1)'}[key];
+      const arr=feelings[hit];const ftext=arr[Math.floor(Math.random()*arr.length)];
+      $('feeling').innerHTML=`<p class="text-sm text-gray-700">${ftext}</p>`;
+      if(feeds===1){beforeState={key,img:boyImages[key],feeling:ftext,menu:beforeMenu.slice(),ratio:r};}
+      if(chart)chart.destroy();
+      chart=new Chart($('nutrition-chart').getContext('2d'),{
+        type:'bar',
+        data:{labels:LABELS,datasets:[{label:'营养比例 (%)',data:[r.fats,r.dairy,r.protein,r.vegetables,r.grains,r.water],backgroundColor:CHART_COLORS,borderColor:CHART_BORDER,borderWidth:1}]},
+        options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,max:100,ticks:{font:{size:9}}},y:{ticks:{font:{size:10}}}}}
+      });
+      $('resetBtn').disabled=false;$('resetBtn').className='mt-2 px-4 py-1.5 bg-primary text-white rounded-full text-xs';
+      document.querySelectorAll('#food-grid3 .food-card').forEach(el=>el.style.pointerEvents='none');
+      if(feeds>=2)showCompare(r);
+    },selected.length*140+800);
+  }
+  function showCompare(r){
+    $('compareBox').classList.remove('hidden');
+    const hit2=calcHit(r);
+    const key2={highFat:'fat',highProtein:'muscular',highVeggie:'slim',balanced:'normal'}[hit2];
+    const f2=feelings[hit2][Math.floor(Math.random()*feelings[hit2].length)];
+    const after={key:key2,img:boyImages[key2],feeling:f2,menu:finalMenu.map(f=>f.name),ratio:r};
+    const b=beforeState||{key:'normal',img:boyImages.normal,feeling:'等待投喂...',menu:beforeMenu||[],ratio:r};
+    const face=(s,label,cls)=>`<div class="border-2 ${cls} rounded-xl p-2 text-center">
+      <div class="font-bold text-sm mb-1">${label}</div>
+      <div style="height:120px;display:flex;align-items:center;justify-content:center"><img src="${s.img}" style="max-height:115px;max-width:100%;object-fit:contain" alt="小朋友状态"></div>
+      <div class="text-xs bg-slate-50 rounded-lg p-1.5 my-1">${esc(s.feeling)}</div>
+      <div class="text-[11px] text-gray-600 leading-snug">${s.menu.join('、')}</div>
+      <div class="text-[10px] text-gray-400 mt-1">油盐 ${s.ratio.fats.toFixed(0)}%　蔬果 ${s.ratio.vegetables.toFixed(0)}%</div>
+    </div>`;
+    $('compareCards').innerHTML=face(b,'修改前','border-gray-200')+
+      `<div class="flex items-center justify-center text-2xl text-orange font-bold">→</div>`+
+      face(after,'修改后','border-orange');
+    $('compareTip').innerHTML=`<b>请分享你们的修改过程与成果：</b>小男孩发生了什么变化？什么样的菜品组合让他满意？—— 菜品搭配要<b>营养多样、均衡</b>。`;
+  }
+  function resetFeed(){
+    feeds=0;finalMenu=[];beforeMenu=null;beforeState=null;selected=[];
+    if(chart){chart.destroy();chart=null;}
+    $('boy').style.backgroundImage="url('')";$('boy').style.transform='scale(1)';$('feeling').textContent='等待投喂...';
+    $('plate-area').innerHTML='';$('compareBox').classList.add('hidden');
+    $('resetBtn').disabled=true;$('resetBtn').className='mt-2 px-4 py-1.5 bg-gray-300 text-gray-600 rounded-full text-xs opacity-50 cursor-not-allowed';
+    renderGrids();
+  }
+
+  // ===== 营养粒实验（玉米粒）=====
+  let pills=[],selectedPill=null;
+  function makePills(){
+    const r=finalMenu.length?avg(finalMenu):{water:0,grains:0,vegetables:0,protein:0,dairy:0,fats:0};
+    const total=48;
+    let counts=KEYS.map(k=>Math.round(r[k]/100*total));
+    const diff=total-counts.reduce((a,b)=>a+b,0);counts[1]+=diff;
+    pills=[];
+    KEYS.forEach((k,i)=>{for(let n=0;n<Math.max(0,counts[i]);n++)pills.push({id:k+'-'+n,cat:k,placed:null});});
+    // 洗牌
+    for(let i=pills.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pills[i],pills[j]]=[pills[j],pills[i]];}
+    selectedPill=null;
+  }
+  function renderTrays(){
+    $('trays').innerHTML=KEYS.map(k=>`<div class="tray okless" data-tray="${k}" style="border-color:${CAT[k].color}"><div class="text-[11px] font-bold mb-1" style="color:${CAT[k].color}">${CAT[k].name}</div><div class="flex flex-wrap" data-traypills="${k}"></div></div>`).join('');
+    document.querySelectorAll('[data-tray]').forEach(el=>el.addEventListener('click',()=>place(el.dataset.tray)));
+  }
+  function renderPills(){
+    $('pillPool').innerHTML=pills.filter(p=>!p.placed).map(p=>`<div class="pill-dot ${selectedPill===p.id?'sel':''}" style="background:${CAT[p.cat].color}" data-pill="${p.id}" draggable="true" title="${CAT[p.cat].name}"></div>`).join('');
+    document.querySelectorAll('[data-pill]').forEach(el=>{
+      el.addEventListener('click',()=>{selectedPill=el.dataset.pill;renderPills();});
+      el.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',el.dataset.pill);});
+    });
+    KEYS.forEach(k=>{
+      const box=document.querySelector(`[data-traypills="${k}"]`);
+      box.innerHTML=pills.filter(p=>p.placed===k).map(p=>`<div class="pill-dot placed" style="background:${CAT[k].color}"></div>`).join('');
+      const tray=document.querySelector(`[data-tray="${k}"]`);
+      tray.classList.toggle('ok',pills.filter(p=>p.placed===k).length>0);
+    });
+    const done=pills.filter(p=>p.placed).length;
+    $('sortProgress').textContent=`已分 ${done} / ${pills.length}`;
+    $('stackBtn').disabled=done!==pills.length;
+    $('stackBtn').className=done===pills.length?'px-4 py-1.5 bg-green-600 text-white rounded-full text-xs font-bold':'px-4 py-1.5 bg-green-600 text-white rounded-full text-xs font-bold opacity-50 cursor-not-allowed';
+  }
+  function place(tray){
+    if(!selectedPill)return;
+    const p=pills.find(x=>x.id===selectedPill);if(!p)return;
+    if(p.cat!==tray){$('pillHint').innerHTML='<span class="text-red-600">颜色不对，再想想它属于哪一类？</span>';return;}
+    p.placed=tray;selectedPill=null;$('pillHint').textContent='点击一颗营养粒，再点它该去的托盘；也可以直接拖过去。';
+    renderPills();
+  }
+  function initPills(){makePills();renderTrays();renderPills();$('tower').innerHTML='';}
+  // 从上到下：油盐(塔尖) → 奶豆 → 肉蛋 → 蔬果 → 谷薯(塔底)，下宽上窄
+  const TOWER_ORDER=['fats','dairy','protein','vegetables','grains'];
+  function towerHtml(counts,mini){
+    const max=Math.max(1,...TOWER_ORDER.map(k=>counts[k]||0));
+    const layers=TOWER_ORDER.map(k=>{
+      const c=counts[k]||0;
+      const w=mini?Math.round(50+c/max*70):Math.round(110+c/max*170);
+      const h=mini?Math.round(9+c/max*11):Math.round(24+c/max*36);
+      const cls=mini?'mini-layer':'layer';
+      return `<div class="${cls}" data-k="${k}" style="height:${h}px;width:${w}px;background:${CAT[k].color};color:${k==='dairy'?'#333':'#fff'}" title="${CAT[k].name} ${c}粒 ${c*20}克">${mini?'':CAT[k].name+' · '}${c}粒</div>`;
+    }).join('');
+    return layers+`<div class="text-xs text-blue-600 mt-1"><i class="fa fa-tint"></i> 茶水 ${counts.water||0} 粒（单独喝，不搭塔）</div>`;
+  }
+  function currentCounts(){
+    const counts={};KEYS.forEach(k=>counts[k]=pills.filter(p=>p.placed===k).length);
+    return counts;
+  }
+  function towerLayers(el,counts){ towerHtml(counts||currentCounts(),false)&&(el.innerHTML=towerHtml(counts||currentCounts(),false)); }
+  $('stackBtn').addEventListener('click',()=>{
+    towerLayers($('tower'));
+    $('stackBtn').textContent='搭好啦！';
+  });
+  $('autoSort').addEventListener('click',()=>{
+    pills.forEach(p=>p.placed=p.cat);selectedPill=null;renderPills();
+    $('pillHint').textContent='演示完成：按颜色分成六类。现在轮到你们自己分一分。';
+  });
+  // 拖拽放置
+  document.addEventListener('dragover',e=>e.preventDefault());
+  document.addEventListener('drop',e=>{
+    const tray=e.target.closest('[data-tray]');if(!tray)return;
+    const id=e.dataTransfer.getData('text/plain');if(!id)return;
+    const p=pills.find(x=>x.id===id);if(!p)return;
+    if(p.cat!==tray.dataset.tray){$('pillHint').innerHTML='<span class="text-red-600">颜色不对，再想想它属于哪一类？</span>';return;}
+    p.placed=tray.dataset.tray;renderPills();
+  });
+  function renderMiniTower(){ if(pills.some(p=>p.placed)) towerLayers($('towerMiniInner')); else $('towerMiniInner').innerHTML='<p class="text-sm text-gray-500">还没搭食物塔</p>'; }
+
+  // ===== 班级作品墙（localStorage）=====
+  const STORE='zaocha_gallery_v1';
+  function loadWorks(){ try{return JSON.parse(localStorage.getItem(STORE))||[]}catch(e){return []} }
+  function saveWorks(w){ try{localStorage.setItem(STORE,JSON.stringify(w))}catch(e){} }
+  function submitWork(){
+    const g=($('groupName').value||'').trim()||'未命名小组';
+    if(!finalMenu.length){alert('请先在「调菜单」里投喂并确定菜单。');goto(3);return;}
+    const works=loadWorks();
+    const work={
+      id:Date.now()+'-'+Math.random().toString(36).slice(2,6),
+      group:g,
+      time:new Date().toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}),
+      dishes:finalMenu.map(f=>({name:f.name,image:img(f.image),cat:f.category})),
+      reason:($('reason').value||'').trim(),
+      counts:currentCounts(),
+      before:beforeMenu||null
+    };
+    works.unshift(work);saveWorks(works);
+    const btn=$('submitWork');const old=btn.innerHTML;btn.innerHTML='<i class="fa fa-check mr-1"></i>已展示到作品墙';
+    setTimeout(()=>btn.innerHTML=old,2500);
+    renderGallery();goto(6);
+  }
+  function renderGallery(){
+    const works=loadWorks();
+    $('workCount').textContent=works.length?`（共 ${works.length} 组）`:'（还没有作品）';
+    if(!works.length){
+      $('gallery').innerHTML='<div class="card col-span-full text-center text-gray-500 py-10"><i class="fa fa-inbox text-3xl mb-2 block"></i>还没有作品。先点菜、调菜单、搭食物塔，再点「展示到班级作品墙」。</div>';
+      return;
+    }
+    $('gallery').innerHTML=works.map(w=>`
+      <div class="gallery-card">
+        <div class="flex justify-between items-start mb-2">
+          <div><div class="font-bold text-primary">${esc(w.group)}</div><div class="text-[10px] text-gray-400">${esc(w.time)}</div></div>
+          <button class="text-red-400 hover:text-red-600 text-sm" data-del="${w.id}" title="删除这幅作品"><i class="fa fa-trash"></i></button>
+        </div>
+        <div class="grid grid-cols-5 gap-1 mb-2">
+          ${w.dishes.map(d=>`<div class="text-center"><img src="${d.image}" class="w-full h-10 object-cover rounded" alt="${esc(d.name)}"><div class="text-[9px] truncate text-gray-600">${esc(d.name)}</div></div>`).join('')}
+        </div>
+        ${w.reason?`<p class="text-[11px] text-gray-600 mb-2 bg-gray-50 rounded p-1.5">选菜理由：${esc(w.reason)}</p>`:''}
+        <div class="tower-wrap py-2"><div class="flex flex-col items-center justify-end gap-0.5">${towerHtml(w.counts||{},true)}</div></div>
+      </div>`).join('');
+    document.querySelectorAll('[data-del]').forEach(el=>el.addEventListener('click',()=>{
+      if(!confirm('删除这一组的作品？'))return;
+      saveWorks(loadWorks().filter(x=>x.id!==el.dataset.del));renderGallery();
+    }));
+  }
+  function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+
+  // ===== 班级分享链接（数据随链接走，跨设备汇总）=====
+  function b64enc(obj){
+    const json=JSON.stringify(obj);
+    return btoa(unescape(encodeURIComponent(json))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+  }
+  function b64dec(s){
+    s=s.replace(/-/g,'+').replace(/_/g,'/');
+    while(s.length%4)s+='=';
+    return JSON.parse(decodeURIComponent(escape(atob(s))));
+  }
+  function genShareLink(){
+    const works=loadWorks().map(w=>({g:w.group,t:w.time,r:w.reason||'',d:(w.dishes||[]).map(x=>x.name),c:w.counts||{},b:w.before||null}));
+    const reasons=loadReasons().map(r=>({g:r.group,t:r.time,r:r.reason,d:r.dishes||[]}));
+    const payload={v:1,w:works,r:reasons};
+    const code=b64enc(payload);
+    const url=location.href.split('#')[0]+'#class='+code;
+    const tip=`链接已生成（含 ${works.length} 组作品、${reasons.length} 条理由）。<b>要跨设备打开，课件本身必须放在大家都能访问的网址</b>（如 Vercel / GitHub Pages）；本地文件链接只在本机有效。理由与作品数据都在这个链接里。`;
+    document.querySelectorAll('.shareLinkBox').forEach(el=>{el.value=url;el.classList.remove('hidden')});
+    document.querySelectorAll('.copyShareBtn').forEach(el=>el.classList.remove('hidden'));
+    document.querySelectorAll('.shareTip').forEach(el=>{el.innerHTML=tip;el.classList.remove('hidden')});
+    return url;
+  }
+  function importFromHash(){
+    const m=location.hash.match(/class=([^&]+)/);
+    if(!m)return 0;
+    try{
+      const p=b64dec(m[1]);
+      if(!p||p.v!==1)return 0;
+      let added=0;
+      const works=(p.w||[]).map(w=>{
+        const dishes=(w.d||[]).map(name=>{const f=foods.find(x=>x.name===name);return {name,image:f?img(f.image):'',cat:f?f.category:''}});
+        return {id:'s-'+Math.random().toString(36).slice(2,8),group:w.g||'小组',time:w.t||'',reason:w.r||'',dishes,counts:w.c||{},before:w.b||null};
+      });
+      const curW=loadWorks();const kW=new Set(curW.map(x=>x.group+'|'+x.time+'|'+(x.reason||'').slice(0,10)));
+      works.forEach(w=>{const k=w.group+'|'+w.time+'|'+(w.reason||'').slice(0,10);if(!kW.has(k)){curW.push(w);kW.add(k);added++}});
+      saveWorks(curW);
+      const reasons=(p.r||[]).map(r=>({id:'s-'+Math.random().toString(36).slice(2,8),group:r.g||'小组',time:r.t||'',reason:r.r||'',dishes:r.d||[]}));
+      const curR=loadReasons();const kR=new Set(curR.map(x=>x.group+'|'+x.time+'|'+(x.reason||'').slice(0,10)));
+      reasons.forEach(r=>{const k=r.group+'|'+r.time+'|'+(r.reason||'').slice(0,10);if(!kR.has(k)){curR.push(r);kR.add(k);added++}});
+      saveReasons(curR);
+      renderGallery();renderReasons();
+      history.replaceState(null,'',location.href.split('#')[0]);
+      return added;
+    }catch(e){console.warn('链接数据导入失败',e);return 0;}
+  }
+
+  // ===== 全班选菜理由墙 =====
+  const RSTORE='zaocha_reasons_v1';
+  function loadReasons(){ try{return JSON.parse(localStorage.getItem(RSTORE))||[]}catch(e){return []} }
+  function saveReasons(w){ try{localStorage.setItem(RSTORE,JSON.stringify(w))}catch(e){} }
+  function submitReason(){
+    const g=($('groupName').value||'').trim()||'未命名小组';
+    const txt=($('reason').value||'').trim();
+    if(!txt){alert('请先写下你们组的选菜理由。');$('reason').focus();return;}
+    const rs=loadReasons();
+    const item={id:Date.now()+'-'+Math.random().toString(36).slice(2,6),group:g,reason:txt,
+      dishes:selected.map(f=>f.name),time:new Date().toLocaleString('zh-CN',{month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'})};
+    rs.unshift(item);saveReasons(rs);renderReasons();
+    const btn=$('submitReason');const old=btn.innerHTML;btn.innerHTML='<i class="fa fa-check mr-1"></i>已提交';
+    setTimeout(()=>btn.innerHTML=old,2000);
+  }
+  function renderReasons(){
+    const rs=loadReasons();
+    $('reasonCount').textContent=rs.length?`（共 ${rs.length} 组）`:'';
+    if(!rs.length){$('reasonWall').innerHTML='<div class="text-xs text-gray-400 col-span-full py-3">还没有小组提交理由。写下理由后点「提交本组理由」。</div>';return;}
+    $('reasonWall').innerHTML=rs.map(r=>`
+      <div class="bg-blue-50 rounded-xl p-2.5 relative">
+        <button class="absolute top-2 right-2 text-red-300 hover:text-red-600 text-xs" data-rdel="${r.id}" title="删除"><i class="fa fa-times"></i></button>
+        <div class="font-bold text-primary text-sm mb-1">${esc(r.group)} <span class="text-[10px] font-normal text-gray-400">${esc(r.time)}</span></div>
+        <div class="text-xs text-gray-700 leading-relaxed">${esc(r.reason)}</div>
+        ${r.dishes&&r.dishes.length?`<div class="text-[10px] text-gray-400 mt-1">选菜：${esc(r.dishes.join('、'))}</div>`:''}
+      </div>`).join('');
+    document.querySelectorAll('[data-rdel]').forEach(el=>el.addEventListener('click',()=>{
+      saveReasons(loadReasons().filter(x=>x.id!==el.dataset.rdel));renderReasons();
+    }));
+  }
+
+  // ===== 事件绑定 =====
+  $('feedBtn').addEventListener('click',feed);
+  $('resetBtn').addEventListener('click',resetFeed);
+  $('restartAll').addEventListener('click',()=>{resetFeed();$('reason').value='';goto(1);});
+  $('toStep2').addEventListener('click',()=>goto(2));
+  $('submitWork').addEventListener('click',submitWork);
+  $('gotoGallery').addEventListener('click',()=>goto(6));
+  $('refreshGallery').addEventListener('click',renderGallery);
+  $('clearGallery').addEventListener('click',()=>{if(confirm('确定清空全部作品？此操作不可恢复。')){saveWorks([]);renderGallery();}});
+  $('submitReason').addEventListener('click',submitReason);
+  $('refreshReasons').addEventListener('click',renderReasons);
+  $('clearReasons').addEventListener('click',()=>{if(confirm('确定清空全部理由？')){saveReasons([]);renderReasons();}});
+  document.querySelectorAll('.genShareBtn').forEach(b=>b.addEventListener('click',genShareLink));
+  document.querySelectorAll('.copyShareBtn').forEach(b=>b.addEventListener('click',async()=>{
+    let box=[...document.querySelectorAll('.shareLinkBox')].find(x=>x.value);
+    if(!box){genShareLink();box=document.querySelector('.shareLinkBox');}
+    try{await navigator.clipboard.writeText(box.value);}
+    catch(e){box.select();document.execCommand('copy');}
+    const old=b.innerHTML;b.innerHTML='<i class="fa fa-check mr-1"></i>已复制';
+    setTimeout(()=>b.innerHTML=old,2000);
+  }));
+
+  // ===== 初始化 =====
+  renderNav();renderGrids();renderReasons();
+  const imported=importFromHash();
+  if(imported>0){setTimeout(()=>alert('已从班级链接导入 '+imported+' 条数据（作品 + 理由）。'),300);}
+  $('boy').style.backgroundImage=`url('${boyImages.normal}')`;
+</script>
+</body>
+</html>

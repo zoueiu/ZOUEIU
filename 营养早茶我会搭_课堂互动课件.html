@@ -547,7 +547,6 @@
         <div class="grid grid-cols-5 gap-1 mb-2">
           ${w.dishes.map(d=>`<div class="text-center"><img src="${d.image}" class="w-full h-10 object-cover rounded" alt="${esc(d.name)}"><div class="text-[9px] truncate text-gray-600">${esc(d.name)}</div></div>`).join('')}
         </div>
-        ${w.reason?`<p class="text-[11px] text-gray-600 mb-2 bg-gray-50 rounded p-1.5">选菜理由：${esc(w.reason)}</p>`:''}
         <div class="tower-wrap py-2"><div class="flex flex-col items-center justify-end gap-0.5">${towerHtml(w.counts||{},true)}</div></div>
       </div>`).join('');
     document.querySelectorAll('[data-del]').forEach(el=>el.addEventListener('click',()=>{
